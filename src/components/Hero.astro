@@ -25,6 +25,9 @@ const { eyebrow, title, description, primaryCta, secondaryCta, stats } = Astro.p
         {eyebrow && (
           <p class="text-xs font-semibold uppercase tracking-[0.4em] text-brand-primary dark:text-brand-light">{eyebrow}</p>
         )}
+        <p class="text-sm md:text-base font-serif italic text-brand-primary dark:text-brand-light">
+          “Fare la differenza è... la vera differenza.”
+        </p>
         <h1 class="text-3xl md:text-5xl font-semibold text-neutral-text leading-tight dark:text-white">
           {title}
         </h1>
@@ -47,6 +50,16 @@ const { eyebrow, title, description, primaryCta, secondaryCta, stats } = Astro.p
             </a>
           )}
         </div>
+        {stats && stats.length > 0 && (
+          <dl class="grid gap-4 pt-6 sm:grid-cols-2">
+            {stats.map((item) => (
+              <div class="rounded-2xl border border-neutral-border bg-white px-6 py-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+                <dt class="text-xs uppercase tracking-[0.3em] text-neutral-muted dark:text-neutral-300">{item.label}</dt>
+                <dd class="text-2xl font-semibold text-brand-primary dark:text-brand-light">{item.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
       </div>
       <div class="space-y-6">
         <div class="relative">
@@ -63,7 +76,7 @@ const { eyebrow, title, description, primaryCta, secondaryCta, stats } = Astro.p
             class="pointer-events-none absolute -bottom-10 left-6 h-28 w-auto rotate-[-6deg] drop-shadow-lg"
           />
         </div>
-  <div class="rounded-3xl border border-neutral-border bg-white shadow-card p-8 space-y-6 dark:border-neutral-800 dark:bg-neutral-900">
+        <div class="rounded-3xl border border-neutral-border bg-white shadow-card p-8 space-y-6 dark:border-neutral-800 dark:bg-neutral-900">
           <p class="text-sm uppercase tracking-[0.3em] text-neutral-muted dark:text-neutral-300">Approccio</p>
           <p class="text-lg text-neutral-text leading-relaxed dark:text-neutral-100">
             Ogni piano nasce da una visione integrata: obiettivi personali, orizzonte temporale, propensione al rischio e governance
@@ -73,16 +86,6 @@ const { eyebrow, title, description, primaryCta, secondaryCta, stats } = Astro.p
             Analizziamo il patrimonio complessivo e costruiamo scenari su misura, con monitoraggio continuo e coaching decisionale.
           </p>
         </div>
-        {stats && stats.length > 0 && (
-          <dl class="grid grid-cols-2 gap-6">
-            {stats.map((item) => (
-              <div class="rounded-2xl border border-neutral-border bg-white px-6 py-5 dark:border-neutral-800 dark:bg-neutral-900">
-                <dt class="text-xs uppercase tracking-[0.3em] text-neutral-muted dark:text-neutral-300">{item.label}</dt>
-                <dd class="text-2xl font-semibold text-brand-primary dark:text-brand-light">{item.value}</dd>
-              </div>
-            ))}
-          </dl>
-        )}
       </div>
     </div>
   </div>
