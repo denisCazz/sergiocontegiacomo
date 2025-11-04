@@ -96,8 +96,8 @@ const isActive = (href: string) => {
 </header>
 
 <div id="mobile-menu" class="lg:hidden" hidden data-mobile-drawer>
-  <div class="fixed inset-0 bg-neutral-text/60 dark:bg-neutral-950/70" data-overlay></div>
-  <div class="fixed top-0 right-0 bottom-0 w-4/5 max-w-xs bg-white shadow-xl p-6 flex flex-col gap-6 dark:bg-neutral-900">
+  <div class="fixed inset-0 bg-neutral-text/60 dark:bg-neutral-950/70 z-40" data-overlay></div>
+  <div class="fixed top-0 right-0 bottom-0 w-4/5 max-w-xs bg-white shadow-xl p-6 flex flex-col gap-6 dark:bg-neutral-900 z-50">
     <div class="flex items-center justify-between">
       <div>
         <p class="text-sm uppercase tracking-[0.3em] text-brand-primary">{siteConfig.name}</p>
