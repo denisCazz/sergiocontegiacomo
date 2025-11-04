@@ -1,0 +1,46 @@
+---
+import dayjs from 'dayjs';
+import 'dayjs/locale/it';
+import type { Article } from '../lib/cms';
+
+interface Props {
+  article: Article;
+}
+
+const { article } = Astro.props;
+const formattedDate = dayjs(article.publishedAt).locale('it').format('DD MMMM YYYY');
+---
+
+<article class="group rounded-3xl border border-neutral-border bg-white overflow-hidden shadow-sm transition hover:shadow-card dark:border-neutral-800 dark:bg-neutral-900">
+  {article.coverImage && (
+    <a href={`/blog/${article.slug}`} class="block aspect-[16/10] overflow-hidden">
+      <img
+        src={article.coverImage}
+        alt={`Copertina articolo ${article.title}`}
+        loading="lazy"
+        class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+      />
+    </a>
+  )}
+  <div class="p-6 space-y-4">
+    <div class="flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-neutral-muted dark:text-neutral-400">
+      <span>{formattedDate}</span>
+      {article.tags && article.tags.length > 0 && <span class="text-brand-primary">{article.tags[0]}</span>}
+    </div>
+    <a href={`/blog/${article.slug}`} class="block space-y-3">
+      <h3 class="text-xl font-semibold text-neutral-text group-hover:text-brand-primary transition dark:text-white">
+        {article.title}
+      </h3>
+      {article.excerpt && <p class="text-sm text-neutral-muted leading-relaxed dark:text-neutral-300">{article.excerpt}</p>}
+    </a>
+    <div class="flex items-center justify-between text-xs text-neutral-muted dark:text-neutral-400">
+      <span>Autore: {article.author}</span>
+      <a href={`/blog/${article.slug}`} class="inline-flex items-center gap-1 font-semibold text-brand-primary">
+        Leggi
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</article>

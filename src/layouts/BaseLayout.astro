@@ -1,0 +1,78 @@
+---
+import '../styles/base.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { siteConfig } from '../lib/config';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  activePath?: string;
+}
+
+const { title, description, ogImage, activePath } = Astro.props;
+const pageTitle = title ? `${title} | ${siteConfig.name}` : `${siteConfig.name} - ${siteConfig.role}`;
+const pageDescription = description ??
+  'Consulenza patrimoniale su misura, coaching finanziario e percorsi di educazione economica per imprenditori e famiglie.';
+const image = ogImage ?? '/sergio.jpg';
+---
+
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:image" content={new URL(image, Astro.site ?? siteConfig.siteUrl).toString()} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={new URL(image, Astro.site ?? siteConfig.siteUrl).toString()} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;600&family=Work+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <script>
+      {`(() => {
+        if (typeof window === 'undefined' || typeof document === 'undefined') {
+          return;
+        }
+
+        const storageKey = 'preferred-theme';
+        const root = document.documentElement;
+
+        const applyTheme = (theme) => {
+          if (theme === 'dark') {
+            root.classList.add('dark');
+          } else {
+            root.classList.remove('dark');
+          }
+          root.dataset.theme = theme;
+        };
+
+        try {
+          const stored = localStorage.getItem(storageKey);
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          applyTheme(stored ?? (prefersDark ? 'dark' : 'light'));
+        } catch (error) {
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          applyTheme(prefersDark ? 'dark' : 'light');
+        }
+      })();`}
+    </script>
+  </head>
+  <body class="min-h-screen flex flex-col bg-white text-neutral-text dark:bg-neutral-950 dark:text-neutral-100">
+    <Header activePath={activePath ?? Astro.url.pathname} />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

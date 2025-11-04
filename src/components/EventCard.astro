@@ -1,0 +1,67 @@
+---
+import dayjs from 'dayjs';
+import 'dayjs/locale/it';
+import type { EventItem } from '../lib/cms';
+import { renderMarkdown } from '../lib/markdown';
+
+interface Props {
+  event: EventItem;
+}
+
+const { event } = Astro.props;
+const formattedDate = dayjs(event.date).locale('it').format('DD MMM YYYY');
+const isPast = dayjs(event.date).isBefore(dayjs(), 'day');
+const htmlDescription = renderMarkdown(event.description);
+const plainDescription = htmlDescription
+  ? htmlDescription.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+  : undefined;
+const truncatedDescription = plainDescription && plainDescription.length > 160
+  ? `${plainDescription.slice(0, 157).trimEnd()}…`
+  : plainDescription;
+---
+
+<article class="group rounded-3xl border border-neutral-border bg-white overflow-hidden shadow-sm transition hover:shadow-card dark:border-neutral-800 dark:bg-neutral-900">
+  {event.coverImage && (
+    <a href={`/eventi/${event.slug}`} class="block aspect-[16/9] overflow-hidden">
+      <img
+        src={event.coverImage}
+        alt={`Immagine evento ${event.title}`}
+        loading="lazy"
+        class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+      />
+    </a>
+  )}
+  <div class="p-6 space-y-4">
+    <div class="flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-neutral-muted dark:text-neutral-400">
+      <span>{formattedDate}</span>
+      {event.time && <span>{event.time}</span>}
+      <span>|</span>
+      <span>{event.location}</span>
+    </div>
+    <div class="space-y-3">
+      <a href={`/eventi/${event.slug}`} class="block">
+        <h3 class="text-lg font-semibold text-neutral-text group-hover:text-brand-primary transition dark:text-white">
+          {event.title}
+        </h3>
+      </a>
+      {truncatedDescription && (
+        <p class="text-sm text-neutral-muted leading-relaxed dark:text-neutral-300">{truncatedDescription}</p>
+      )}
+    </div>
+    <div class="flex items-center justify-between text-xs text-neutral-muted dark:text-neutral-400">
+      {event.price && <span>Costo: {event.price}</span>}
+      <div class="flex items-center gap-2">
+        {isPast ? (
+          <span class="rounded-full bg-neutral-border px-3 py-1 text-neutral-muted dark:bg-neutral-800 dark:text-neutral-400">Evento terminato</span>
+        ) : (
+          <a
+            href={`/eventi/${event.slug}`}
+            class="inline-flex items-center gap-2 rounded-full bg-brand-primary px-4 py-1.5 text-white text-xs font-semibold hover:bg-brand-light transition"
+          >
+            Scopri di piu'
+          </a>
+        )}
+      </div>
+    </div>
+  </div>
+</article>

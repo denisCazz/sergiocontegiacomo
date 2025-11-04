@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import TagFilter from '../../components/TagFilter.astro';
+import Pagination from '../../components/Pagination.astro';
+import { getArticles, type Article } from '../../lib/cms';
+
+const page = Number(Astro.url.searchParams.get('page') ?? '1');
+const activeTag = Astro.url.searchParams.get('tag') ?? undefined;
+
+const { data: articleEntries, meta } = await getArticles({
+  pagination: { page, pageSize: 9 },
+  filters: activeTag ? { tags: { $containsi: activeTag } } : undefined,
+});
+
+const articles = (articleEntries ?? []).map((entry) => entry.attributes as Article);
+
+const allEntries = await getArticles();
+const tagSet = new Set<string>();
+(allEntries.data ?? []).forEach((entry) => {
+  (entry.attributes as Article).tags?.forEach((tag) => tagSet.add(tag));
+});
+const tags = Array.from(tagSet).sort();
+
+const pagination = meta?.pagination ?? { page: 1, pageCount: 1 };
+---
+
+<BaseLayout title="Blog" activePath="/blog">
+  <section class="bg-neutral-base py-20 dark:bg-neutral-950">
+    <div class="mx-auto max-w-6xl px-6 space-y-12">
+      <SectionHeading
+        eyebrow="BLOG"
+        title="Pensieri e strumenti per la gestione del patrimonio"
+        description="Analisi di scenario, metodologia e casi reali per navigare i mercati con lucidita' e proteggere il patrimonio familiare."
+      />
+  <TagFilter tags={tags} activeTag={activeTag} basePath="/blog" />
+      <div class="grid gap-6 md:grid-cols-3">
+        {articles.length > 0 ? (
+          articles.map((article) => <BlogCard article={article} />)
+        ) : (
+          <p class="text-neutral-muted dark:text-neutral-300">Nessun articolo disponibile per il filtro selezionato.</p>
+        )}
+      </div>
+      <Pagination
+        page={pagination.page ?? 1}
+        pageCount={pagination.pageCount ?? 1}
+        basePath="/blog"
+        query={{ tag: activeTag }}
+      />
+    </div>
+  </section>
+</BaseLayout>

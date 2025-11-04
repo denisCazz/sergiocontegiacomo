@@ -1,0 +1,155 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+
+const contactChannels = [
+  {
+    label: 'Email',
+    value: 'info@sergiocontegiacomo.it',
+    href: 'mailto:info@sergiocontegiacomo.it',
+  },
+  {
+    label: 'Telefono',
+    value: '+39 000 000 0000',
+    href: 'tel:+390000000000',
+  },
+  {
+    label: 'LinkedIn',
+    value: 'linkedin.com/in/sergiocontegiacomo',
+    href: 'https://www.linkedin.com/',
+  },
+];
+---
+
+<BaseLayout title="Contatti" activePath="/contatti">
+  <section class="bg-neutral-base py-20 dark:bg-neutral-950">
+    <div class="mx-auto max-w-4xl px-6 space-y-12">
+      <SectionHeading
+        eyebrow="CONTATTI"
+        title="Parliamo del tuo progetto patrimoniale"
+        description="Compila il modulo oppure prenota una call introduttiva. Valuteremo insieme il percorso piu' adatto e i prossimi passi concreti."
+        align="center"
+      />
+      <div class="grid gap-10 md:grid-cols-[2fr,3fr] items-start">
+        <div class="space-y-6">
+          <div class="rounded-3xl border border-neutral-border bg-white p-8 dark:border-neutral-800 dark:bg-neutral-900">
+            <p class="text-sm uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light">Studio</p>
+            <p class="mt-3 text-neutral-text leading-relaxed dark:text-neutral-100">
+              Milano, Italia<br />
+              Ricevo su appuntamento oppure online.
+            </p>
+            <div class="mt-6 space-y-3 text-sm text-neutral-muted dark:text-neutral-300">
+              {contactChannels.map((channel) => (
+                <a href={channel.href} class="block hover:text-brand-primary transition">
+                  <span class="font-semibold text-neutral-text dark:text-white">{channel.label}:</span> {channel.value}
+                </a>
+              ))}
+            </div>
+          </div>
+          <div class="rounded-3xl border border-neutral-border bg-white p-8 space-y-3 dark:border-neutral-800 dark:bg-neutral-900">
+            <p class="text-sm uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light">Documentazione</p>
+            <p class="text-sm text-neutral-muted leading-relaxed dark:text-neutral-300">
+              Riceverai brochure servizi, informativa privacy e checklist pre-call al momento della richiesta. Scrivimi per ricevere i materiali aggiornati.
+            </p>
+          </div>
+        </div>
+        <form class="rounded-3xl border border-neutral-border bg-white p-8 space-y-6 dark:border-neutral-800 dark:bg-neutral-900" data-contact-form>
+          <p class="text-sm uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light">Richiedi una consulenza</p>
+          <div class="grid gap-4 md:grid-cols-2">
+            <label class="block text-sm text-neutral-text dark:text-neutral-100">
+              Nome
+              <input
+                type="text"
+                name="nome"
+                required
+                class="mt-1 w-full rounded-full border border-neutral-border px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none dark:border-neutral-700 dark:bg-neutral-950 dark:text-neutral-100"
+              />
+            </label>
+            <label class="block text-sm text-neutral-text dark:text-neutral-100">
+              Cognome
+              <input
+                type="text"
+                name="cognome"
+                required
+                class="mt-1 w-full rounded-full border border-neutral-border px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none dark:border-neutral-700 dark:bg-neutral-950 dark:text-neutral-100"
+              />
+            </label>
+            <label class="block text-sm text-neutral-text dark:text-neutral-100">
+              Email
+              <input
+                type="email"
+                name="email"
+                required
+                class="mt-1 w-full rounded-full border border-neutral-border px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none dark:border-neutral-700 dark:bg-neutral-950 dark:text-neutral-100"
+              />
+            </label>
+            <label class="block text-sm text-neutral-text dark:text-neutral-100">
+              Telefono
+              <input
+                type="tel"
+                name="telefono"
+                class="mt-1 w-full rounded-full border border-neutral-border px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none dark:border-neutral-700 dark:bg-neutral-950 dark:text-neutral-100"
+              />
+            </label>
+          </div>
+          <label class="block text-sm text-neutral-text dark:text-neutral-100">
+            Messaggio
+            <textarea
+              name="messaggio"
+              rows="4"
+              class="mt-1 w-full rounded-2xl border border-neutral-border px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none dark:border-neutral-700 dark:bg-neutral-950 dark:text-neutral-100"
+              placeholder="Raccontami il tuo obiettivo patrimoniale..."
+            ></textarea>
+          </label>
+          <label class="flex items-start gap-3 text-xs text-neutral-muted dark:text-neutral-300">
+            <input type="checkbox" name="privacy" required class="mt-1 rounded border-neutral-border text-brand-primary focus:ring-brand-primary" />
+            <span>
+              Acconsento al trattamento dei dati personali secondo l'<a href="/privacy" class="underline">informativa privacy</a>.
+            </span>
+          </label>
+          <button
+            type="submit"
+            class="w-full rounded-full bg-brand-primary px-4 py-3 text-sm font-semibold text-white hover:bg-brand-light transition"
+          >
+            Invia richiesta
+          </button>
+          <p class="text-xs text-neutral-muted dark:text-neutral-300" data-feedback hidden>
+            Grazie per il messaggio. Ti contattero' entro 24 ore lavorative.
+          </p>
+        </form>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline>
+  const form = document.querySelector('[data-contact-form]');
+  const feedback = document.querySelector('[data-feedback]');
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!(form instanceof HTMLFormElement)) return;
+
+    const data = Object.fromEntries(new FormData(form));
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) throw new Error('Request failed');
+      if (feedback instanceof HTMLElement) {
+        feedback.hidden = false;
+        feedback.textContent = "Grazie per il messaggio. Ti contattero' entro 24 ore lavorative.";
+      }
+      form.reset();
+    } catch (error) {
+      if (feedback instanceof HTMLElement) {
+        feedback.hidden = false;
+        feedback.textContent = "Si e' verificato un problema. Riprova piu' tardi.";
+      }
+    }
+  });
+</script>

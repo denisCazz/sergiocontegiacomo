@@ -1,0 +1,111 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import CTASection from '../../components/CTASection.astro';
+import { getEventBySlug, getEvents, type EventItem } from '../../lib/cms';
+import { renderMarkdown } from '../../lib/markdown';
+import dayjs from 'dayjs';
+import 'dayjs/locale/it';
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  throw new Error('Missing event slug');
+}
+
+const event = (await getEventBySlug(slug)) as EventItem | null;
+
+if (!event) {
+  throw Astro.redirect('/eventi');
+}
+
+const formattedDate = dayjs(event.date).locale('it').format('dddd DD MMMM YYYY');
+const formattedTime = event.time ? dayjs(`${event.date}T${event.time}`).format('HH:mm') : undefined;
+const isPast = dayjs(event.date).isBefore(dayjs(), 'day');
+const htmlDescription = renderMarkdown(event.description);
+const plainDescription = htmlDescription
+  ? htmlDescription.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 160)
+  : undefined;
+const isOnline = event.tags?.some((tag) => tag.toLowerCase() === 'online');
+
+export async function getStaticPaths() {
+  const { data } = await getEvents();
+
+  return data
+    .map((entry) => entry?.attributes?.slug)
+    .filter((slug): slug is string => Boolean(slug))
+    .map((eventSlug) => ({ params: { slug: eventSlug } }));
+}
+---
+
+<BaseLayout title={event.title} description={event.description} activePath="/eventi">
+  <article class="bg-neutral-base dark:bg-neutral-950">
+    <div class="mx-auto max-w-4xl px-6 py-20 space-y-12">
+      <SectionHeading
+        eyebrow={isPast ? 'Evento terminato' : 'Evento'}
+        title={event.title}
+        description={plainDescription}
+        align="center"
+      />
+      {event.coverImage && (
+        <img
+          src={event.coverImage}
+          alt={`Immagine evento ${event.title}`}
+          class="w-full rounded-3xl border border-neutral-border object-cover dark:border-neutral-800"
+        />
+      )}
+      <div class="grid gap-6 md:grid-cols-[2fr,1fr]">
+        <div class="rounded-3xl border border-neutral-border bg-white p-8 space-y-4 dark:border-neutral-800 dark:bg-neutral-900">
+          <h2 class="text-lg font-semibold text-neutral-text dark:text-white">Dettagli completi</h2>
+          <div
+            class="text-sm text-neutral-muted leading-relaxed dark:text-neutral-300"
+            set:html={htmlDescription || '<p>Descrizione disponibile a breve.</p>'}
+          ></div>
+        </div>
+        <aside class="rounded-3xl border border-neutral-border bg-white p-8 space-y-4 dark:border-neutral-800 dark:bg-neutral-900">
+          <h3 class="text-sm uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light">Informazioni</h3>
+          <dl class="space-y-3 text-sm text-neutral-text dark:text-neutral-100">
+            <div>
+              <dt class="text-neutral-muted uppercase tracking-[0.2em] text-xs dark:text-neutral-300">Data</dt>
+              <dd>{formattedDate}</dd>
+            </div>
+            {formattedTime && (
+              <div>
+                <dt class="text-neutral-muted uppercase tracking-[0.2em] text-xs dark:text-neutral-300">Orario</dt>
+                <dd>{formattedTime}</dd>
+              </div>
+            )}
+            <div>
+              <dt class="text-neutral-muted uppercase tracking-[0.2em] text-xs dark:text-neutral-300">Luogo</dt>
+              <dd>{event.location}</dd>
+            </div>
+            {event.price && (
+              <div>
+                <dt class="text-neutral-muted uppercase tracking-[0.2em] text-xs dark:text-neutral-300">Partecipazione</dt>
+                <dd>{event.price}</dd>
+              </div>
+            )}
+          </dl>
+          <a
+            href={isOnline ? `mailto:${import.meta.env.PUBLIC_EVENT_EMAIL ?? 'info@sergiocontegiacomo.it'}` : '/contatti?richiedi=evento'}
+            class={`inline-flex items-center justify-center rounded-full px-4 py-2.5 text-sm font-semibold transition ${
+              isPast
+                ? 'border border-neutral-border text-neutral-muted cursor-not-allowed dark:border-neutral-700 dark:text-neutral-400'
+                : 'bg-brand-primary text-white hover:bg-brand-light'
+            }`}
+            aria-disabled={isPast}
+          >
+            {isPast ? 'Evento concluso' : 'Richiedi partecipazione'}
+          </a>
+        </aside>
+      </div>
+    </div>
+  </article>
+
+  <CTASection
+    title="Vuoi organizzare un evento personalizzato per il tuo team?"
+    description="Creo workshop dedicati a famiglie imprenditoriali e leadership team per sviluppare governance patrimoniale e processi decisionali."
+    primaryCta={{ label: 'Parliamone', href: '/contatti?richiedi=evento' }}
+    secondaryCta={{ label: 'Iscriviti alla newsletter eventi', href: '#newsletter' }}
+  />
+</BaseLayout>

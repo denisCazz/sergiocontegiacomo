@@ -1,0 +1,57 @@
+---
+interface Props {
+  tags: string[];
+  activeTag?: string;
+  basePath?: string;
+  extraQuery?: Record<string, string | undefined>;
+}
+
+const { tags, activeTag, basePath = '', extraQuery = {} } = Astro.props;
+
+if (!tags || tags.length === 0) {
+  return null;
+}
+
+const buildHref = (tagValue?: string) => {
+  const params = new URLSearchParams();
+  Object.entries(extraQuery).forEach(([key, value]) => {
+    if (value) params.set(key, value);
+  });
+
+  if (tagValue) {
+    params.set('tag', tagValue);
+    params.delete('page');
+  } else {
+    params.delete('tag');
+    params.delete('page');
+  }
+
+  const queryString = params.toString();
+  return `${basePath}${queryString ? `?${queryString}` : ''}`;
+};
+---
+
+<div class="flex flex-wrap gap-2" aria-label="Filtra per tag">
+  <a
+    href={buildHref()}
+    class={`rounded-full border px-3 py-1.5 text-sm transition ${
+      !activeTag
+        ? 'border-brand-primary bg-brand-primary text-white'
+        : 'border-neutral-border text-neutral-muted hover:border-brand-primary hover:text-brand-primary dark:border-neutral-700 dark:text-neutral-300'
+    }`}
+  >
+    Tutti
+  </a>
+  {tags.map((tag) => (
+    <a
+      href={buildHref(tag)}
+      class={`rounded-full border px-3 py-1.5 text-sm transition ${
+        activeTag === tag
+          ? 'border-brand-primary bg-brand-primary text-white'
+          : 'border-neutral-border text-neutral-muted hover:border-brand-primary hover:text-brand-primary dark:border-neutral-700 dark:text-neutral-300'
+      }`}
+    >
+      {tag}
+    </a>
+  ))}
+</div>

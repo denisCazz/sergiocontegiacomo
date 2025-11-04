@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import EventCard from '../../components/EventCard.astro';
+import TagFilter from '../../components/TagFilter.astro';
+import Pagination from '../../components/Pagination.astro';
+import { getEvents, type EventItem } from '../../lib/cms';
+import dayjs from 'dayjs';
+
+const page = Number(Astro.url.searchParams.get('page') ?? '1');
+const activeTag = Astro.url.searchParams.get('tag') ?? undefined;
+const view = Astro.url.searchParams.get('view') === 'past' ? 'past' : 'upcoming';
+
+const filters: Record<string, unknown> = {};
+const todayIso = dayjs().startOf('day').toISOString();
+
+if (view === 'past') {
+  filters.date = { $lt: todayIso };
+} else {
+  filters.date = { $gte: todayIso };
+}
+
+if (activeTag) {
+  filters.tags = { $containsi: activeTag };
+}
+
+const { data: eventEntries, meta } = await getEvents({
+  pagination: { page, pageSize: 9 },
+  filters,
+});
+
+const events = (eventEntries ?? []).map((entry) => entry.attributes as EventItem);
+
+const tagSet = new Set<string>();
+const allEvents = (await getEvents()).data?.map((entry) => entry.attributes as EventItem) ?? [];
+allEvents.forEach((event) => event.tags?.forEach((tag) => tagSet.add(tag)));
+const tags = Array.from(tagSet).sort();
+
+const pagination = meta?.pagination ?? { page: 1, pageCount: 1 };
+---
+
+<BaseLayout title="Eventi" activePath="/eventi">
+  <section class="bg-neutral-base py-20 dark:bg-neutral-950">
+    <div class="mx-auto max-w-6xl px-6 space-y-12">
+      <SectionHeading
+        eyebrow="EVENTI"
+        title="Formazione, workshop e percorsi esperienziali"
+        description="Appuntamenti esclusivi dedicati a chi vuole lavorare sul proprio patrimonio con metodo: incontri riservati, webinar e percorsi residenziali."
+      />
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <TagFilter tags={tags} activeTag={activeTag} basePath="/eventi" extraQuery={{ view: view === 'past' ? 'past' : undefined }} />
+        <div class="flex items-center gap-2 text-sm text-neutral-muted dark:text-neutral-300">
+          <a
+            href={`/eventi${activeTag ? `?tag=${activeTag}` : ''}`}
+            class={`rounded-full px-3 py-1.5 transition ${
+              view === 'upcoming'
+                ? 'bg-brand-primary text-white'
+                : 'border border-neutral-border hover:border-brand-primary hover:text-brand-primary dark:border-neutral-700 dark:text-neutral-300'
+            }`}
+          >
+            Prossimi eventi
+          </a>
+          <a
+            href={`/eventi?view=past${activeTag ? `&tag=${activeTag}` : ''}`}
+            class={`rounded-full px-3 py-1.5 transition ${
+              view === 'past'
+                ? 'bg-brand-primary text-white'
+                : 'border border-neutral-border hover:border-brand-primary hover:text-brand-primary dark:border-neutral-700 dark:text-neutral-300'
+            }`}
+          >
+            Eventi passati
+          </a>
+        </div>
+      </div>
+      <div class="grid gap-6 md:grid-cols-3">
+        {events.length > 0 ? (
+          events.map((event) => <EventCard event={event} />)
+        ) : (
+          <p class="text-neutral-muted dark:text-neutral-300">
+            Nessun evento {view === 'past' ? 'archiviato' : 'in programma'} per i filtri selezionati. Riprova piu' tardi.
+          </p>
+        )}
+      </div>
+      <Pagination
+        page={pagination.page ?? 1}
+        pageCount={pagination.pageCount ?? 1}
+        basePath="/eventi"
+        query={{ tag: activeTag, view: view === 'past' ? 'past' : undefined }}
+      />
+    </div>
+  </section>
+</BaseLayout>

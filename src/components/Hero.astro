@@ -1,0 +1,89 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  description: string;
+  primaryCta: {
+    label: string;
+    href: string;
+  };
+  secondaryCta?: {
+    label: string;
+    href: string;
+  };
+  stats?: Array<{ value: string; label: string }>;
+}
+
+const { eyebrow, title, description, primaryCta, secondaryCta, stats } = Astro.props;
+---
+
+<section class="relative overflow-hidden bg-neutral-base dark:bg-neutral-950">
+  <div class="absolute inset-0 bg-gradient-to-br from-brand-primary/10 via-transparent to-brand-light/10 dark:from-brand-dark/40 dark:via-transparent dark:to-brand-accent/20"></div>
+  <div class="relative mx-auto max-w-6xl px-6 py-24 lg:py-32">
+    <div class="grid gap-12 lg:grid-cols-2 lg:items-center">
+      <div class="space-y-6">
+        {eyebrow && (
+          <p class="text-xs font-semibold uppercase tracking-[0.4em] text-brand-primary dark:text-brand-light">{eyebrow}</p>
+        )}
+        <h1 class="text-3xl md:text-5xl font-semibold text-neutral-text leading-tight dark:text-white">
+          {title}
+        </h1>
+        <p class="text-base text-neutral-muted md:text-lg leading-relaxed dark:text-neutral-300">
+          {description}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 pt-4">
+          <a
+            href={primaryCta.href}
+            class="inline-flex items-center justify-center rounded-full bg-brand-primary px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-primary/20 hover:bg-brand-light transition"
+          >
+            {primaryCta.label}
+          </a>
+          {secondaryCta && (
+            <a
+              href={secondaryCta.href}
+              class="inline-flex items-center justify-center rounded-full border border-brand-primary px-6 py-3 text-sm font-semibold text-brand-primary hover:bg-brand-primary/5 transition dark:text-white"
+            >
+              {secondaryCta.label}
+            </a>
+          )}
+        </div>
+      </div>
+      <div class="space-y-6">
+        <div class="relative pt-10">
+          <img
+            src="/sergio.jpg"
+            alt="Sergio Contegiacomo"
+            loading="lazy"
+            class="w-full rounded-3xl object-cover shadow-card"
+          />
+          <img
+            src="/fare_differenza.png"
+            alt="Fare la differenza"
+            loading="lazy"
+            class="pointer-events-none absolute -bottom-6 left-6 h-16 w-auto rotate-[-6deg] drop-shadow-lg"
+          />
+        </div>
+  <div class="rounded-3xl border border-neutral-border bg-white shadow-card p-8 space-y-6 dark:border-neutral-800 dark:bg-neutral-900">
+          <p class="text-sm uppercase tracking-[0.3em] text-neutral-muted dark:text-neutral-300">Approccio</p>
+          <p class="text-lg text-neutral-text leading-relaxed dark:text-neutral-100">
+            Ogni piano nasce da una visione integrata: obiettivi personali, orizzonte temporale, propensione al rischio e governance
+            familiare.
+          </p>
+          <p class="text-sm text-neutral-muted dark:text-neutral-300">
+            Analizziamo il patrimonio complessivo e costruiamo scenari su misura, con monitoraggio continuo e coaching decisionale.
+          </p>
+        </div>
+        {stats && stats.length > 0 && (
+          <dl class="grid grid-cols-2 gap-6">
+            {stats.map((item) => (
+              <div class="rounded-2xl border border-neutral-border bg-white px-6 py-5 dark:border-neutral-800 dark:bg-neutral-900">
+                <dt class="text-xs uppercase tracking-[0.3em] text-neutral-muted dark:text-neutral-300">{item.label}</dt>
+                <dd class="text-2xl font-semibold text-brand-primary dark:text-brand-light">{item.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+      </div>
+    </div>
+  </div>
+</section>

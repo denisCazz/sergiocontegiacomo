@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import CTASection from '../components/CTASection.astro';
+
+const pillars = [
+  {
+    title: "Analisi e Diagnosi",
+    description:
+      "Mappiamo patrimonio, flussi e obiettivi per comprendere il perimetro decisionale. Identifichiamo rischi, opportunita' e priorita' strategiche.",
+    items: ["Analisi patrimoniale completa", "Scenario planning", "Identificazione obiettivi misurabili"],
+  },
+  {
+    title: "Strategia e Governo",
+    description:
+      "Costruiamo un framework di governance che integri investimenti, protezione, fiscalita' e bisogni personali/familiari.",
+    items: ["Policy d'investimento", "Allocazione dinamica", "Processi di controllo periodici"],
+  },
+  {
+    title: "Coaching e Monitoraggio",
+    description:
+      "Sessioni periodiche di coaching per mantenere focus e lucidita'. Reportistica chiara, indicatori chiave e momenti di allineamento.",
+    items: ["Coaching decisionale", "Education personalizzata", "KPI patrimoniali condivisi"],
+  },
+];
+
+const workflow = [
+  {
+    title: "Assessment iniziale",
+    description:
+      "Incontri di ascolto con stakeholder, raccolta documentale e costruzione della mappa patrimoniale completa.",
+  },
+  {
+    title: "Visione condivisa",
+    description: "Definizione congiunta di obiettivi, timeline e indicatori di successo. Consegna del piano strategico.",
+  },
+  {
+    title: "Implementazione guidata",
+    description: "Coordinamento advisor, istituti finanziari e professionisti per attuare le azioni definite.",
+  },
+  {
+    title: "Coaching continuo",
+    description: "Sessioni regolari per rivedere risultati, adeguare strategie e gestire i momenti critici.",
+  },
+];
+---
+
+<BaseLayout title="Cosa Faccio" activePath="/cosa-faccio">
+  <section class="bg-neutral-base py-20 dark:bg-neutral-950">
+    <div class="mx-auto max-w-6xl px-6 space-y-12">
+      <SectionHeading
+        eyebrow="SERVIZI"
+        title="Consulenza patrimoniale integrata, dalla visione all'esecuzione"
+        description="Ogni relazione parte da un'analisi accurata e prosegue con un metodo ripetibile: strategia, governance e coaching per allineare patrimonio e vita."
+        align="center"
+      />
+      <div class="grid gap-6 md:grid-cols-3">
+        {pillars.map((pillar) => (
+          <ServiceCard {...pillar} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 bg-white dark:bg-neutral-950">
+    <div class="mx-auto max-w-5xl px-6 space-y-12">
+      <SectionHeading
+        eyebrow="PROCESSO"
+        title="Un percorso strutturato per produrre decisioni efficaci"
+        description="Strumenti, incontri e deliverable che passano dalla visione strategica all'implementazione e follow-up."
+        align="center"
+      />
+      <div class="grid gap-6 md:grid-cols-2">
+        {workflow.map((step, index) => (
+          <div class="rounded-3xl border border-neutral-border bg-white p-8 shadow-sm transition hover:shadow-card dark:border-neutral-800 dark:bg-neutral-900">
+            <p class="text-xs uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light">Fase {index + 1}</p>
+            <h3 class="mt-3 text-xl font-semibold text-neutral-text dark:text-white">{step.title}</h3>
+            <p class="mt-4 text-sm text-neutral-muted leading-relaxed dark:text-neutral-300">{step.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection
+    title="Hai bisogno di integrare strategia e azione sul tuo patrimonio?"
+    description="Progettiamo insieme un percorso modulare, con strumenti digitali di monitoraggio e sessioni periodiche dedicate al tuo team o alla tua famiglia."
+    primaryCta={{ label: 'Prenota una call introduttiva', href: '/contatti' }}
+    secondaryCta={{ label: 'Richiedi case study', href: '/contatti?type=case-study' }}
+  />
+</BaseLayout>

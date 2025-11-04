@@ -1,0 +1,280 @@
+---
+import { siteConfig } from '../lib/config';
+
+interface NavLink {
+  label: string;
+  href: string;
+}
+
+const navLinks: NavLink[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Chi Sono', href: '/chi-sono' },
+  { label: 'Cosa Faccio', href: '/cosa-faccio' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Eventi', href: '/eventi' },
+  { label: 'Contatti', href: '/contatti' },
+];
+
+interface Props {
+  activePath?: string;
+}
+
+const { activePath } = Astro.props;
+
+const isActive = (href: string) => {
+  if (!activePath) return false;
+  if (href === '/') return activePath === '/';
+  return activePath.startsWith(href);
+};
+---
+
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-neutral-border dark:bg-neutral-900/90 dark:border-neutral-800">
+  <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-3">
+      <div class="h-10 w-10 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary font-semibold dark:bg-brand-primary/20">
+        SC
+      </div>
+      <div class="flex flex-col">
+        <span class="text-sm uppercase tracking-[0.3em] text-brand-primary">{siteConfig.name}</span>
+        <span class="text-xs text-neutral-muted dark:text-neutral-300">{siteConfig.role}</span>
+      </div>
+    </a>
+    <nav aria-label="Principale" class="hidden lg:flex items-center gap-6 text-sm font-medium">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class={`transition hover:text-brand-primary ${isActive(link.href) ? 'text-brand-primary' : 'text-neutral-muted dark:text-neutral-300'}`}
+        >
+          {link.label}
+        </a>
+      ))}
+      <button
+        type="button"
+        class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-border text-neutral-muted transition hover:border-brand-primary hover:text-brand-primary dark:border-neutral-700 dark:text-neutral-300"
+        data-theme-toggle
+        aria-label="Cambia tema"
+      >
+        <span data-theme-icon="sun">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2" />
+            <path d="M12 20v2" />
+            <path d="m4.93 4.93 1.41 1.41" />
+            <path d="m17.66 17.66 1.41 1.41" />
+            <path d="M2 12h2" />
+            <path d="M20 12h2" />
+            <path d="m6.34 17.66-1.41 1.41" />
+            <path d="m19.07 4.93-1.41 1.41" />
+          </svg>
+        </span>
+        <span data-theme-icon="moon" class="hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+          </svg>
+        </span>
+      </button>
+      <a
+        href="/contatti"
+        class="ml-6 inline-flex items-center rounded-full bg-brand-primary px-4 py-2 text-white text-sm font-semibold shadow-md shadow-brand-primary/20 hover:bg-brand-light transition"
+      >
+        Parliamo
+      </a>
+    </nav>
+    <button
+      class="lg:hidden text-brand-primary"
+      type="button"
+      aria-label="Apri menu"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      data-mobile-menu
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<div id="mobile-menu" class="lg:hidden" hidden data-mobile-drawer>
+  <div class="fixed inset-0 bg-neutral-text/60 dark:bg-neutral-950/70" data-overlay></div>
+  <div class="fixed top-0 right-0 bottom-0 w-4/5 max-w-xs bg-white shadow-xl p-6 flex flex-col gap-6 dark:bg-neutral-900">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm uppercase tracking-[0.3em] text-brand-primary">{siteConfig.name}</p>
+        <p class="text-xs text-neutral-muted dark:text-neutral-300">{siteConfig.role}</p>
+      </div>
+  <button type="button" aria-label="Chiudi menu" data-mobile-close class="text-neutral-muted dark:text-neutral-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <nav class="flex flex-col gap-4 text-base">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class={`py-2 transition border-b border-neutral-border ${
+            isActive(link.href) ? 'text-brand-primary font-semibold' : 'text-neutral-muted dark:text-neutral-300'
+          }`}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+    <button
+      type="button"
+      class="inline-flex h-12 w-full items-center justify-center rounded-full border border-neutral-border text-neutral-muted font-semibold transition hover:border-brand-primary hover:text-brand-primary dark:border-neutral-700 dark:text-neutral-300"
+      data-theme-toggle
+      aria-label="Cambia tema"
+    >
+      <span data-theme-icon="sun" class="inline-flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2" />
+          <path d="M12 20v2" />
+          <path d="m4.93 4.93 1.41 1.41" />
+          <path d="m17.66 17.66 1.41 1.41" />
+          <path d="M2 12h2" />
+          <path d="M20 12h2" />
+          <path d="m6.34 17.66-1.41 1.41" />
+          <path d="m19.07 4.93-1.41 1.41" />
+        </svg>
+        Tema chiaro
+      </span>
+      <span data-theme-icon="moon" class="hidden inline-flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+        </svg>
+        Tema scuro
+      </span>
+    </button>
+    <a
+      href="/contatti"
+      class="mt-auto inline-flex items-center justify-center rounded-full bg-brand-primary px-4 py-3 text-white font-semibold shadow-md shadow-brand-primary/20 hover:bg-brand-light transition"
+    >
+      Prenota una call
+    </a>
+  </div>
+</div>
+
+<script is:inline>
+  const setupMobileMenu = () => {
+    const menuBtn = document.querySelector('[data-mobile-menu]');
+    const drawerEl = document.querySelector('[data-mobile-drawer]');
+    const closeBtn = document.querySelector('[data-mobile-close]');
+    const overlay = drawerEl instanceof HTMLElement ? drawerEl.querySelector('[data-overlay]') : null;
+
+    if (!(menuBtn instanceof HTMLElement) || !(drawerEl instanceof HTMLElement)) return;
+
+    const applyState = (open) => {
+      drawerEl.hidden = !open;
+      menuBtn.setAttribute('aria-expanded', String(open));
+      document.body.style.overflow = open ? 'hidden' : '';
+    };
+
+    menuBtn.addEventListener('click', () => applyState(true));
+    closeBtn?.addEventListener('click', () => applyState(false));
+    overlay?.addEventListener('click', () => applyState(false));
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        applyState(false);
+      }
+    });
+
+    const mediaQuery = window.matchMedia('(min-width: 1024px)');
+    const handleMediaChange = (event) => {
+      if (event.matches) {
+        applyState(false);
+      }
+    };
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', handleMediaChange);
+    } else if (typeof mediaQuery.addListener === 'function') {
+      mediaQuery.addListener(handleMediaChange);
+    }
+  };
+
+  const initThemeToggle = () => {
+    const storageKey = 'preferred-theme';
+    const root = document.documentElement;
+    const toggles = document.querySelectorAll('[data-theme-toggle]');
+
+    if (!toggles.length) return;
+
+    const storeTheme = (theme) => {
+      try {
+        localStorage.setItem(storageKey, theme);
+      } catch (error) {
+        /* localStorage non disponibile */
+      }
+    };
+
+    const getStoredTheme = () => {
+      try {
+        return localStorage.getItem(storageKey);
+      } catch (error) {
+        return null;
+      }
+    };
+
+    const getCurrentTheme = () => (root.dataset.theme === 'dark' || root.classList.contains('dark') ? 'dark' : 'light');
+
+    const updateIcons = (theme) => {
+      toggles.forEach((toggle) => {
+        const sun = toggle.querySelector('[data-theme-icon="sun"]');
+        const moon = toggle.querySelector('[data-theme-icon="moon"]');
+        if (sun instanceof HTMLElement) {
+          sun.classList.toggle('hidden', theme === 'dark');
+        }
+        if (moon instanceof HTMLElement) {
+          moon.classList.toggle('hidden', theme === 'light');
+        }
+      });
+    };
+
+    const applyTheme = (theme) => {
+      root.classList.toggle('dark', theme === 'dark');
+      root.dataset.theme = theme;
+      updateIcons(theme);
+      storeTheme(theme);
+    };
+
+    const storedTheme = getStoredTheme();
+    if (storedTheme === 'dark' || storedTheme === 'light') {
+      applyTheme(storedTheme);
+    } else {
+      updateIcons(getCurrentTheme());
+    }
+
+    toggles.forEach((toggle) => {
+      toggle.addEventListener('click', () => {
+        const nextTheme = getCurrentTheme() === 'dark' ? 'light' : 'dark';
+        applyTheme(nextTheme);
+      });
+    });
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handlePreferredScheme = (event) => {
+      if (getStoredTheme()) return;
+      applyTheme(event.matches ? 'dark' : 'light');
+    };
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', handlePreferredScheme);
+    } else if (typeof mediaQuery.addListener === 'function') {
+      mediaQuery.addListener(handlePreferredScheme);
+    }
+  };
+
+  const init = () => {
+    setupMobileMenu();
+    initThemeToggle();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+</script>

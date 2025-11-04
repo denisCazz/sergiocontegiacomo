@@ -1,16 +1,161 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import BlogCard from '../components/BlogCard.astro';
+import EventCard from '../components/EventCard.astro';
+import TestimonialCard from '../components/TestimonialCard.astro';
+import CTASection from '../components/CTASection.astro';
+import { getArticles, getEvents, type Article, type EventItem } from '../lib/cms';
+import dayjs from 'dayjs';
 
+const todayIso = dayjs().startOf('day').toISOString();
+
+const [{ data: articleEntries }, { data: eventEntries }] = await Promise.all([
+	getArticles({ pagination: { page: 1, pageSize: 3 } }),
+	getEvents({ pagination: { page: 1, pageSize: 6 }, filters: { date: { $gte: todayIso } } }),
+]);
+const latestArticles = (articleEntries ?? [])
+	.map((entry) => entry.attributes as Article)
+	.slice(0, 3);
+const upcomingEvents = (eventEntries ?? [])
+	.map((entry) => entry.attributes as EventItem)
+	.filter(Boolean)
+	.slice(0, 3);
+
+const services = [
+	{
+		title: "Wealth Management Strategico",
+		description:
+			"Analisi del patrimonio complessivo, definizione degli obiettivi e costruzione di portafogli resilienti con monitoraggio costante.",
+		items: ["Asset allocation dinamica", "Protezione del capitale", "Coordinamento advisor e family office"],
+	},
+	{
+		title: "Coaching Finanziario One-to-One",
+		description:
+			"Percorsi personalizzati per imprenditori e famiglie per prendere decisioni consapevoli e governare le emozioni nei mercati.",
+		items: ["Sessioni periodiche di allineamento", "Framework decisionali", "Educazione finanziaria su misura"],
+	},
+	{
+		title: "Governance e Passaggio Generazionale",
+		description:
+			"Modelli di governance, patti di famiglia e roadmap per la continuita' aziendale e patrimoniale.",
+		items: ["Family charter", "Processi di successione", "Formazione nuove generazioni"],
+	},
+];
+
+const testimonials = [
+	{
+		quote:
+			"Un consulente che coniuga numeri e visione. Abbiamo riscritto la nostra asset allocation mantenendo serenita' durante i picchi di volatilita'.",
+		author: "Ilaria B.",
+		role: "Imprenditrice settore manifatturiero",
+	},
+	{
+		quote:
+			"Il percorso di coaching ha portato chiarezza nelle decisioni societarie e nella pianificazione personale.",
+		author: "Luca D.",
+		role: "CEO scale-up tecnologia",
+	},
+	{
+		quote:
+			"Abbiamo costruito un modello di governance familiare che tutelasse gli obiettivi di tutti. Il metodo e' stato decisivo.",
+		author: "Famiglia R.",
+		role: "Family business nel real estate",
+	},
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout activePath="/">
+	<Hero
+		eyebrow="CONSULENZA PATRIMONIALE"
+		title="Proteggiamo e facciamo crescere il tuo patrimonio con metodo"
+		description="Strategie di wealth management e coaching finanziario per imprenditori, famiglie imprenditoriali e professionisti che cercano chiarezza, controllo e continuita'."
+		primaryCta={{ label: 'Prenota una call', href: '/contatti' }}
+		secondaryCta={{ label: 'Scopri il metodo', href: '/cosa-faccio' }}
+		stats={[
+			{ value: '15+', label: 'Anni di esperienza' },
+			{ value: '120M', label: 'Patrimoni seguiti' },
+			{ value: '94%', label: 'Clienti fidelizzati' },
+			{ value: '35', label: 'Workshop annuali' },
+		]}
+	/>
+
+	<section class="py-20 bg-white dark:bg-neutral-950">
+		<div class="mx-auto max-w-6xl px-6 space-y-12">
+			<SectionHeading
+				eyebrow="SERVIZI"
+				title="Percorsi dedicati a chi desidera una visione patrimoniale completa"
+				description="Integro consulenza strategica, strumenti finanziari e coaching decisionale per allineare patrimonio, obiettivi e persone."
+			/>
+			<div class="grid gap-6 md:grid-cols-3">
+				{services.map((service) => (
+					<ServiceCard {...service} />
+				))}
+			</div>
+		</div>
+	</section>
+
+	<section class="bg-neutral-base py-20 dark:bg-neutral-950">
+		<div class="mx-auto max-w-6xl px-6 space-y-12">
+			<SectionHeading
+				eyebrow="TESTIMONIANZE"
+				title="Risultati concreti, fiducia duratura"
+				description="Accompagno famiglie e imprenditori in percorsi trasformativi: ridurre il rischio percepito, prendere decisioni efficaci, armonizzare gli obiettivi."
+			/>
+			<div class="grid gap-6 md:grid-cols-3">
+				{testimonials.map((item) => (
+					<TestimonialCard {...item} />
+				))}
+			</div>
+		</div>
+	</section>
+
+	<section class="py-20 bg-white dark:bg-neutral-950">
+		<div class="mx-auto max-w-6xl px-6 space-y-12">
+			<div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+				<SectionHeading
+					eyebrow="BLOG"
+					title="Approfondimenti per governare il patrimonio"
+					description="Analisi di scenario, strumenti pratici e riflessioni per prendere decisioni lucide."
+				/>
+				<a href="/blog" class="text-sm font-semibold text-brand-primary hover:text-brand-light transition">Vedi tutti</a>
+			</div>
+			<div class="grid gap-6 md:grid-cols-3">
+				{latestArticles.length > 0 ? (
+					latestArticles.map((article) => <BlogCard article={article} />)
+				) : (
+					<p class="text-neutral-muted dark:text-neutral-300">Gli articoli saranno disponibili a breve.</p>
+				)}
+			</div>
+		</div>
+	</section>
+
+	<section class="bg-neutral-base py-20 dark:bg-neutral-950">
+		<div class="mx-auto max-w-6xl px-6 space-y-12">
+			<div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+				<SectionHeading
+					eyebrow="EVENTI"
+					title="Esperienze formative e networking selezionato"
+					description="Workshop riservati, webinar e percorsi immersivi per chi desidera confrontarsi su strategie patrimoniali evolute."
+				/>
+				<a href="/eventi" class="text-sm font-semibold text-brand-primary hover:text-brand-light transition">Calendario completo</a>
+			</div>
+			<div class="grid gap-6 md:grid-cols-3">
+				{upcomingEvents.length > 0 ? (
+					upcomingEvents.map((event) => <EventCard event={event} />)
+				) : (
+					<p class="text-neutral-muted dark:text-neutral-300">Gli eventi in programma saranno pubblicati a breve.</p>
+				)}
+			</div>
+		</div>
+	</section>
+
+	<CTASection
+		title="Cominciamo a costruire il tuo prossimo capitolo patrimoniale"
+		description="Analizziamo insieme i tuoi obiettivi e creiamo un piano d'azione concreto con monitoraggio continuo e momenti di coaching."
+		primaryCta={{ label: 'Prenota una consulenza', href: '/contatti' }}
+		secondaryCta={{ label: 'Richiedi il programma', href: '/chi-sono' }}
+	/>
+</BaseLayout>

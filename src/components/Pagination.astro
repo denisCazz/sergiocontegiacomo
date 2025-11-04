@@ -1,0 +1,48 @@
+---
+interface Props {
+  page: number;
+  pageCount: number;
+  basePath: string;
+  query?: Record<string, string | undefined>;
+}
+
+const { page, pageCount, basePath, query = {} } = Astro.props;
+
+if (pageCount <= 1) {
+  return null;
+}
+
+const pages = Array.from({ length: pageCount }, (_, index) => index + 1);
+
+const baseQuery = new URLSearchParams();
+Object.entries(query).forEach(([key, value]) => {
+  if (value) baseQuery.set(key, value);
+});
+
+const buildHref = (pageNumber: number) => {
+  const params = new URLSearchParams(baseQuery);
+  if (pageNumber > 1) {
+    params.set('page', String(pageNumber));
+  } else {
+    params.delete('page');
+  }
+  const queryString = params.toString();
+  return `${basePath}${queryString ? `?${queryString}` : ''}`;
+};
+---
+
+<nav class="flex items-center justify-center gap-2 text-sm" aria-label="Paginazione">
+  {pages.map((pageNumber) => (
+    <a
+      href={buildHref(pageNumber)}
+      aria-current={pageNumber === page ? 'page' : undefined}
+      class={`min-w-[40px] rounded-full border px-3 py-1.5 text-center transition ${
+        pageNumber === page
+          ? 'border-brand-primary bg-brand-primary text-white'
+          : 'border-neutral-border text-neutral-muted hover:border-brand-primary hover:text-brand-primary dark:border-neutral-700 dark:text-neutral-300'
+      }`}
+    >
+      {pageNumber}
+    </a>
+  ))}
+</nav>

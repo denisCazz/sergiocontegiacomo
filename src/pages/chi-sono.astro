@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import CTASection from '../components/CTASection.astro';
+
+const skills = [
+  "Pianificazione patrimoniale olistica",
+  "Coordinamento di team multidisciplinari",
+  "Analisi di rischi e opportunita' per patrimoni complessi",
+  "Formazione e coaching decisionale",
+];
+---
+
+<BaseLayout title="Chi Sono" activePath="/chi-sono">
+  <section class="bg-neutral-base py-20 dark:bg-neutral-950">
+    <div class="mx-auto max-w-5xl px-6 space-y-12">
+      <SectionHeading
+        eyebrow="CHI SONO"
+        title="Una guida che unisce consulenza e coaching finanziario"
+        description="Dopo oltre quindici anni nel private banking e nel wealth management per famiglie imprenditoriali, ho scelto di costruire un modello indipendente che integra finanza, governance e comportamenti decisionali."
+        align="center"
+      />
+      <div class="grid gap-10 md:grid-cols-[2fr,3fr] items-start">
+        <div class="space-y-6">
+          <figure class="overflow-hidden rounded-3xl border border-neutral-border bg-white shadow-card dark:border-neutral-800 dark:bg-neutral-900">
+            <img
+              src="/sergio_2.jpg"
+              alt="Sergio Contegiacomo durante una sessione di lavoro"
+              loading="lazy"
+              class="w-full object-cover"
+            />
+          </figure>
+          <div class="rounded-3xl border border-neutral-border bg-white shadow-card p-8 space-y-4 dark:border-neutral-800 dark:bg-neutral-900">
+            <p class="text-sm uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light">Percorso</p>
+            <p class="text-neutral-text leading-relaxed dark:text-neutral-100">
+              Ho lavorato in realta' internazionali, seguendo patrimoni familiari e manageriali, coordinando private banker, fiscalisti e consulenti legali. Oggi metto a disposizione questa esperienza in maniera indipendente, affiancando imprenditori e famiglie nei momenti strategici.
+            </p>
+            <p class="text-neutral-muted text-sm leading-relaxed dark:text-neutral-300">
+              La mia missione e' facilitare scelte consapevoli: trasformare numeri e scenari in decisioni condivise, con un metodo replicabile.
+            </p>
+          </div>
+          <div class="rounded-3xl border border-neutral-border bg-white p-8 space-y-4 dark:border-neutral-800 dark:bg-neutral-900">
+            <p class="text-sm uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light">Certificazioni</p>
+            <ul class="space-y-3 text-sm text-neutral-muted dark:text-neutral-300">
+              <li>European Financial Advisor (EFPA)</li>
+              <li>Executive Coach (ICF)</li>
+              <li>Wealth Planning Specialist</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-neutral-border bg-white p-10 space-y-6 dark:border-neutral-800 dark:bg-neutral-900">
+          <p class="text-sm uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light">Metodo</p>
+          <p class="text-neutral-text leading-relaxed dark:text-neutral-100">
+            Analisi quantitative, ascolto attivo e coaching. Ogni percorso inizia con una diagnosi patrimoniale e prosegue con sessioni di allineamento periodiche, reportistica chiara e strumenti condivisi.
+          </p>
+          <ul class="space-y-3 text-neutral-muted text-sm dark:text-neutral-300">
+            {skills.map((skill) => (
+              <li class="flex items-start gap-3">
+                <span class="mt-1 h-2 w-2 rounded-full bg-brand-primary"></span>
+                <span>{skill}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CTASection
+    title="Ti accompagno nel prendere decisioni patrimoniali lucide"
+    description="Definiamo insieme i tuoi obiettivi e creiamo un framework di governance che ti permetta di agire con chiarezza e controllo."
+    primaryCta={{ label: 'Prenota una consulenza', href: '/contatti' }}
+    secondaryCta={{ label: 'Richiedi il profilo completo', href: '/contatti?richiedi=profilo' }}
+  />
+</BaseLayout>

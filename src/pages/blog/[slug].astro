@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import CTASection from '../../components/CTASection.astro';
+import { getArticleBySlug, getArticles, type Article } from '../../lib/cms';
+import { renderMarkdown } from '../../lib/markdown';
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  throw new Error('Missing article slug');
+}
+
+const article = (await getArticleBySlug(slug)) as Article | null;
+
+if (!article) {
+  throw Astro.redirect('/blog');
+}
+
+const formattedDate = new Intl.DateTimeFormat('it-IT', {
+  day: '2-digit',
+  month: 'long',
+  year: 'numeric',
+}).format(new Date(article.publishedAt));
+const htmlContent = renderMarkdown(article.content);
+
+export async function getStaticPaths() {
+  const { data } = await getArticles();
+
+  return data
+    .map((entry) => entry?.attributes?.slug)
+    .filter((slug): slug is string => Boolean(slug))
+    .map((articleSlug) => ({ params: { slug: articleSlug } }));
+}
+---
+
+<BaseLayout title={article.title} description={article.excerpt} activePath="/blog">
+  <article class="bg-neutral-base dark:bg-neutral-950">
+    <div class="mx-auto max-w-4xl px-6 py-20 space-y-12">
+      <SectionHeading
+        eyebrow={formattedDate}
+        title={article.title}
+        description={article.excerpt}
+        align="center"
+      />
+      {article.coverImage && (
+        <img
+          src={article.coverImage}
+          alt={`Copertina articolo ${article.title}`}
+          class="w-full rounded-3xl border border-neutral-border object-cover dark:border-neutral-800"
+        />
+      )}
+      <div
+        class="prose prose-lg prose-neutral max-w-none prose-headings:font-serif dark:prose-invert"
+        set:html={htmlContent || '<p>Contenuto disponibile a breve.</p>'}
+      ></div>
+      <div class="rounded-3xl border border-neutral-border bg-white p-8 dark:border-neutral-800 dark:bg-neutral-900">
+        <p class="text-sm uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light">Autore</p>
+        <p class="mt-3 text-lg font-semibold text-neutral-text dark:text-white">{article.author}</p>
+      </div>
+    </div>
+  </article>
+
+  <CTASection
+    title="Vuoi approfondire questi temi per la tua realta'?"
+    description="Organizziamo una sessione dedicata per trasformare insight in azioni concrete e portare valore al tuo patrimonio."
+    primaryCta={{ label: 'Prenota una call', href: '/contatti' }}
+    secondaryCta={{ label: 'Iscriviti alla newsletter', href: '#newsletter' }}
+  />
+</BaseLayout>
