@@ -1,7 +1,7 @@
 {
   "name": "sergiocontegiacomo",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -13,8 +13,10 @@
     "@astrojs/sitemap": "^3.1.3",
     "@astrojs/tailwind": "^5.1.0",
     "@astrojs/vercel": "^8.0.0",
+    "@playform/compress": "^0.2.0",
     "@supabase/supabase-js": "^2.86.0",
     "astro": "^5.15.3",
+    "astro-robots-txt": "^1.0.0",
     "dayjs": "^1.11.13",
     "marked": "^12.0.2"
   },
