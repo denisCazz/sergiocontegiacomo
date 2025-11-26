@@ -6,9 +6,7 @@ import { siteConfig } from '../lib/config';
   <div class="mx-auto max-w-6xl px-6 py-12 grid gap-10 md:grid-cols-4 text-sm">
     <div class="space-y-3">
       <div class="flex items-center gap-3">
-        <div class="h-10 w-10 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary font-semibold dark:bg-brand-primary/20">
-          SC
-        </div>
+        <img src="/logo_sergio.png" alt="Logo Sergio Contegiacomo" class="h-12 w-auto rounded-full" />
         <div>
           <p class="text-base font-semibold text-neutral-text dark:text-white">{siteConfig.name}</p>
           <p class="text-xs text-neutral-muted dark:text-neutral-300">{siteConfig.role}</p>
@@ -72,10 +70,15 @@ import { siteConfig } from '../lib/config';
   </div>
   <div class="border-t border-neutral-border py-4 dark:border-neutral-800">
     <div class="mx-auto max-w-6xl px-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-neutral-muted dark:text-neutral-400">
-      <p>&copy; {new Date().getFullYear()} {siteConfig.name}. Tutti i diritti riservati.</p>
+      <div class="flex flex-col md:flex-row items-center gap-1 md:gap-4 text-center md:text-left">
+        <p>&copy; {new Date().getFullYear()} {siteConfig.name}. Tutti i diritti riservati.</p>
+        <span class="hidden md:inline text-neutral-300 dark:text-neutral-700">|</span>
+        <p>Realizzato da <a href="https://bitora.it" target="_blank" rel="noopener noreferrer" class="hover:text-brand-primary transition">Bitora.it</a> - un prodotto di Cazzulo Denis</p>
+      </div>
       <div class="flex gap-4">
         <a href="/privacy" class="hover:text-brand-primary transition">Privacy</a>
         <a href="/cookie" class="hover:text-brand-primary transition">Cookie</a>
+        <a href="/admin" class="hover:text-brand-primary transition">Admin</a>
       </div>
     </div>
   </div>

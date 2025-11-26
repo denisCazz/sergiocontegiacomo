@@ -12,55 +12,84 @@ const skills = [
 ---
 
 <BaseLayout title="Chi Sono" activePath="/chi-sono">
-  <section class="bg-neutral-base py-20 dark:bg-neutral-950">
-    <div class="mx-auto max-w-5xl px-6 space-y-12">
-      <SectionHeading
-        eyebrow="CHI SONO"
-        title="Una guida che unisce consulenza e coaching finanziario"
-        description="Dopo oltre quindici anni nel private banking e nel wealth management per famiglie imprenditoriali, ho scelto di costruire un modello indipendente che integra finanza, governance e comportamenti decisionali."
-        align="center"
-      />
-      <div class="grid gap-10 md:grid-cols-[2fr,3fr] items-start">
-        <div class="space-y-6">
-          <figure class="overflow-hidden rounded-3xl border border-neutral-border bg-white shadow-card dark:border-neutral-800 dark:bg-neutral-900">
+  <section class="relative py-24 lg:py-32 bg-white dark:bg-neutral-950 overflow-hidden">
+    <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-brand-primary/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-brand-accent/5 rounded-full blur-3xl"></div>
+    
+    <div class="relative mx-auto max-w-6xl px-6">
+      <div class="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center mb-32">
+        <div class="space-y-10">
+          <div class="inline-flex items-center gap-2 rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand-primary dark:bg-brand-primary/20 dark:text-brand-light">
+            <span class="h-1.5 w-1.5 rounded-full bg-brand-primary dark:bg-brand-light"></span>
+            Chi Sono
+          </div>
+          <h1 class="text-5xl md:text-7xl font-serif font-medium text-neutral-text leading-[1.1] dark:text-white tracking-tight">
+            Una guida che unisce <br/> <span class="text-brand-primary italic">consulenza</span> e <span class="text-brand-primary italic">coaching</span>.
+          </h1>
+          <p class="text-xl text-neutral-muted leading-relaxed dark:text-neutral-300 max-w-lg">
+            Dopo oltre quindici anni nel private banking e nel wealth management per famiglie imprenditoriali, ho scelto di costruire un modello indipendente che integra finanza, governance e comportamenti decisionali.
+          </p>
+        </div>
+        <div class="relative lg:pl-12">
+          <div class="aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl shadow-brand-primary/10 rotate-2 hover:rotate-0 transition duration-700 ease-out">
             <img
               src="/sergio_2.jpg"
               alt="Sergio Contegiacomo durante una sessione di lavoro"
               loading="lazy"
-              class="w-full object-cover"
+              class="w-full h-full object-cover transform hover:scale-105 transition duration-700"
             />
-          </figure>
-          <div class="rounded-3xl border border-neutral-border bg-white shadow-card p-8 space-y-4 dark:border-neutral-800 dark:bg-neutral-900">
-            <p class="text-sm uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light">Percorso</p>
-            <p class="text-neutral-text leading-relaxed dark:text-neutral-100">
-              Ho lavorato in realta' internazionali, seguendo patrimoni familiari e manageriali, coordinando private banker, fiscalisti e consulenti legali. Oggi metto a disposizione questa esperienza in maniera indipendente, affiancando imprenditori e famiglie nei momenti strategici.
-            </p>
-            <p class="text-neutral-muted text-sm leading-relaxed dark:text-neutral-300">
-              La mia missione e' facilitare scelte consapevoli: trasformare numeri e scenari in decisioni condivise, con un metodo replicabile.
-            </p>
-          </div>
-          <div class="rounded-3xl border border-neutral-border bg-white p-8 space-y-4 dark:border-neutral-800 dark:bg-neutral-900">
-            <p class="text-sm uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light">Certificazioni</p>
-            <ul class="space-y-3 text-sm text-neutral-muted dark:text-neutral-300">
-              <li>European Financial Advisor (EFPA)</li>
-              <li>Executive Coach (ICF)</li>
-              <li>Wealth Planning Specialist</li>
-            </ul>
           </div>
         </div>
-        <div class="rounded-3xl border border-neutral-border bg-white p-10 space-y-6 dark:border-neutral-800 dark:bg-neutral-900">
-          <p class="text-sm uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light">Metodo</p>
-          <p class="text-neutral-text leading-relaxed dark:text-neutral-100">
-            Analisi quantitative, ascolto attivo e coaching. Ogni percorso inizia con una diagnosi patrimoniale e prosegue con sessioni di allineamento periodiche, reportistica chiara e strumenti condivisi.
-          </p>
-          <ul class="space-y-3 text-neutral-muted text-sm dark:text-neutral-300">
-            {skills.map((skill) => (
-              <li class="flex items-start gap-3">
-                <span class="mt-1 h-2 w-2 rounded-full bg-brand-primary"></span>
-                <span>{skill}</span>
+      </div>
+
+      <div class="grid gap-12 lg:grid-cols-12 items-start">
+        <div class="lg:col-span-7 rounded-[2.5rem] border border-neutral-border bg-white p-10 lg:p-12 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+          <h3 class="text-xs uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light mb-8 font-bold">Il mio Percorso</h3>
+          <div class="prose prose-lg prose-neutral dark:prose-invert max-w-none">
+            <p class="text-xl leading-relaxed text-neutral-800 dark:text-neutral-100 font-medium">
+              Ho lavorato in realtà internazionali, seguendo patrimoni familiari e manageriali, coordinando private banker, fiscalisti e consulenti legali. Oggi metto a disposizione questa esperienza in maniera indipendente, affiancando imprenditori e famiglie nei momenti strategici.
+            </p>
+            <p class="text-neutral-600 dark:text-neutral-400 mt-6 leading-relaxed">
+              La mia missione è facilitare scelte consapevoli: trasformare numeri e scenari in decisioni condivise, con un metodo replicabile che mette al centro la persona e i suoi obiettivi di vita.
+            </p>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 space-y-8">
+          <div class="rounded-[2.5rem] border border-neutral-border bg-neutral-50 p-10 dark:border-neutral-800 dark:bg-neutral-900/50">
+            <h3 class="text-xs uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light mb-6 font-bold">Certificazioni</h3>
+            <ul class="space-y-5">
+              <li class="flex items-center gap-4 text-neutral-700 dark:text-neutral-300">
+                <div class="h-2.5 w-2.5 rounded-full bg-brand-accent shrink-0"></div>
+                <span class="text-lg">European Financial Advisor (EFPA)</span>
               </li>
-            ))}
-          </ul>
+              <li class="flex items-center gap-4 text-neutral-700 dark:text-neutral-300">
+                <div class="h-2.5 w-2.5 rounded-full bg-brand-accent shrink-0"></div>
+                <span class="text-lg">Executive Coach (ICF)</span>
+              </li>
+              <li class="flex items-center gap-4 text-neutral-700 dark:text-neutral-300">
+                <div class="h-2.5 w-2.5 rounded-full bg-brand-accent shrink-0"></div>
+                <span class="text-lg">Wealth Planning Specialist</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="rounded-[2.5rem] bg-brand-primary p-10 text-white shadow-xl shadow-brand-primary/20">
+            <h3 class="text-xs uppercase tracking-[0.3em] text-brand-accent mb-6 font-bold">Metodo</h3>
+            <p class="mb-8 text-brand-light/90 text-lg leading-relaxed">
+              Analisi quantitative, ascolto attivo e coaching. Ogni percorso inizia con una diagnosi patrimoniale.
+            </p>
+            <ul class="space-y-3">
+              {skills.map((skill) => (
+                <li class="flex items-start gap-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-brand-accent shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                  <span class="text-base font-medium">{skill}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </div>

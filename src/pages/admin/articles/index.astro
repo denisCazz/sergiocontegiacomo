@@ -1,0 +1,90 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Articoli">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Articoli</h1>
+    <a href="/admin/articles/new" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-brand-primary hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary">
+      Nuovo Articolo
+    </a>
+  </div>
+
+  <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
+    <ul id="articlesList" class="divide-y divide-gray-200 dark:divide-gray-700">
+      <li class="p-4 text-center text-gray-500 dark:text-gray-400">Caricamento...</li>
+    </ul>
+  </div>
+
+  <script>
+    import { supabase } from '../../../lib/supabase';
+    import dayjs from 'dayjs';
+
+    const list = document.getElementById('articlesList');
+
+    const fetchArticles = async () => {
+      const { data, error } = await supabase
+        .from('articles')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error(error);
+        if (list) list.innerHTML = `<li class="p-4 text-red-500">Errore nel caricamento: ${error.message}</li>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        if (list) list.innerHTML = '<li class="p-4 text-center text-gray-500">Nessun articolo trovato.</li>';
+        return;
+      }
+
+      if (list) {
+        list.innerHTML = data.map(article => `
+          <li>
+            <div class="px-4 py-4 sm:px-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out">
+              <div class="flex items-center justify-between">
+                <div class="text-sm font-medium text-brand-primary truncate">
+                  ${article.title}
+                </div>
+                <div class="ml-2 flex-shrink-0 flex">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${article.published_at ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                    ${article.published_at ? 'Pubblicato' : 'Bozza'}
+                  </span>
+                </div>
+              </div>
+              <div class="mt-2 sm:flex sm:justify-between">
+                <div class="sm:flex">
+                  <p class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                    ${article.author || 'Nessun autore'}
+                  </p>
+                </div>
+                <div class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
+                  <p>
+                    ${dayjs(article.created_at).format('DD/MM/YYYY')}
+                  </p>
+                </div>
+              </div>
+              <div class="mt-2 flex justify-end gap-2">
+                 <button data-delete="${article.id}" class="text-red-600 hover:text-red-900 text-sm">Elimina</button>
+              </div>
+            </div>
+          </li>
+        `).join('');
+
+        // Add delete listeners
+        document.querySelectorAll('[data-delete]').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            if (!confirm('Sei sicuro di voler eliminare questo articolo?')) return;
+            const id = (e.target as HTMLElement).getAttribute('data-delete');
+            const { error } = await supabase.from('articles').delete().eq('id', id);
+            if (error) alert('Errore: ' + error.message);
+            else fetchArticles(); // Reload
+          });
+        });
+      }
+    };
+
+    fetchArticles();
+  </script>
+</AdminLayout>

@@ -20,72 +20,65 @@ const { eyebrow, title, description, primaryCta, secondaryCta, stats } = Astro.p
 <section class="relative overflow-hidden bg-neutral-base dark:bg-neutral-950">
   <div class="absolute inset-0 bg-gradient-to-br from-brand-primary/10 via-transparent to-brand-light/10 dark:from-brand-dark/40 dark:via-transparent dark:to-brand-accent/20"></div>
   <div class="relative mx-auto max-w-6xl px-6 py-24 lg:py-32">
-    <div class="grid gap-12 lg:grid-cols-2 lg:items-start">
-      <div class="space-y-6">
+    <div class="grid gap-12 lg:grid-cols-2 lg:items-center">
+      <div class="space-y-8 animate-slide-up">
         {eyebrow && (
-          <p class="text-xs font-semibold uppercase tracking-[0.4em] text-brand-primary dark:text-brand-light">{eyebrow}</p>
+          <div class="inline-flex items-center gap-2 rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand-primary dark:bg-brand-primary/20 dark:text-brand-light">
+            <span class="h-1.5 w-1.5 rounded-full bg-brand-primary dark:bg-brand-light"></span>
+            {eyebrow}
+          </div>
         )}
-        <p class="text-sm md:text-base font-serif italic text-brand-primary dark:text-brand-light">
-          “Fare la differenza è... la vera differenza.”
-        </p>
-        <h1 class="text-3xl md:text-5xl font-semibold text-neutral-text leading-tight dark:text-white">
-          {title}
-        </h1>
-        <p class="text-base text-neutral-muted md:text-lg leading-relaxed dark:text-neutral-300">
-          {description}
-        </p>
+        <div class="space-y-6">
+          <h1 class="text-5xl md:text-7xl font-serif font-medium text-neutral-text leading-[1.1] dark:text-white tracking-tight">
+            Fare la differenza è... <br/>
+            <span class="text-brand-primary italic">la vera differenza.</span>
+          </h1>
+          <p class="text-xl md:text-2xl font-medium text-neutral-700 dark:text-neutral-200 max-w-xl leading-relaxed">
+            {title}
+          </p>
+          <p class="text-base text-neutral-muted leading-relaxed dark:text-neutral-400 max-w-lg">
+            {description}
+          </p>
+        </div>
         <div class="flex flex-col sm:flex-row gap-4 pt-4">
           <a
             href={primaryCta.href}
-            class="inline-flex items-center justify-center rounded-full bg-brand-primary px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-primary/20 hover:bg-brand-light transition"
+            class="inline-flex items-center justify-center rounded-full bg-brand-primary px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-brand-primary/20 hover:bg-brand-light hover:-translate-y-0.5 transition duration-300"
           >
             {primaryCta.label}
           </a>
           {secondaryCta && (
             <a
               href={secondaryCta.href}
-              class="inline-flex items-center justify-center rounded-full border border-brand-primary px-6 py-3 text-sm font-semibold text-brand-primary hover:bg-brand-primary/5 transition dark:text-white"
+              class="inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-8 py-4 text-sm font-semibold text-neutral-700 hover:border-brand-primary hover:text-brand-primary transition duration-300 dark:bg-neutral-900 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-brand-light dark:hover:text-white"
             >
               {secondaryCta.label}
             </a>
           )}
         </div>
         {stats && stats.length > 0 && (
-          <dl class="grid gap-4 pt-6 sm:grid-cols-2">
+          <dl class="grid grid-cols-2 gap-6 pt-8 border-t border-neutral-200 dark:border-neutral-800">
             {stats.map((item) => (
-              <div class="rounded-2xl border border-neutral-border bg-white px-6 py-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-                <dt class="text-xs uppercase tracking-[0.3em] text-neutral-muted dark:text-neutral-300">{item.label}</dt>
-                <dd class="text-2xl font-semibold text-brand-primary dark:text-brand-light">{item.value}</dd>
+              <div>
+                <dt class="text-xs uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">{item.label}</dt>
+                <dd class="text-3xl font-bold text-brand-primary dark:text-brand-light">{item.value}</dd>
               </div>
             ))}
           </dl>
         )}
       </div>
-      <div class="space-y-6">
-        <div class="relative">
+      <div class="relative lg:pl-10 animate-fade-in" style="animation-delay: 0.2s;">
+        <div class="relative z-10 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-brand-primary/10">
           <img
             src="/sergio.jpg"
             alt="Sergio Contegiacomo"
-            loading="lazy"
-            class="w-full rounded-3xl object-cover shadow-card"
-          />
-          <img
-            src="/fare_differenza.png"
-            alt="Fare la differenza"
-            loading="lazy"
-            class="pointer-events-none absolute -bottom-10 left-6 h-28 w-auto rotate-[-6deg] drop-shadow-lg"
+            fetchpriority="high"
+            class="w-full h-auto object-cover transform hover:scale-105 transition duration-700 ease-out"
           />
         </div>
-        <div class="rounded-3xl border border-neutral-border bg-white shadow-card p-8 space-y-6 dark:border-neutral-800 dark:bg-neutral-900">
-          <p class="text-sm uppercase tracking-[0.3em] text-neutral-muted dark:text-neutral-300">Approccio</p>
-          <p class="text-lg text-neutral-text leading-relaxed dark:text-neutral-100">
-            Ogni piano nasce da una visione integrata: obiettivi personali, orizzonte temporale, propensione al rischio e governance
-            familiare.
-          </p>
-          <p class="text-sm text-neutral-muted dark:text-neutral-300">
-            Analizziamo il patrimonio complessivo e costruiamo scenari su misura, con monitoraggio continuo e coaching decisionale.
-          </p>
-        </div>
+        
+        <div class="absolute -top-10 -right-10 -z-10 h-64 w-64 rounded-full bg-brand-accent/10 blur-3xl dark:bg-brand-accent/5"></div>
+        <div class="absolute -bottom-10 -left-10 -z-10 h-64 w-64 rounded-full bg-brand-primary/10 blur-3xl dark:bg-brand-primary/5"></div>
       </div>
     </div>
   </div>

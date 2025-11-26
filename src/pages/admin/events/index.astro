@@ -1,0 +1,97 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Eventi">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Eventi</h1>
+    <a href="/admin/events/new" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-brand-primary hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary">
+      Nuovo Evento
+    </a>
+  </div>
+
+  <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
+    <ul id="eventsList" class="divide-y divide-gray-200 dark:divide-gray-700">
+      <li class="p-4 text-center text-gray-500 dark:text-gray-400">Caricamento...</li>
+    </ul>
+  </div>
+
+  <script>
+    import { supabase } from '../../../lib/supabase';
+    import dayjs from 'dayjs';
+
+    const list = document.getElementById('eventsList');
+
+    const fetchEvents = async () => {
+      const { data, error } = await supabase
+        .from('events')
+        .select('*')
+        .order('date', { ascending: true });
+
+      if (error) {
+        console.error(error);
+        if (list) list.innerHTML = `<li class="p-4 text-red-500">Errore nel caricamento: ${error.message}</li>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        if (list) list.innerHTML = '<li class="p-4 text-center text-gray-500">Nessun evento trovato.</li>';
+        return;
+      }
+
+      if (list) {
+        list.innerHTML = data.map(event => `
+          <li>
+            <div class="px-4 py-4 sm:px-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out">
+              <div class="flex items-center justify-between">
+                <div class="text-sm font-medium text-brand-primary truncate">
+                  ${event.title}
+                </div>
+                <div class="ml-2 flex-shrink-0 flex">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${event.status === 'upcoming' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                    ${event.status === 'upcoming' ? 'In programma' : 'Passato'}
+                  </span>
+                </div>
+              </div>
+              <div class="mt-2 sm:flex sm:justify-between">
+                <div class="sm:flex">
+                  <p class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                    <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    ${event.location || 'Online'}
+                  </p>
+                </div>
+                <div class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
+                  <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <p>
+                    ${dayjs(event.date).format('DD/MM/YYYY')} ${event.time ? '- ' + event.time : ''}
+                  </p>
+                </div>
+              </div>
+              <div class="mt-2 flex justify-end gap-2">
+                 <button data-delete="${event.id}" class="text-red-600 hover:text-red-900 text-sm">Elimina</button>
+              </div>
+            </div>
+          </li>
+        `).join('');
+
+        // Add delete listeners
+        document.querySelectorAll('[data-delete]').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            if (!confirm('Sei sicuro di voler eliminare questo evento?')) return;
+            const id = (e.target as HTMLElement).getAttribute('data-delete');
+            const { error } = await supabase.from('events').delete().eq('id', id);
+            if (error) alert('Errore: ' + error.message);
+            else fetchEvents(); // Reload
+          });
+        });
+      }
+    };
+
+    fetchEvents();
+  </script>
+</AdminLayout>

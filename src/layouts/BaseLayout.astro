@@ -38,7 +38,63 @@ const image = ogImage ?? '/sergio.jpg';
       href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;600&family=Work+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="icon" type="image/x-icon" href="/logo_sergio.ico" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FinancialService",
+        "name": "Sergio Contegiacomo",
+        "image": "https://www.sergiocontegiacomo.it/logo_sergio.png",
+        "@id": "https://www.sergiocontegiacomo.it",
+        "url": "https://www.sergiocontegiacomo.it",
+        "telephone": "0172 44191",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Piazza Roma, 39",
+          "addressLocality": "Bra",
+          "addressRegion": "CN",
+          "postalCode": "12042",
+          "addressCountry": "IT"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.698,
+          "longitude": 7.855
+        },
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Wednesday"],
+            "opens": "08:30",
+            "closes": "13:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Wednesday"],
+            "opens": "18:00",
+            "closes": "20:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Tuesday", "Friday"],
+            "opens": "08:30",
+            "closes": "13:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": "Thursday",
+            "opens": "08:30",
+            "closes": "12:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": "Thursday",
+            "opens": "14:00",
+            "closes": "18:00"
+          }
+        ]
+      }
+    </script>
     <script>
       {`(() => {
         if (typeof window === 'undefined' || typeof document === 'undefined') {

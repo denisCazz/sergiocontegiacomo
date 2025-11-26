@@ -40,53 +40,78 @@ const pagination = meta?.pagination ?? { page: 1, pageCount: 1 };
 ---
 
 <BaseLayout title="Eventi" activePath="/eventi">
-  <section class="bg-neutral-base py-20 dark:bg-neutral-950">
-    <div class="mx-auto max-w-6xl px-6 space-y-12">
-      <SectionHeading
-        eyebrow="EVENTI"
-        title="Formazione, workshop e percorsi esperienziali"
-        description="Appuntamenti esclusivi dedicati a chi vuole lavorare sul proprio patrimonio con metodo: incontri riservati, webinar e percorsi residenziali."
-      />
-      <div class="flex flex-wrap items-center justify-between gap-4">
-        <TagFilter tags={tags} activeTag={activeTag} basePath="/eventi" extraQuery={{ view: view === 'past' ? 'past' : undefined }} />
-        <div class="flex items-center gap-2 text-sm text-neutral-muted dark:text-neutral-300">
-          <a
-            href={`/eventi${activeTag ? `?tag=${activeTag}` : ''}`}
-            class={`rounded-full px-3 py-1.5 transition ${
-              view === 'upcoming'
-                ? 'bg-brand-primary text-white'
-                : 'border border-neutral-border hover:border-brand-primary hover:text-brand-primary dark:border-neutral-700 dark:text-neutral-300'
-            }`}
-          >
-            Prossimi eventi
-          </a>
-          <a
-            href={`/eventi?view=past${activeTag ? `&tag=${activeTag}` : ''}`}
-            class={`rounded-full px-3 py-1.5 transition ${
-              view === 'past'
-                ? 'bg-brand-primary text-white'
-                : 'border border-neutral-border hover:border-brand-primary hover:text-brand-primary dark:border-neutral-700 dark:text-neutral-300'
-            }`}
-          >
-            Eventi passati
-          </a>
+  <section class="relative py-24 lg:py-32 bg-neutral-base dark:bg-neutral-950 overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+      <div class="absolute -top-24 -left-24 w-96 h-96 bg-brand-accent/5 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="mx-auto max-w-6xl px-6 space-y-16 relative z-10">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand-primary shadow-sm dark:bg-neutral-900 dark:text-brand-light border border-neutral-100 dark:border-neutral-800 mb-6">
+          <span class="h-1.5 w-1.5 rounded-full bg-brand-primary dark:bg-brand-light"></span>
+          Eventi
         </div>
+        <h1 class="text-4xl md:text-5xl font-serif font-medium text-neutral-text dark:text-white mb-6">
+          Formazione, workshop e <span class="text-brand-primary italic">percorsi esperienziali</span>
+        </h1>
+        <p class="text-xl text-neutral-muted leading-relaxed dark:text-neutral-300 max-w-2xl">
+          Appuntamenti esclusivi dedicati a chi vuole lavorare sul proprio patrimonio con metodo: incontri riservati, webinar e percorsi residenziali.
+        </p>
       </div>
-      <div class="grid gap-6 md:grid-cols-3">
-        {events.length > 0 ? (
-          events.map((event) => <EventCard event={event} />)
-        ) : (
-          <p class="text-neutral-muted dark:text-neutral-300">
-            Nessun evento {view === 'past' ? 'archiviato' : 'in programma'} per i filtri selezionati. Riprova piu' tardi.
-          </p>
-        )}
+
+      <div class="space-y-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-neutral-200 dark:border-neutral-800 pb-8">
+          <TagFilter tags={tags} activeTag={activeTag} basePath="/eventi" extraQuery={{ view: view === 'past' ? 'past' : undefined }} />
+          
+          <div class="flex items-center bg-white rounded-full p-1 shadow-sm border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-800">
+            <a
+              href={`/eventi${activeTag ? `?tag=${activeTag}` : ''}`}
+              class={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                view === 'upcoming'
+                  ? 'bg-brand-primary text-white shadow-md'
+                  : 'text-neutral-500 hover:text-brand-primary dark:text-neutral-400'
+              }`}
+            >
+              Prossimi eventi
+            </a>
+            <a
+              href={`/eventi?view=past${activeTag ? `&tag=${activeTag}` : ''}`}
+              class={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                view === 'past'
+                  ? 'bg-brand-primary text-white shadow-md'
+                  : 'text-neutral-500 hover:text-brand-primary dark:text-neutral-400'
+              }`}
+            >
+              Archivio
+            </a>
+          </div>
+        </div>
+
+        <div class="grid gap-8 md:grid-cols-3">
+          {events.length > 0 ? (
+            events.map((event) => <EventCard event={event} />)
+          ) : (
+            <div class="col-span-full py-16 text-center rounded-[2.5rem] border border-dashed border-neutral-300 dark:border-neutral-700 bg-neutral-50/50 dark:bg-neutral-900/50">
+              <div class="inline-flex h-16 w-16 items-center justify-center rounded-full bg-neutral-100 text-neutral-400 mb-6 dark:bg-neutral-800">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <p class="text-xl font-medium text-neutral-900 dark:text-white mb-2">Nessun evento trovato</p>
+              <p class="text-neutral-500 dark:text-neutral-400 max-w-md mx-auto">
+                Non ci sono eventi {view === 'past' ? 'passati' : 'in programma'} per i filtri selezionati.
+              </p>
+            </div>
+          )}
+        </div>
+        
+        <Pagination
+          page={pagination.page ?? 1}
+          pageCount={pagination.pageCount ?? 1}
+          basePath="/eventi"
+          query={{ tag: activeTag, view: view === 'past' ? 'past' : undefined }}
+        />
       </div>
-      <Pagination
-        page={pagination.page ?? 1}
-        pageCount={pagination.pageCount ?? 1}
-        basePath="/eventi"
-        query={{ tag: activeTag, view: view === 'past' ? 'past' : undefined }}
-      />
     </div>
   </section>
 </BaseLayout>

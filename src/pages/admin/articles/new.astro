@@ -1,0 +1,152 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Nuovo Articolo">
+  <div class="md:grid md:grid-cols-3 md:gap-6">
+    <div class="md:col-span-1">
+      <div class="px-4 sm:px-0">
+        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">Dettagli Articolo</h3>
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+          Inserisci le informazioni per il nuovo articolo del blog.
+        </p>
+      </div>
+    </div>
+    <div class="mt-5 md:mt-0 md:col-span-2">
+      <form id="articleForm">
+        <div class="shadow sm:rounded-md sm:overflow-hidden">
+          <div class="px-4 py-5 bg-white dark:bg-gray-800 space-y-6 sm:p-6">
+            
+            <div class="grid grid-cols-6 gap-6">
+              <div class="col-span-6 sm:col-span-4">
+                <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Titolo</label>
+                <input type="text" name="title" id="title" required class="mt-1 focus:ring-brand-primary focus:border-brand-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+              </div>
+
+              <div class="col-span-6 sm:col-span-4">
+                <label for="slug" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Slug</label>
+                <input type="text" name="slug" id="slug" required class="mt-1 focus:ring-brand-primary focus:border-brand-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <p class="mt-2 text-sm text-gray-500">URL amichevole (es. mio-nuovo-articolo)</p>
+              </div>
+
+              <div class="col-span-6 sm:col-span-3">
+                <label for="author" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Autore</label>
+                <input type="text" name="author" id="author" class="mt-1 focus:ring-brand-primary focus:border-brand-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+              </div>
+
+              <div class="col-span-6">
+                <label for="excerpt" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Estratto (Breve descrizione)</label>
+                <textarea id="excerpt" name="excerpt" rows="3" class="shadow-sm focus:ring-brand-primary focus:border-brand-primary mt-1 block w-full sm:text-sm border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+              </div>
+
+              <div class="col-span-6">
+                <label for="content" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Contenuto (Markdown)</label>
+                <textarea id="content" name="content" rows="10" class="shadow-sm focus:ring-brand-primary focus:border-brand-primary mt-1 block w-full sm:text-sm border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white font-mono"></textarea>
+              </div>
+
+              <div class="col-span-6">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Immagine di Copertina</label>
+                <div class="mt-1 flex items-center space-x-4">
+                  <input type="file" id="coverImage" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-primary file:text-white hover:file:bg-brand-dark"/>
+                  <input type="hidden" id="coverImageUrl" name="cover_image">
+                </div>
+                <div id="imagePreview" class="mt-2 hidden">
+                  <img src="" alt="Preview" class="h-32 w-auto rounded-md object-cover">
+                </div>
+              </div>
+
+              <div class="col-span-6 sm:col-span-4">
+                <label for="tags" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tags (separati da virgola)</label>
+                <input type="text" name="tags" id="tags" class="mt-1 focus:ring-brand-primary focus:border-brand-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+              </div>
+
+              <div class="col-span-6 sm:col-span-3">
+                <label for="published_at" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Data Pubblicazione</label>
+                <input type="datetime-local" name="published_at" id="published_at" class="mt-1 focus:ring-brand-primary focus:border-brand-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <p class="mt-2 text-sm text-gray-500">Lascia vuoto per salvare come bozza.</p>
+              </div>
+            </div>
+          </div>
+          <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 text-right sm:px-6">
+            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-brand-primary hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary">
+              Salva Articolo
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    import { supabase } from '../../../lib/supabase';
+
+    // Slug generation
+    const titleInput = document.getElementById('title') as HTMLInputElement;
+    const slugInput = document.getElementById('slug') as HTMLInputElement;
+
+    titleInput?.addEventListener('input', () => {
+      const slug = titleInput.value
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '');
+      if (slugInput) slugInput.value = slug;
+    });
+
+    // Image Upload
+    const fileInput = document.getElementById('coverImage') as HTMLInputElement;
+    const urlInput = document.getElementById('coverImageUrl') as HTMLInputElement;
+    const preview = document.getElementById('imagePreview');
+    const previewImg = preview?.querySelector('img');
+
+    fileInput?.addEventListener('change', async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('images')
+        .upload(filePath, file);
+
+      if (error) {
+        alert('Errore caricamento immagine: ' + error.message);
+      } else {
+        const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(filePath);
+        if (urlInput) urlInput.value = publicUrl;
+        if (preview && previewImg) {
+          previewImg.src = publicUrl;
+          preview.classList.remove('hidden');
+        }
+      }
+    });
+
+    // Form Submit
+    const form = document.getElementById('articleForm');
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target as HTMLFormElement);
+      
+      const article = {
+        title: formData.get('title'),
+        slug: formData.get('slug'),
+        author: formData.get('author'),
+        excerpt: formData.get('excerpt'),
+        content: formData.get('content'),
+        cover_image: formData.get('cover_image'),
+        tags: (formData.get('tags') as string).split(',').map(t => t.trim()).filter(Boolean),
+        published_at: formData.get('published_at') || null,
+      };
+
+      const { error } = await supabase.from('articles').insert([article]);
+
+      if (error) {
+        alert('Errore salvataggio: ' + error.message);
+      } else {
+        alert('Articolo salvato con successo!');
+        window.location.href = '/admin/articles';
+      }
+    });
+  </script>
+</AdminLayout>

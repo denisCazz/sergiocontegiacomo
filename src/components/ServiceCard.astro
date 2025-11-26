@@ -10,7 +10,7 @@ interface Props {
 const { title, description, items = [], ctaLabel, ctaHref } = Astro.props;
 ---
 
-<div class="rounded-3xl border border-neutral-border bg-white p-8 shadow-sm transition hover:shadow-card dark:border-neutral-800 dark:bg-neutral-900">
+<div class="rounded-3xl border border-neutral-border bg-white p-8 shadow-sm transition duration-300 hover:shadow-card hover:-translate-y-1 dark:border-neutral-800 dark:bg-neutral-900">
   <h3 class="text-xl font-semibold text-neutral-text mb-4 dark:text-white">{title}</h3>
   <p class="text-neutral-muted text-sm leading-relaxed mb-6 dark:text-neutral-300">{description}</p>
   {items.length > 0 && (

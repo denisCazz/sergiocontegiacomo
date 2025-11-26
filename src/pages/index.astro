@@ -82,38 +82,66 @@ const testimonials = [
 		]}
 	/>
 
-	<section class="py-20 bg-white dark:bg-neutral-950">
-		<div class="mx-auto max-w-6xl px-6 space-y-12">
-			<SectionHeading
-				eyebrow="SERVIZI"
-				title="Percorsi dedicati a chi desidera una visione patrimoniale completa"
-				description="Integro consulenza strategica, strumenti finanziari e coaching decisionale per allineare patrimonio, obiettivi e persone."
-			/>
-			<div class="grid gap-6 md:grid-cols-3">
-				{services.map((service) => (
-					<ServiceCard {...service} />
-				))}
+	<section class="py-24 lg:py-32 bg-white dark:bg-neutral-950">
+		<div class="mx-auto max-w-6xl px-6">
+			<div class="grid lg:grid-cols-12 gap-12 lg:gap-24 items-start">
+				<div class="lg:col-span-4 lg:sticky lg:top-32">
+					<SectionHeading
+						eyebrow="SERVIZI"
+						title="Percorsi di valore per il tuo patrimonio"
+						description="Un approccio olistico che integra consulenza finanziaria, pianificazione strategica e supporto decisionale."
+					/>
+					<div class="mt-8">
+						<a href="/cosa-faccio" class="inline-flex items-center gap-2 text-sm font-semibold text-brand-primary hover:text-brand-light transition">
+							Scopri tutti i servizi
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+							</svg>
+						</a>
+					</div>
+				</div>
+				<div class="lg:col-span-8 grid gap-6 md:grid-cols-2">
+					{services.map((service) => (
+						<ServiceCard {...service} />
+					))}
+				</div>
 			</div>
 		</div>
 	</section>
 
-	<section class="bg-neutral-base py-20 dark:bg-neutral-950">
-		<div class="mx-auto max-w-6xl px-6 space-y-12">
-			<SectionHeading
-				eyebrow="TESTIMONIANZE"
-				title="Risultati concreti, fiducia duratura"
-				description="Accompagno famiglie e imprenditori in percorsi trasformativi: ridurre il rischio percepito, prendere decisioni efficaci, armonizzare gli obiettivi."
-			/>
-			<div class="grid gap-6 md:grid-cols-3">
+	<section class="bg-neutral-900 py-24 lg:py-32 text-white relative overflow-hidden">
+		<div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-20">
+			<div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-brand-primary blur-3xl"></div>
+			<div class="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-brand-accent blur-3xl"></div>
+		</div>
+		<div class="mx-auto max-w-6xl px-6 relative z-10">
+			<div class="max-w-3xl mx-auto text-center mb-16">
+				<h2 class="text-3xl md:text-4xl font-serif mb-6">Risultati concreti, fiducia duratura</h2>
+				<p class="text-neutral-400 text-lg leading-relaxed">
+					La vera misura del successo è la serenità dei miei clienti nel tempo.
+				</p>
+			</div>
+			<div class="grid gap-8 md:grid-cols-3">
 				{testimonials.map((item) => (
-					<TestimonialCard {...item} />
+					<div class="bg-white/5 backdrop-blur-sm border border-white/10 p-8 rounded-3xl hover:bg-white/10 transition duration-300">
+						<div class="mb-6 text-brand-accent">
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
+								<path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 8.44772 14.017 9V11C14.017 11.5523 13.5693 12 13.017 12H12.017V5H22.017V15C22.017 18.3137 19.3307 21 16.017 21H14.017ZM5.0166 21L5.0166 18C5.0166 16.8954 5.91203 16 7.0166 16H10.0166C10.5689 16 11.0166 15.5523 11.0166 15V9C11.0166 8.44772 10.5689 8 10.0166 8H6.0166C5.46432 8 5.0166 8.44772 5.0166 9V11C5.0166 11.5523 4.56889 12 4.0166 12H3.0166V5H13.0166V15C13.0166 18.3137 10.3303 21 7.0166 21H5.0166Z" />
+							</svg>
+						</div>
+						<p class="text-neutral-300 italic mb-6 leading-relaxed">"{item.quote}"</p>
+						<div>
+							<p class="font-semibold text-white">{item.author}</p>
+							<p class="text-xs text-neutral-500 uppercase tracking-wider mt-1">{item.role}</p>
+						</div>
+					</div>
 				))}
 			</div>
 		</div>
 	</section>
 
-	<section class="py-20 bg-white dark:bg-neutral-950">
-		<div class="mx-auto max-w-6xl px-6 space-y-12">
+	<section class="py-24 lg:py-32 bg-white dark:bg-neutral-950">
+		<div class="mx-auto max-w-6xl px-6 space-y-16">
 			<div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
 				<SectionHeading
 					eyebrow="BLOG"
@@ -122,7 +150,7 @@ const testimonials = [
 				/>
 				<a href="/blog" class="text-sm font-semibold text-brand-primary hover:text-brand-light transition">Vedi tutti</a>
 			</div>
-			<div class="grid gap-6 md:grid-cols-3">
+			<div class="grid gap-8 md:grid-cols-3">
 				{latestArticles.length > 0 ? (
 					latestArticles.map((article) => <BlogCard article={article} />)
 				) : (
@@ -132,8 +160,8 @@ const testimonials = [
 		</div>
 	</section>
 
-	<section class="bg-neutral-base py-20 dark:bg-neutral-950">
-		<div class="mx-auto max-w-6xl px-6 space-y-12">
+	<section class="bg-neutral-base py-24 lg:py-32 dark:bg-neutral-950">
+		<div class="mx-auto max-w-6xl px-6 space-y-16">
 			<div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
 				<SectionHeading
 					eyebrow="EVENTI"
@@ -142,7 +170,7 @@ const testimonials = [
 				/>
 				<a href="/eventi" class="text-sm font-semibold text-brand-primary hover:text-brand-light transition">Calendario completo</a>
 			</div>
-			<div class="grid gap-6 md:grid-cols-3">
+			<div class="grid gap-8 md:grid-cols-3">
 				{upcomingEvents.length > 0 ? (
 					upcomingEvents.map((event) => <EventCard event={event} />)
 				) : (

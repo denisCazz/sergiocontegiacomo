@@ -8,8 +8,8 @@ export const siteConfig = {
   role: 'Consulente patrimoniale & coach finanziario',
   siteUrl: 'https://www.sergiocontegiacomo.it',
   contactEmail: 'info@sergiocontegiacomo.it',
-  phone: '+39 000 000 0000',
-  address: 'Milano, Italia',
+  phone: '0172 44191',
+  address: 'Piazza Roma, 39, 12042 Bra (CN)',
   newsletterEndpoint: '/api/newsletter',
   social: {
     linkedin: 'https://www.linkedin.com/',

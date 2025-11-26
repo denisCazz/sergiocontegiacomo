@@ -1,4 +1,4 @@
-import { cmsConfig } from './config';
+import { supabase } from './supabase';
 import dayjs from 'dayjs';
 import { sampleArticles } from './dataFallback';
 
@@ -51,186 +51,172 @@ export type EventItem = {
   tags?: string[];
 };
 
-const DEFAULT_HEADERS = cmsConfig.strapiToken
-  ? {
-      Authorization: `Bearer ${cmsConfig.strapiToken}`,
-    }
-  : undefined;
-
-function buildQuery(params: FetchOptions = {}) {
-  const search = new URLSearchParams();
-
-  if (params.populate) {
-    search.set('populate', params.populate);
-  }
-
-  if (params.sort) {
-    search.set('sort', params.sort);
-  }
-
-  if (params.pagination) {
-    search.set('pagination[page]', String(params.pagination.page));
-    search.set('pagination[pageSize]', String(params.pagination.pageSize));
-  }
-
-  const appendFilter = (prefix: string, value: unknown) => {
-    if (value === undefined || value === null) return;
-
-    if (Array.isArray(value)) {
-      value.forEach((item, index) => appendFilter(`${prefix}[${index}]`, item));
-      return;
-    }
-
-    if (typeof value === 'object') {
-      Object.entries(value as Record<string, unknown>).forEach(([key, child]) => {
-        appendFilter(`${prefix}[${key}]`, child);
-      });
-      return;
-    }
-
-    search.set(prefix, String(value));
-  };
-
-  if (params.filters) {
-    Object.entries(params.filters).forEach(([key, value]) => {
-      appendFilter(`filters[${key}]`, value);
-    });
-  }
-
-  return search.size > 0 ? `?${search.toString()}` : '';
-}
-
-async function fetchStrapi<T>(endpoint: string, options: FetchOptions = {}): Promise<StrapiResponse<T>> {
-  if (!cmsConfig.strapiBaseUrl) {
-    throw new Error('Missing STRAPI_BASE_URL in environment variables');
-  }
-
-  const url = `${cmsConfig.strapiBaseUrl}/api/${endpoint}${buildQuery(options)}`;
-  const res = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...DEFAULT_HEADERS,
-    },
-  });
-
-  if (!res.ok) {
-    const errorBody = await res.text();
-    throw new Error(`Strapi request failed: ${res.status} ${res.statusText} - ${errorBody}`);
-  }
-
-  return res.json();
-}
-
 export async function getArticles(options: FetchOptions = {}) {
-  if (!cmsConfig.strapiBaseUrl) {
-    let filtered = [...sampleArticles];
+  let query = supabase.from('articles').select('*', { count: 'exact' });
 
-    if (options.filters) {
-      const tagFilter = (() => {
-        const tagsFilter = options.filters?.tags as Record<string, unknown> | undefined;
-        const contains = tagsFilter?.['$containsi'];
-        return typeof contains === 'string' ? contains : undefined;
-      })();
-      const slugFilter = options.filters.slug;
-
-      if (typeof tagFilter === 'string') {
-        filtered = filtered.filter((article) => article.tags?.some((tag) => tag.toLowerCase() === tagFilter.toLowerCase()));
-      }
-
-      if (typeof slugFilter === 'string') {
-        filtered = filtered.filter((article) => article.slug === slugFilter);
-      }
+  // Filters
+  if (options.filters) {
+    if (options.filters.slug) {
+      query = query.eq('slug', options.filters.slug);
     }
-
-  filtered.sort((a, b) => (dayjs(a.publishedAt).isBefore(dayjs(b.publishedAt)) ? 1 : -1));
-
-  const page = options.pagination?.page ?? 1;
-    const pageSize = options.pagination?.pageSize ?? filtered.length;
-    const start = (page - 1) * pageSize;
-    const paged = filtered.slice(start, start + pageSize);
-
-    return {
-      data: paged.map((article, index) => ({
-        id: start + index + 1,
-        attributes: article,
-      })),
-      meta: {
-        pagination: {
-          page,
-          pageSize,
-          pageCount: Math.max(1, Math.ceil(filtered.length / pageSize)),
-          total: filtered.length,
-        },
-      },
-    } satisfies StrapiResponse<Article>;
+    // Handle other filters if needed, e.g. tags
   }
 
-  const response = await fetchStrapi<Article>('articoli', {
-    populate: 'coverImage',
-    sort: 'publishedAt:desc',
-    ...options,
-  });
+  // Sort
+  query = query.order('published_at', { ascending: false });
 
-  return response;
+  // Pagination
+  const page = options.pagination?.page ?? 1;
+  const pageSize = options.pagination?.pageSize ?? 10;
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  query = query.range(from, to);
+
+  const { data, count, error } = await query;
+
+  if (error) {
+    console.error('Error fetching articles:', error);
+    return { data: [], meta: { pagination: { page, pageSize, pageCount: 0, total: 0 } } };
+  }
+
+  const articles = (data || []).map((item) => ({
+    id: item.id,
+    attributes: {
+      title: item.title,
+      slug: item.slug,
+      publishedAt: item.published_at,
+      author: item.author,
+      coverImage: item.cover_image,
+      excerpt: item.excerpt,
+      content: item.content,
+      tags: item.tags,
+    } as Article,
+  }));
+
+  return {
+    data: articles,
+    meta: {
+      pagination: {
+        page,
+        pageSize,
+        pageCount: Math.ceil((count || 0) / pageSize),
+        total: count || 0,
+      },
+    },
+  } satisfies StrapiResponse<Article>;
 }
 
 export async function getArticleBySlug(slug: string) {
-  if (!cmsConfig.strapiBaseUrl) {
-    return sampleArticles.find((article) => article.slug === slug) ?? null;
-  }
+  const { data, error } = await supabase
+    .from('articles')
+    .select('*')
+    .eq('slug', slug)
+    .single();
 
-  const response = await fetchStrapi<Article>('articoli', {
-    populate: 'coverImage',
-    filters: {
-      slug,
-    },
-  });
-
-  return response.data[0]?.attributes ?? null;
-}
-
-export async function getEvents(options: FetchOptions = {}) {
-  if (!cmsConfig.strapiBaseUrl) {
-    const page = options.pagination?.page ?? 1;
-    const pageSize = options.pagination?.pageSize ?? 10;
-
-    return {
-      data: [],
-      meta: {
-        pagination: {
-          page,
-          pageSize,
-          pageCount: 1,
-          total: 0,
-        },
-      },
-    } satisfies StrapiResponse<EventItem>;
-  }
-
-  const response = await fetchStrapi<EventItem>('eventi', {
-    populate: 'coverImage',
-    sort: 'date:asc',
-    ...options,
-  });
-
-  return response;
-}
-
-export async function getEventBySlug(slug: string) {
-  if (!cmsConfig.strapiBaseUrl) {
+  if (error || !data) {
     return null;
   }
 
-  const response = await fetchStrapi<EventItem>('eventi', {
-    populate: 'coverImage',
-    filters: {
-      slug,
-    },
-  });
+  return {
+    title: data.title,
+    slug: data.slug,
+    publishedAt: data.published_at,
+    author: data.author,
+    coverImage: data.cover_image,
+    excerpt: data.excerpt,
+    content: data.content,
+    tags: data.tags,
+  } as Article;
+}
 
-  return response.data[0]?.attributes ?? null;
+export async function getEvents(options: FetchOptions = {}) {
+  let query = supabase.from('events').select('*', { count: 'exact' });
+
+  // Filters
+  if (options.filters) {
+    if (options.filters.date && typeof options.filters.date === 'object') {
+       // Handle date filters like $gte
+       const dateFilter = options.filters.date as any;
+       if (dateFilter.$gte) {
+         query = query.gte('date', dateFilter.$gte);
+       }
+    }
+  }
+
+  // Sort
+  query = query.order('date', { ascending: true });
+
+  // Pagination
+  const page = options.pagination?.page ?? 1;
+  const pageSize = options.pagination?.pageSize ?? 10;
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  query = query.range(from, to);
+
+  const { data, count, error } = await query;
+
+  if (error) {
+    console.error('Error fetching events:', error);
+    return { data: [], meta: { pagination: { page, pageSize, pageCount: 0, total: 0 } } };
+  }
+
+  const events = (data || []).map((item) => ({
+    id: item.id,
+    attributes: {
+      title: item.title,
+      slug: item.slug,
+      date: item.date,
+      time: item.time,
+      location: item.location,
+      coverImage: item.cover_image,
+      description: item.description,
+      price: item.price,
+      status: item.status,
+      tags: item.tags,
+    } as EventItem,
+  }));
+
+  return {
+    data: events,
+    meta: {
+      pagination: {
+        page,
+        pageSize,
+        pageCount: Math.ceil((count || 0) / pageSize),
+        total: count || 0,
+      },
+    },
+  } satisfies StrapiResponse<EventItem>;
+}
+
+export async function getEventBySlug(slug: string) {
+  const { data, error } = await supabase
+    .from('events')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+
+  if (error || !data) {
+    return null;
+  }
+
+  return {
+    title: data.title,
+    slug: data.slug,
+    date: data.date,
+    time: data.time,
+    location: data.location,
+    coverImage: data.cover_image,
+    description: data.description,
+    price: data.price,
+    status: data.status,
+    tags: data.tags,
+  } as EventItem;
 }
 
 export function isEventUpcoming(event: EventItem) {
   return dayjs(event.date).isSame(dayjs(), 'day') || dayjs(event.date).isAfter(dayjs(), 'day');
 }
+
