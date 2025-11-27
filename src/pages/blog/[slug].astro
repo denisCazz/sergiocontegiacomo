@@ -36,30 +36,119 @@ export async function getStaticPaths() {
 
 <BaseLayout title={article.title} description={article.excerpt} activePath="/blog">
   <article class="bg-neutral-base dark:bg-neutral-950">
-    <div class="mx-auto max-w-4xl px-6 py-20 space-y-12">
-      <SectionHeading
-        eyebrow={formattedDate}
-        title={article.title}
-        description={article.excerpt}
-        align="center"
-      />
-      {article.coverImage && (
-        <img
-          src={article.coverImage}
-          alt={`Copertina articolo ${article.title}`}
-          class="w-full rounded-3xl border border-neutral-border object-cover dark:border-neutral-800"
-        />
-      )}
-      <div
-        class="prose prose-lg prose-neutral max-w-none prose-headings:font-serif dark:prose-invert"
-        set:html={htmlContent || '<p>Contenuto disponibile a breve.</p>'}
-      ></div>
-      <div class="rounded-3xl border border-neutral-border bg-white p-8 dark:border-neutral-800 dark:bg-neutral-900">
-        <p class="text-sm uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light">Autore</p>
-        <p class="mt-3 text-lg font-semibold text-neutral-text dark:text-white">{article.author}</p>
+    <div class="mx-auto max-w-7xl px-6 py-20">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div class="lg:col-span-8 space-y-12">
+          <SectionHeading
+            eyebrow={formattedDate}
+            title={article.title}
+            description={article.excerpt}
+            align="left"
+          />
+          
+          <div id="rating-summary" class="flex items-center gap-4 -mt-6 mb-8">
+            <div class="flex gap-1 text-yellow-400" id="avg-stars">
+              <!-- Stars will be injected here -->
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span class="text-2xl font-bold text-brand-primary dark:text-brand-light" id="avg-rating">-</span>
+              <span class="text-sm text-neutral-muted dark:text-neutral-400" id="total-reviews">0 recensioni</span>
+            </div>
+          </div>
+
+          {article.coverImage && (
+            <img
+              src={article.coverImage}
+              alt={`Copertina articolo ${article.title}`}
+              class="w-full rounded-3xl border border-neutral-border object-cover dark:border-neutral-800"
+            />
+          )}
+          <div
+            class="prose prose-lg prose-neutral max-w-none prose-headings:font-serif dark:prose-invert"
+            set:html={htmlContent || '<p>Contenuto disponibile a breve.</p>'}
+          ></div>
+          <div class="rounded-3xl border border-neutral-border bg-white p-8 dark:border-neutral-800 dark:bg-neutral-900">
+            <p class="text-sm uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light">Autore</p>
+            <p class="mt-3 text-lg font-semibold text-neutral-text dark:text-white">{article.author}</p>
+          </div>
+        </div>
+
+        <aside class="lg:col-span-4 space-y-8">
+          <div class="sticky top-32 space-y-8">
+            <!-- Rating & Comments Sidebar -->
+            <div class="rounded-3xl border border-neutral-border bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-900" id="comments-section" data-slug={article.slug}>
+              <h3 class="text-lg font-serif font-semibold text-neutral-text dark:text-white mb-4">Commenti</h3>
+
+              <div class="space-y-4 mb-6 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar" id="comments-list">
+                <p class="text-sm text-neutral-muted text-center py-4">Caricamento commenti...</p>
+              </div>
+
+              <button id="open-review-modal-btn" class="w-full rounded-lg bg-brand-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-light transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                Scrivi la recensione
+              </button>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   </article>
+
+  <!-- Review Modal -->
+  <div id="review-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" id="modal-backdrop"></div>
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+      <div class="inline-block align-bottom bg-white dark:bg-neutral-900 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-neutral-200 dark:border-neutral-800">
+        <div class="bg-white dark:bg-neutral-900 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+              <h3 class="text-lg leading-6 font-medium text-neutral-900 dark:text-white" id="modal-title">
+                Scrivi la tua recensione
+              </h3>
+              <div class="mt-4">
+                <form id="comment-form" class="space-y-4">
+                  <div>
+                    <label for="comment-user-name" class="block text-xs font-medium text-neutral-muted mb-1">Il tuo nome</label>
+                    <input id="comment-user-name" type="text" name="user_name" required class="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm focus:border-brand-primary focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white" placeholder="Mario Rossi" />
+                  </div>
+
+                  <div>
+                    <span class="block text-xs font-medium text-neutral-muted mb-1">Valutazione</span>
+                    <div class="flex gap-2 text-neutral-300 hover:text-yellow-400 transition-colors cursor-pointer justify-center sm:justify-start" id="star-rating-input">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button type="button" data-value={star} class="focus:outline-none hover:scale-110 transition-transform p-1">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                          </svg>
+                        </button>
+                      ))}
+                    </div>
+                    <input type="hidden" name="rating" id="rating-value" required />
+                  </div>
+
+                  <div>
+                    <label for="comment-content" class="block text-xs font-medium text-neutral-muted mb-1">Commento</label>
+                    <textarea id="comment-content" name="content" required rows="4" class="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm focus:border-brand-primary focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white" placeholder="Condividi la tua opinione..."></textarea>
+                  </div>
+
+                  <p id="form-message" class="text-xs text-center hidden"></p>
+                  
+                  <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-brand-primary text-base font-medium text-white hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary sm:col-start-2 sm:text-sm">
+                      Invia
+                    </button>
+                    <button type="button" id="close-modal-btn" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary sm:mt-0 sm:col-start-1 sm:text-sm dark:bg-neutral-800 dark:text-gray-300 dark:border-neutral-700 dark:hover:bg-neutral-700">
+                      Annulla
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <CTASection
     title="Vuoi approfondire questi temi per la tua realta'?"
@@ -68,3 +157,196 @@ export async function getStaticPaths() {
     secondaryCta={{ label: 'Iscriviti alla newsletter', href: '#newsletter' }}
   />
 </BaseLayout>
+
+<script>
+  import { createClient } from '@supabase/supabase-js';
+
+  // Initialize Supabase client
+  const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+  const commentsSection = document.getElementById('comments-section');
+  const slug = commentsSection?.dataset.slug;
+
+  const commentsList = document.getElementById('comments-list');
+  const commentForm = document.getElementById('comment-form');
+  const ratingInput = document.getElementById('rating-value') as HTMLInputElement;
+  const starButtons = document.querySelectorAll('#star-rating-input button');
+  const avgRatingEl = document.getElementById('avg-rating');
+  const avgStarsEl = document.getElementById('avg-stars');
+  const totalReviewsEl = document.getElementById('total-reviews');
+  const formMessage = document.getElementById('form-message');
+
+  // Modal Elements
+  const modal = document.getElementById('review-modal');
+  const openModalBtn = document.getElementById('open-review-modal-btn');
+  const closeModalBtn = document.getElementById('close-modal-btn');
+  const modalBackdrop = document.getElementById('modal-backdrop');
+
+  if (!slug) {
+    console.error('Slug not found');
+  } else {
+    // Modal Logic
+    const toggleModal = (show: boolean) => {
+      if (!modal) return;
+      if (show) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      } else {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+    };
+
+    if (openModalBtn) openModalBtn.addEventListener('click', () => toggleModal(true));
+    if (closeModalBtn) closeModalBtn.addEventListener('click', () => toggleModal(false));
+    if (modalBackdrop) modalBackdrop.addEventListener('click', () => toggleModal(false));
+
+    // Star Rating Interaction
+    let currentRating = 0;
+    starButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const value = parseInt(btn.getAttribute('data-value') || '0');
+        currentRating = value;
+        if (ratingInput) ratingInput.value = value.toString();
+        updateStars(value);
+      });
+      btn.addEventListener('mouseenter', () => {
+        updateStars(parseInt(btn.getAttribute('data-value') || '0'));
+      });
+    });
+
+    const starRatingInput = document.getElementById('star-rating-input');
+    if (starRatingInput) {
+      starRatingInput.addEventListener('mouseleave', () => {
+        updateStars(currentRating);
+      });
+    }
+
+    function updateStars(value: number) {
+      starButtons.forEach(btn => {
+        const btnValue = parseInt(btn.getAttribute('data-value') || '0');
+        if (btnValue <= value) {
+          btn.classList.add('text-yellow-400');
+          btn.classList.remove('text-neutral-300');
+        } else {
+          btn.classList.add('text-neutral-300');
+          btn.classList.remove('text-yellow-400');
+        }
+      });
+    }
+
+    // Fetch Comments & Stats
+    async function loadComments() {
+      if (!commentsList || !avgRatingEl || !totalReviewsEl || !avgStarsEl) return;
+
+      const { data: comments, error } = await supabase
+        .from('comments')
+        .select('*')
+        .eq('article_slug', slug)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading comments:', error);
+        commentsList.innerHTML = '<p class="text-sm text-red-500 text-center">Errore nel caricamento dei commenti.</p>';
+        return;
+      }
+
+      if (comments.length === 0) {
+        commentsList.innerHTML = '<p class="text-sm text-neutral-muted text-center italic">Nessun commento ancora. Sii il primo!</p>';
+      } else {
+        commentsList.innerHTML = comments.map((comment: any) => `
+          <div class="border-b border-neutral-100 dark:border-neutral-800 last:border-0 pb-4 last:pb-0">
+            <div class="flex justify-between items-start mb-1">
+              <span class="font-semibold text-sm text-neutral-900 dark:text-white">${comment.user_name}</span>
+              <div class="flex text-yellow-400 text-xs">
+                ${Array(5).fill(0).map((_, i) => 
+                  `<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ${i < comment.rating ? 'fill-current' : 'text-neutral-300'}" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`
+                ).join('')}
+              </div>
+            </div>
+            <p class="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">${comment.content}</p>
+          </div>
+        `).join('');
+      }
+
+      // Calculate Stats locally for immediate update
+      if (comments.length > 0) {
+        const avg = comments.reduce((acc: number, curr: any) => acc + curr.rating, 0) / comments.length;
+        avgRatingEl.textContent = avg.toFixed(1);
+        totalReviewsEl.textContent = `${comments.length} recensioni`;
+        
+        avgStarsEl.innerHTML = Array(5).fill(0).map((_, i) => 
+          `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ${i < Math.round(avg) ? 'fill-current' : 'text-neutral-300'}" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`
+        ).join('');
+      } else {
+        avgRatingEl.textContent = '-';
+        totalReviewsEl.textContent = '0 recensioni';
+        avgStarsEl.innerHTML = '';
+      }
+    }
+
+    // Submit Comment
+    if (commentForm) {
+      commentForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!formMessage) return;
+
+        const formData = new FormData(commentForm as HTMLFormElement);
+        const user_name = formData.get('user_name');
+        const rating = parseInt(formData.get('rating') as string);
+        const content = formData.get('content');
+
+        if (!rating) {
+          formMessage.textContent = 'Seleziona una valutazione in stelle.';
+          formMessage.className = 'text-xs text-center text-red-500 block';
+          formMessage.hidden = false;
+          return;
+        }
+
+        formMessage.hidden = true;
+        const submitBtn = commentForm.querySelector('button[type="submit"]');
+        if (!submitBtn) return;
+        
+        const originalBtnText = submitBtn.textContent;
+        (submitBtn as HTMLButtonElement).disabled = true;
+        submitBtn.textContent = 'Invio...';
+
+        const { error } = await supabase
+          .from('comments')
+          .insert([{ article_slug: slug, user_name, rating, content }]);
+
+        if (error) {
+          console.error('Error submitting comment:', error);
+          formMessage.textContent = 'Errore durante l\'invio. Riprova.';
+          formMessage.className = 'text-xs text-center text-red-500 block';
+          formMessage.hidden = false;
+        } else {
+          formMessage.textContent = 'Grazie per il tuo commento!';
+          formMessage.className = 'text-xs text-center text-green-500 block';
+          formMessage.hidden = false;
+          (commentForm as HTMLFormElement).reset();
+          currentRating = 0;
+          updateStars(0);
+          loadComments();
+          
+          // Close modal after delay
+          setTimeout(() => {
+            const modal = document.getElementById('review-modal');
+            if (modal) {
+              modal.classList.add('hidden');
+              document.body.style.overflow = '';
+            }
+            formMessage.hidden = true;
+          }, 1500);
+        }
+
+        (submitBtn as HTMLButtonElement).disabled = false;
+        submitBtn.textContent = originalBtnText;
+      });
+    }
+
+    loadComments();
+  }
+</script>

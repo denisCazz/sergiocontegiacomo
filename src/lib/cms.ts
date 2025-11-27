@@ -51,6 +51,153 @@ export type EventItem = {
   tags?: string[];
 };
 
+export type Comment = {
+  id: number;
+  article_slug: string;
+  user_name: string;
+  rating: number;
+  content: string;
+  created_at: string;
+};
+
+export type EventRSVP = {
+  id: number;
+  event_slug: string;
+  user_name: string;
+  status: 'attending' | 'not_attending';
+  created_at: string;
+};
+
+export type ArticleStats = {
+  article_slug: string;
+  comment_count: number;
+  average_rating: number;
+};
+
+export type EventStats = {
+  event_slug: string;
+  attending_count: number;
+  not_attending_count: number;
+};
+
+export async function getAllComments() {
+  const { data, error } = await supabase
+    .from('comments')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching all comments:', error);
+    return [];
+  }
+  return data as Comment[];
+}
+
+export async function deleteComment(id: number) {
+  const { error } = await supabase
+    .from('comments')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting comment:', error);
+    return false;
+  }
+  return true;
+}
+
+export async function getComments(slug: string) {
+  const { data, error } = await supabase
+    .from('comments')
+    .select('*')
+    .eq('article_slug', slug)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching comments:', error);
+    return [];
+  }
+  return data as Comment[];
+}
+
+export async function addComment(comment: Omit<Comment, 'id' | 'created_at'>) {
+  const { data, error } = await supabase
+    .from('comments')
+    .insert([comment])
+    .select();
+
+  if (error) {
+    console.error('Error adding comment:', error);
+    throw error;
+  }
+  return data[0] as Comment;
+}
+
+export async function getArticleStats(slug: string) {
+  const { data, error } = await supabase
+    .from('article_stats')
+    .select('*')
+    .eq('article_slug', slug)
+    .single();
+
+  if (error && error.code !== 'PGRST116') { // PGRST116 is "The result contains 0 rows"
+    console.error('Error fetching article stats:', error);
+  }
+  return data as ArticleStats | null;
+}
+
+export async function getAllArticleStats() {
+  const { data, error } = await supabase
+    .from('article_stats')
+    .select('*');
+
+  if (error) {
+    console.error('Error fetching all article stats:', error);
+    return [];
+  }
+  return data as ArticleStats[];
+}
+
+export async function getEventRSVPs(slug: string) {
+  const { data, error } = await supabase
+    .from('event_rsvps')
+    .select('*')
+    .eq('event_slug', slug);
+
+  if (error) {
+    console.error('Error fetching event RSVPs:', error);
+    return [];
+  }
+  return data as EventRSVP[];
+}
+
+export async function addEventRSVP(rsvp: Omit<EventRSVP, 'id' | 'created_at'>) {
+  const { data, error } = await supabase
+    .from('event_rsvps')
+    .insert([rsvp])
+    .select();
+
+  if (error) {
+    console.error('Error adding event RSVP:', error);
+    throw error;
+  }
+  return data[0] as EventRSVP;
+}
+
+export async function getEventStats(slug: string) {
+  const { data, error } = await supabase
+    .from('event_stats')
+    .select('*')
+    .eq('event_slug', slug)
+    .single();
+
+  if (error && error.code !== 'PGRST116') {
+    console.error('Error fetching event stats:', error);
+  }
+  return data as EventStats | null;
+}
+
+
 export async function getArticles(options: FetchOptions = {}) {
   let query = supabase.from('articles').select('*', { count: 'exact' });
 

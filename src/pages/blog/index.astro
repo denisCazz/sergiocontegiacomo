@@ -47,11 +47,27 @@ const pagination = meta?.pagination ?? { page: 1, pageCount: 1 };
       </div>
 
       <div class="space-y-8">
-        <TagFilter tags={tags} activeTag={activeTag} basePath="/blog" />
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <TagFilter tags={tags} activeTag={activeTag} basePath="/blog" />
+          
+          <div class="relative inline-block text-left">
+            <select id="sort-select" class="block w-full rounded-full border border-neutral-200 bg-white px-4 py-2 pr-10 text-sm focus:border-brand-primary focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white appearance-none cursor-pointer">
+              <option value="recent">Più recenti</option>
+              <option value="rated">Più votati</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-neutral-500">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </div>
+          </div>
+        </div>
         
-        <div class="grid gap-8 md:grid-cols-3">
+        <div class="grid gap-8 md:grid-cols-3" id="articles-grid">
           {articles.length > 0 ? (
-            articles.map((article) => <BlogCard article={article} />)
+            articles.map((article) => (
+              <div data-slug={article.slug} data-date={article.publishedAt} class="article-item h-full">
+                <BlogCard article={article} />
+              </div>
+            ))
           ) : (
             <div class="col-span-full py-16 text-center rounded-[2.5rem] border border-dashed border-neutral-300 dark:border-neutral-700 bg-neutral-50/50 dark:bg-neutral-900/50">
               <div class="inline-flex h-16 w-16 items-center justify-center rounded-full bg-neutral-100 text-neutral-400 mb-6 dark:bg-neutral-800">
@@ -77,3 +93,65 @@ const pagination = meta?.pagination ?? { page: 1, pageCount: 1 };
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  import { createClient } from '@supabase/supabase-js';
+
+  const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+  const sortSelect = document.getElementById('sort-select') as HTMLSelectElement | null;
+  const grid = document.getElementById('articles-grid');
+  const items = Array.from(document.querySelectorAll('.article-item'));
+
+  let statsLoaded = false;
+  let articleStats: Record<string, number> = {};
+
+  async function loadStats() {
+    if (statsLoaded) return;
+    
+    const { data, error } = await supabase
+      .from('article_stats')
+      .select('article_slug, average_rating');
+
+    if (!error && data) {
+      data.forEach((stat: any) => {
+        articleStats[stat.article_slug] = stat.average_rating;
+      });
+    }
+    statsLoaded = true;
+  }
+
+  async function sortArticles(criteria: string) {
+    if (!grid) return;
+
+    if (criteria === 'rated') {
+      await loadStats();
+      items.sort((a, b) => {
+        const slugA = a.getAttribute('data-slug') || '';
+        const slugB = b.getAttribute('data-slug') || '';
+        const ratingA = articleStats[slugA] || 0;
+        const ratingB = articleStats[slugB] || 0;
+        return ratingB - ratingA;
+      });
+    } else {
+      items.sort((a, b) => {
+        const dateStrA = a.getAttribute('data-date') || '';
+        const dateStrB = b.getAttribute('data-date') || '';
+        const dateA = dateStrA ? new Date(dateStrA).getTime() : 0;
+        const dateB = dateStrB ? new Date(dateStrB).getTime() : 0;
+        return dateB - dateA;
+      });
+    }
+
+    items.forEach(item => grid.appendChild(item));
+  }
+
+  if (sortSelect) {
+    sortSelect.addEventListener('change', (e) => {
+      const target = e.target as HTMLSelectElement;
+      sortArticles(target.value);
+    });
+  }
+</script>

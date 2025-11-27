@@ -39,7 +39,7 @@ export async function getStaticPaths() {
 ---
 
 <BaseLayout title={event.title} description={event.description} activePath="/eventi">
-  <article class="bg-neutral-base dark:bg-neutral-950">
+  <article class="bg-neutral-base dark:bg-neutral-950" data-slug={event.slug} id="event-article">
     <div class="mx-auto max-w-4xl px-6 py-20 space-y-12">
       <SectionHeading
         eyebrow={isPast ? 'Evento terminato' : 'Evento'}
@@ -86,16 +86,48 @@ export async function getStaticPaths() {
               </div>
             )}
           </dl>
+          
+          {!isPast && (
+            <div class="pt-4 border-t border-neutral-100 dark:border-neutral-800" id="rsvp-section">
+              <h4 class="text-sm font-semibold text-neutral-text dark:text-white mb-3">Parteciperai?</h4>
+              <div class="flex gap-2 mb-3">
+                <button id="btn-attend" class="flex-1 rounded-lg bg-green-50 text-green-700 border border-green-200 py-2 text-xs font-semibold hover:bg-green-100 transition dark:bg-green-900/20 dark:text-green-400 dark:border-green-800">
+                  Sì, parteciperò
+                </button>
+                <button id="btn-not-attend" class="flex-1 rounded-lg bg-red-50 text-red-700 border border-red-200 py-2 text-xs font-semibold hover:bg-red-100 transition dark:bg-red-900/20 dark:text-red-400 dark:border-red-800">
+                  No
+                </button>
+              </div>
+              <div class="text-xs text-neutral-500 dark:text-neutral-400 flex justify-center mt-2">
+                <span id="count-attending" class="font-medium">0 partecipanti</span>
+              </div>
+
+              <!-- Email Modal -->
+              <div id="rsvp-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+                <div class="bg-white dark:bg-neutral-900 rounded-2xl p-6 max-w-sm w-full shadow-xl">
+                  <h5 class="text-lg font-semibold mb-4 dark:text-white">Conferma partecipazione</h5>
+                  <p class="text-sm text-neutral-600 dark:text-neutral-300 mb-4">Inserisci la tua email per confermare.</p>
+                  <label for="rsvp-email" class="sr-only">La tua email</label>
+                  <input type="email" id="rsvp-email" class="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm mb-4 focus:border-brand-primary focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white" placeholder="nome@esempio.com" />
+                  <div class="flex gap-3">
+                    <button id="rsvp-cancel" class="flex-1 py-2 text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white">Annulla</button>
+                    <button id="rsvp-confirm" class="flex-1 py-2 text-sm font-semibold text-white bg-brand-primary rounded-lg hover:bg-brand-light">Conferma</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <a
             href={isOnline ? `mailto:${import.meta.env.PUBLIC_EVENT_EMAIL ?? 'info@sergiocontegiacomo.it'}` : '/contatti?richiedi=evento'}
-            class={`inline-flex items-center justify-center rounded-full px-4 py-2.5 text-sm font-semibold transition ${
+            class={`inline-flex items-center justify-center rounded-full px-4 py-2.5 text-sm font-semibold transition w-full ${
               isPast
                 ? 'border border-neutral-border text-neutral-muted cursor-not-allowed dark:border-neutral-700 dark:text-neutral-400'
                 : 'bg-brand-primary text-white hover:bg-brand-light'
             }`}
             aria-disabled={isPast}
           >
-            {isPast ? 'Evento concluso' : 'Richiedi partecipazione'}
+            {isPast ? 'Evento concluso' : 'Richiedi informazioni'}
           </a>
         </aside>
       </div>
@@ -103,9 +135,141 @@ export async function getStaticPaths() {
   </article>
 
   <CTASection
-    title="Vuoi organizzare un evento personalizzato per il tuo team?"
-    description="Creo workshop dedicati a famiglie imprenditoriali e leadership team per sviluppare governance patrimoniale e processi decisionali."
-    primaryCta={{ label: 'Parliamone', href: '/contatti?richiedi=evento' }}
-    secondaryCta={{ label: 'Iscriviti alla newsletter eventi', href: '#newsletter' }}
+    title="Vuoi approfondire questi temi per la tua realta'?"
+    description="Organizziamo una sessione dedicata per trasformare insight in azioni concrete e portare valore al tuo patrimonio."
+    primaryCta={{ label: 'Prenota una call', href: '/contatti' }}
+    secondaryCta={{ label: 'Iscriviti alla newsletter', href: '#newsletter' }}
   />
+</BaseLayout>
+
+<script>
+  import { createClient } from '@supabase/supabase-js';
+
+  const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+  const article = document.getElementById('event-article');
+  const slug = article?.dataset.slug;
+
+  const btnAttend = document.getElementById('btn-attend');
+  const btnNotAttend = document.getElementById('btn-not-attend');
+  const countAttendEl = document.getElementById('count-attending');
+  const modal = document.getElementById('rsvp-modal');
+  const rsvpEmailInput = document.getElementById('rsvp-email') as HTMLInputElement;
+  const btnCancel = document.getElementById('rsvp-cancel');
+  const btnConfirm = document.getElementById('rsvp-confirm');
+
+  let selectedStatus: string | null = null;
+
+  if (!slug) {
+    console.error('Slug not found');
+  } else {
+    async function loadStats() {
+      const { data, error } = await supabase
+        .from('event_rsvps')
+        .select('status')
+        .eq('event_slug', slug);
+      
+      if (error) {
+        console.error('Error loading stats:', error);
+        return;
+      }
+
+      const attending = data.filter((r: any) => r.status === 'attending').length;
+
+      if (countAttendEl) countAttendEl.textContent = `${attending} partecipanti`;
+    }
+
+    function openModal(status: string) {
+      selectedStatus = status;
+      if (modal) modal.classList.remove('hidden');
+      if (rsvpEmailInput) rsvpEmailInput.focus();
+    }
+
+    function closeModal() {
+      if (modal) modal.classList.add('hidden');
+      if (rsvpEmailInput) rsvpEmailInput.value = '';
+      selectedStatus = null;
+    }
+
+    function validateEmail(email: string) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    if (btnAttend) btnAttend.addEventListener('click', () => openModal('attending'));
+    if (btnNotAttend) btnNotAttend.addEventListener('click', () => openModal('not_attending'));
+    if (btnCancel) btnCancel.addEventListener('click', closeModal);
+
+    if (btnConfirm) btnConfirm.addEventListener('click', async () => {
+      if (!rsvpEmailInput) return;
+      const email = rsvpEmailInput.value.trim();
+      
+      if (!email || !validateEmail(email)) {
+        alert('Inserisci un indirizzo email valido');
+        return;
+      }
+
+      const btnText = btnConfirm.textContent;
+      btnConfirm.textContent = 'Salvataggio...';
+      (btnConfirm as HTMLButtonElement).disabled = true;
+
+      // Check if user already voted (simple local storage check to prevent spam)
+      const hasVoted = localStorage.getItem(`rsvp_${slug}`);
+      if (hasVoted) {
+        alert('Hai già votato per questo evento.');
+        closeModal();
+        return;
+      }
+
+      const { error } = await supabase
+        .from('event_rsvps')
+        .insert([{ 
+          event_slug: slug, 
+          user_name: 'Partecipante', // Fallback for schema compatibility
+          user_email: email,
+          status: selectedStatus 
+        }]);
+
+      if (error) {
+        console.error('Error saving RSVP:', error);
+        alert('Errore durante il salvataggio. Riprova.');
+      } else {
+        localStorage.setItem(`rsvp_${slug}`, selectedStatus || '');
+        loadStats();
+        closeModal();
+        alert('Grazie! La tua risposta è stata registrata.');
+        
+        // Visual feedback
+        if (selectedStatus === 'attending' && btnAttend) {
+          btnAttend.classList.add('bg-green-200', 'border-green-300');
+          btnAttend.textContent = 'Parteciperai';
+        } else if (selectedStatus === 'not_attending' && btnNotAttend) {
+          btnNotAttend.classList.add('bg-red-200', 'border-red-300');
+          btnNotAttend.textContent = 'Non parteciperai';
+        }
+      }
+
+      btnConfirm.textContent = btnText;
+      (btnConfirm as HTMLButtonElement).disabled = false;
+    });
+
+    // Check previous vote on load
+    const previousVote = localStorage.getItem(`rsvp_${slug}`);
+    if (previousVote === 'attending' && btnAttend) {
+       btnAttend.classList.add('bg-green-200', 'border-green-300');
+       btnAttend.textContent = 'Parteciperai';
+    } else if (previousVote === 'not_attending' && btnNotAttend) {
+       btnNotAttend.classList.add('bg-red-200', 'border-red-300');
+       btnNotAttend.textContent = 'Non parteciperai';
+    }
+
+    loadStats();
+  }
+</script>
+        </aside>
+      </div>
+    </div>
+  </article>
 </BaseLayout>
