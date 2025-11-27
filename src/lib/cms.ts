@@ -201,6 +201,9 @@ export async function getEventStats(slug: string) {
 export async function getArticles(options: FetchOptions = {}) {
   let query = supabase.from('articles').select('*', { count: 'exact' });
 
+  // Filter out drafts
+  query = query.not('published_at', 'is', null);
+
   // Filters
   if (options.filters) {
     if (options.filters.slug) {
@@ -259,6 +262,7 @@ export async function getArticleBySlug(slug: string) {
     .from('articles')
     .select('*')
     .eq('slug', slug)
+    .not('published_at', 'is', null)
     .single();
 
   if (error || !data) {

@@ -38,6 +38,33 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           </div>
         </div>
       </div>
+
+      <div class="py-4">
+        <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-4">Lista Utenti</h3>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Creato il</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ultimo Accesso</th>
+                    <th scope="col" class="relative px-6 py-3">
+                      <span class="sr-only">Azioni</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="usersTableBody" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                  <tr>
+                    <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">Caricamento utenti...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </AdminLayout>
@@ -45,6 +72,64 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 <script>
   const form = document.getElementById('createUserForm') as HTMLFormElement;
   const messageDiv = document.getElementById('message');
+  const usersTableBody = document.getElementById('usersTableBody');
+
+  async function fetchUsers() {
+    try {
+      const response = await fetch('/api/admin/users');
+      const data = await response.json();
+
+      if (response.ok) {
+        renderUsers(data.users);
+      } else {
+        if (usersTableBody) usersTableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-center text-red-500">Errore: ${data.error}</td></tr>`;
+      }
+    } catch (error) {
+      if (usersTableBody) usersTableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-center text-red-500">Errore di connessione</td></tr>`;
+    }
+  }
+
+  function renderUsers(users: any[]) {
+    if (!usersTableBody) return;
+    
+    if (users.length === 0) {
+      usersTableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Nessun utente trovato</td></tr>`;
+      return;
+    }
+
+    usersTableBody.innerHTML = users.map(user => `
+      <tr>
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">${user.email}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${new Date(user.created_at).toLocaleDateString()}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString() : 'Mai'}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+          <button onclick="deleteUser('${user.id}')" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">Elimina</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  (window as any).deleteUser = async (userId: string) => {
+    if (!confirm('Sei sicuro di voler eliminare questo utente? Questa azione è irreversibile.')) return;
+
+    try {
+      const response = await fetch(`/api/admin/users?id=${userId}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        fetchUsers();
+      } else {
+        const data = await response.json();
+        alert(`Errore: ${data.error}`);
+      }
+    } catch (error) {
+      alert('Errore durante l\'eliminazione');
+    }
+  };
+
+  // Initial fetch
+  fetchUsers();
 
   if (form) {
     form.addEventListener('submit', async (e) => {
@@ -87,6 +172,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             messageDiv.classList.add('bg-green-50', 'text-green-800', 'dark:bg-green-900/20', 'dark:text-green-200');
             messageDiv.textContent = `Utente creato con successo: ${data.user.email}`;
             form.reset();
+            fetchUsers(); // Refresh list
           } else {
             messageDiv.classList.add('bg-red-50', 'text-red-800', 'dark:bg-red-900/20', 'dark:text-red-200');
             messageDiv.textContent = `Errore: ${data.error}`;
