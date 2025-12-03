@@ -5,14 +5,14 @@ export const cmsConfig = {
 
 export const siteConfig = {
   name: 'Sergio Contegiacomo',
-  role: 'Consulente patrimoniale & coach finanziario',
+  role: 'Consulente Patrimoniale & Coach Finanziario',
   siteUrl: 'https://www.sergiocontegiacomo.it',
   contactEmail: 'info@sergiocontegiacomo.it',
   phone: '0172 44191',
   address: 'Piazza Roma, 39, 12042 Bra (CN)',
   newsletterEndpoint: '/api/newsletter',
   social: {
-    linkedin: 'https://www.linkedin.com/',
+    linkedin: 'https://www.linkedin.com/in/sergio-contegiacomo-b180b921',
     youtube: 'https://www.youtube.com/',
     instagram: 'https://www.instagram.com/',
   },

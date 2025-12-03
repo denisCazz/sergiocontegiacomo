@@ -1,0 +1,125 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPressItems } from '../../lib/cms';
+
+// Leggi gli articoli dal database
+const pressItems = await getPressItems();
+
+// Funzione per formattare la data
+const formatDate = (dateStr: string) => {
+	if (!dateStr) return '';
+	const date = new Date(dateStr);
+	const months = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+	return `${months[date.getMonth()]} ${date.getFullYear()}`;
+};
+---
+
+<BaseLayout title="Rassegna Stampa" activePath="/blog">
+	<section class="relative min-h-screen py-24 lg:py-32 bg-neutral-base dark:bg-neutral-950 overflow-hidden">
+		<!-- Background decorativo -->
+		<div class="absolute inset-0 overflow-hidden pointer-events-none">
+			<div class="absolute top-0 right-0 w-96 h-96 bg-brand-primary/5 rounded-full blur-3xl"></div>
+			<div class="absolute bottom-1/4 left-0 w-80 h-80 bg-brand-accent/5 rounded-full blur-3xl"></div>
+		</div>
+
+		<div class="mx-auto max-w-5xl px-6 relative z-10">
+			<!-- Header -->
+			<div class="text-center mb-16">
+				<div class="inline-flex items-center gap-3 rounded-full bg-brand-primary/10 px-5 py-2 text-sm font-semibold uppercase tracking-wider text-brand-primary mb-6 border border-brand-primary/20 dark:bg-brand-primary/20 dark:text-brand-light">
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+					</svg>
+					Rassegna Stampa
+				</div>
+				<h1 class="text-4xl md:text-5xl font-serif font-medium text-neutral-text dark:text-white mb-6">
+					Articoli e <span class="text-brand-primary italic">Interviste</span>
+				</h1>
+				<p class="text-xl text-neutral-muted leading-relaxed max-w-2xl mx-auto dark:text-neutral-400">
+					Una raccolta dei miei contributi su testate giornalistiche, riviste specializzate e pubblicazioni di settore.
+				</p>
+			</div>
+
+			<!-- Press Cards -->
+			{pressItems.length > 0 ? (
+				<div class="grid gap-6 md:grid-cols-2">
+					{pressItems.map((article) => (
+						<a 
+							href={article.file_url} 
+							target="_blank"
+							rel="noopener noreferrer"
+							class="group relative rounded-2xl border border-neutral-200 bg-white p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-brand-primary/30 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-brand-primary/50"
+						>
+							<div class="flex items-start gap-4">
+								<!-- Icona PDF -->
+								<div class="flex-shrink-0 w-14 h-14 rounded-xl bg-red-50 dark:bg-red-900/20 flex items-center justify-center text-red-500 dark:text-red-400 group-hover:scale-110 transition-transform">
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-6 4h4" />
+									</svg>
+								</div>
+								
+								<!-- Content -->
+								<div class="flex-1 min-w-0">
+									{article.testata && (
+										<span class="inline-block text-xs font-semibold uppercase tracking-wider text-brand-primary mb-1">
+											{article.testata}
+										</span>
+									)}
+									<h3 class="text-lg font-semibold text-neutral-text dark:text-white group-hover:text-brand-primary transition-colors line-clamp-2 mb-2">
+										{article.title}
+									</h3>
+									{article.published_at && (
+										<p class="text-sm text-neutral-muted dark:text-neutral-500">
+											{formatDate(article.published_at)}
+										</p>
+									)}
+								</div>
+								
+								<!-- Arrow -->
+								<div class="flex-shrink-0 text-neutral-400 group-hover:text-brand-primary transition-colors">
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+									</svg>
+								</div>
+							</div>
+							
+							<!-- Decorative line -->
+							<div class="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-brand-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+						</a>
+					))}
+				</div>
+			) : (
+				<!-- Empty state -->
+				<div class="text-center py-20 rounded-3xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50">
+					<div class="inline-flex h-20 w-20 items-center justify-center rounded-full bg-brand-primary/10 text-brand-primary mb-6">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+						</svg>
+					</div>
+					<h3 class="text-2xl font-semibold text-neutral-text dark:text-white mb-3">Nessun articolo disponibile</h3>
+					<p class="text-neutral-muted dark:text-neutral-400 max-w-md mx-auto mb-6">
+						La rassegna stampa è in fase di aggiornamento. Torna presto per consultare gli articoli pubblicati!
+					</p>
+					<a href="/blog" class="inline-flex items-center gap-2 text-brand-primary hover:text-brand-light transition-colors font-medium">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+						</svg>
+						Torna al Blog
+					</a>
+				</div>
+			)}
+
+			<!-- Back to blog link -->
+			{pressItems.length > 0 && (
+				<div class="text-center mt-16">
+					<a href="/blog" class="inline-flex items-center gap-3 text-neutral-muted hover:text-brand-primary transition-colors group dark:text-neutral-400">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+						</svg>
+						Torna al Blog
+					</a>
+				</div>
+			)}
+		</div>
+	</section>
+</BaseLayout>

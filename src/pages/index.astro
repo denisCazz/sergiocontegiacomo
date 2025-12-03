@@ -26,43 +26,87 @@ const upcomingEvents = (eventEntries ?? [])
 
 const services = [
 	{
-		title: "Wealth Management Strategico",
-		description:
-			"Analisi del patrimonio complessivo, definizione degli obiettivi e costruzione di portafogli resilienti con monitoraggio costante.",
-		items: ["Asset allocation dinamica", "Protezione del capitale", "Coordinamento advisor e family office"],
+		icon: "coach",
+		title: "Coach Finanziario",
+		description: "Il coaching ha precisi scopi: aumentare la conoscenza, la consapevolezza e la responsabilità individuale. L'obiettivo è evitare errori comportamentali e rimuovere le credenze limitanti sul denaro.",
 	},
 	{
-		title: "Coaching Finanziario One-to-One",
-		description:
-			"Percorsi personalizzati per imprenditori e famiglie per prendere decisioni consapevoli e governare le emozioni nei mercati.",
-		items: ["Sessioni periodiche di allineamento", "Framework decisionali", "Educazione finanziaria su misura"],
+		icon: "educatore",
+		title: "Educatore Finanziario",
+		description: "Perché conoscere sé stessi è più importante che conoscere i mercati finanziari. I rendimenti dei tuoi \"possedimenti\" li fanno i tuoi comportamenti, non i tuoi investimenti.",
 	},
 	{
-		title: "Governance e Passaggio Generazionale",
-		description:
-			"Modelli di governance, patti di famiglia e roadmap per la continuita' aziendale e patrimoniale.",
-		items: ["Family charter", "Processi di successione", "Formazione nuove generazioni"],
+		icon: "consulente",
+		title: "Consulente Patrimoniale",
+		description: "Il mio valore aggiunto? Interessarmi ed occuparmi delle persone e delle famiglie a 360 gradi prima che dei loro patrimoni.",
+	},
+	{
+		icon: "editore",
+		title: "Editore",
+		description: "Scrivo libri e contenuti per diffondere consapevolezza finanziaria e aiutarti a scoprire la tua vera ricchezza.",
+	},
+];
+
+const valoreAggiunto = [
+	{
+		title: "Taglio dei Costi",
+		description: "Ottimizzazione di tutti gli oneri bancari e finanziari per massimizzare il valore del tuo patrimonio.",
+		items: ["Analisi e riduzione oneri bancari e finanziari", "Revisione gratuita prodotti assicurativi", "Verifica economicità premi e adeguatezza garanzie"],
+	},
+	{
+		title: "Misurazione dei Rischi",
+		description: "Verifica approfondita delle garanzie e degli aspetti legali di tutti i tuoi prodotti d'investimento.",
+		items: ["Analisi garanzie e aspetti legali", "Identificazione titoli tossici", "Bonifica portafoglio"],
+	},
+	{
+		title: "Rendimenti Ottimizzati",
+		description: "Perseguire a parità di rischio il maggior rendimento possibile, o ridurre al minimo il rischio a parità di rendimento atteso.",
+		items: ["Massimizzazione rendimenti", "Minimizzazione rischio", "Bilanciamento portafoglio"],
+	},
+	{
+		title: "Pianificazione Fiscale",
+		description: "Verificare se è possibile alleggerire il prelievo fiscale che grava su tutti i tuoi redditi e patrimoni.",
+		items: ["Ottimizzazione fiscale", "Pianificazione successoria", "Strategie di efficienza tributaria"],
+	},
+	{
+		title: "Protezione del Patrimonio",
+		description: "Individuare la strada giuridica percorribile per blindare il tuo patrimonio di famiglia dagli imprevisti della vita.",
+		items: ["Blindatura patrimonio familiare", "Tutela da imprevisti", "Strumenti di protezione legale"],
 	},
 ];
 
 const testimonials = [
 	{
-		quote:
-			"Un consulente che coniuga numeri e visione. Abbiamo riscritto la nostra asset allocation mantenendo serenita' durante i picchi di volatilita'.",
-		author: "Ilaria B.",
-		role: "Imprenditrice settore manifatturiero",
+		quote: "È un professionista che tende ad alzare sempre l'asticella dei traguardi da raggiungere.",
+		author: "Ornella Costa",
 	},
 	{
-		quote:
-			"Il percorso di coaching ha portato chiarezza nelle decisioni societarie e nella pianificazione personale.",
-		author: "Luca D.",
-		role: "CEO scale-up tecnologia",
+		quote: "A me piace essere informato nel campo finanziario, saputo che questo è il suo ramo professionale, ho scelto lui come mio consulente. Sono cliente da oltre 25 anni, l'ho visto crescere e mi ha sempre dato ottimi suggerimenti.",
+		author: "Luciano Stella",
 	},
 	{
-		quote:
-			"Abbiamo costruito un modello di governance familiare che tutelasse gli obiettivi di tutti. Il metodo e' stato decisivo.",
-		author: "Famiglia R.",
-		role: "Family business nel real estate",
+		quote: "Ho avuto modo di apprezzare le sue qualità, come la sua attenzione alla realtà, ma anche una spiccata sensibilità. Penso che questo sia un bell'esempio di un successo che si deve in primis alla persona, attenta ai valori della solidarietà.",
+		author: "Francesco Balocco",
+	},
+	{
+		quote: "Lui mi è stato prezioso, salvandomi da un cattivo investimento. Da quel momento è iniziato un percorso di crescita che continua ancora adesso, dopo oltre 20 anni.",
+		author: "Pina Piumatti",
+	},
+	{
+		quote: "Lo conosco da 35 anni e al suo fianco mi trovo ottimamente. I suoi prodotti si sono dimostrati validi, così come i consigli che mi ha dato, sempre giusti.",
+		author: "Bruno Demichelis",
+	},
+	{
+		quote: "Mi ha aiutata in un momento di difficoltà in cui ero sola e avevo bisogno di qualcuno che mi sostenesse nel fare certe operazioni. È un professionista di cui mi fido e quando ho bisogno di rivolgermi a lui lo faccio serenamente.",
+		author: "Giuseppina Gariglio",
+	},
+	{
+		quote: "Con la sua perspicacia e competenza può davvero fare la differenza. Chi lo sceglie fa quel miglio in più che solo i migliori fanno.",
+		author: "Davide Bertaina",
+	},
+	{
+		quote: "L'investimento più importante per me è stato quello di conoscere Sergio e di avere l'immensa fortuna di frequentare il suo corso! È una guida utile, efficace, preziosa e ci ha resi consapevoli delle nostre capacità.",
+		author: "Virginia",
 	},
 ];
 ---
@@ -71,38 +115,128 @@ const testimonials = [
 	<Hero
 		eyebrow="CONSULENZA PATRIMONIALE"
 		title="Proteggiamo e facciamo crescere il tuo patrimonio con metodo"
-		description="Strategie di wealth management e coaching finanziario per imprenditori, famiglie imprenditoriali e professionisti che cercano chiarezza, controllo e continuita'."
+		description="La restituzione del capitale viene prima del rendimento  del capitale. La leva assicurativa, moltiplicando il benefico effetto del risparmio, libera risorse e garantisce all’investitore una efficace ed efficiente gestione del suo patrimonio in un ottica intergenerazionale e  transgenerazionale."
 		primaryCta={{ label: 'Prenota una call', href: '/contatti' }}
 		secondaryCta={{ label: 'Scopri il metodo', href: '/cosa-faccio' }}
 		stats={[
-			{ value: '15+', label: 'Anni di esperienza' },
-			{ value: '120M', label: 'Patrimoni seguiti' },
-			{ value: '94%', label: 'Clienti fidelizzati' },
-			{ value: '35', label: 'Workshop annuali' },
+			{ value: '34+', label: 'Anni di esperienza' },
+			{ value: 'Oltre 250', label: 'Nuclei familiari seguiti' },
+			{ value: '98%', label: 'Clienti fidelizzati' },
 		]}
 	/>
 
 	<section class="py-24 lg:py-32 bg-white dark:bg-neutral-950">
 		<div class="mx-auto max-w-6xl px-6">
-			<div class="grid lg:grid-cols-12 gap-12 lg:gap-24 items-start">
-				<div class="lg:col-span-4 lg:sticky lg:top-32">
-					<SectionHeading
-						eyebrow="SERVIZI"
-						title="Percorsi di valore per il tuo patrimonio"
-						description="Un approccio olistico che integra consulenza finanziaria, pianificazione strategica e supporto decisionale."
-					/>
-					<div class="mt-8">
-						<a href="/cosa-faccio" class="inline-flex items-center gap-2 text-sm font-semibold text-brand-primary hover:text-brand-light transition">
-							Scopri tutti i servizi
-							<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+			<div class="text-center mb-16">
+				<div class="inline-flex items-center gap-2 rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand-primary dark:bg-brand-primary/20 dark:text-brand-light mb-4">
+					<span class="h-1.5 w-1.5 rounded-full bg-brand-primary dark:bg-brand-light"></span>
+					Chi Sono
+				</div>
+				<h2 class="text-3xl md:text-4xl font-serif font-medium text-neutral-text dark:text-white mb-4">I miei ruoli al tuo servizio</h2>
+				<p class="text-neutral-muted dark:text-neutral-400 max-w-2xl mx-auto">Un professionista, molteplici competenze integrate per offrirti un supporto completo nella gestione del tuo patrimonio.</p>
+			</div>
+			<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+				{services.map((service) => (
+					<div class="group relative rounded-2xl border border-neutral-200 bg-white p-6 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-brand-primary/30 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-brand-primary/50">
+						<div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-primary/10 text-brand-primary transition-colors group-hover:bg-brand-primary group-hover:text-white dark:bg-brand-primary/20">
+							{service.icon === 'coach' && (
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+								</svg>
+							)}
+							{service.icon === 'educatore' && (
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+								</svg>
+							)}
+							{service.icon === 'consulente' && (
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+								</svg>
+							)}
+							{service.icon === 'editore' && (
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+								</svg>
+							)}
+						</div>
+						<h3 class="text-lg font-semibold text-neutral-text dark:text-white mb-3">{service.title}</h3>
+						<p class="text-sm text-neutral-muted dark:text-neutral-400 leading-relaxed">{service.description}</p>
+						{service.icon === 'editore' && (
+							<div class="mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-700 space-y-3">
+								<div class="text-center">
+									<p class="text-sm font-semibold text-brand-primary italic">"La mente, lo spirito e l'anima del denaro"</p>
+									<p class="text-xs text-neutral-muted dark:text-neutral-400 mt-1">Tu sei la tua vera ricchezza!</p>
+								</div>
+								<div class="space-y-2">
+								<a href="/capitolo_omaggio_sergio.pdf" download class="flex items-center justify-center gap-2 w-full rounded-lg bg-brand-primary/10 px-3 py-2 text-xs font-semibold text-brand-primary hover:bg-brand-primary hover:text-white transition-colors">
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+									</svg>
+									Scarica un capitolo omaggio
+								</a>
+								<a href="https://amzn.eu/d/8ElkgnH" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full rounded-lg border border-neutral-300 dark:border-neutral-600 px-3 py-2 text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:border-brand-primary hover:text-brand-primary transition-colors">
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+									</svg>
+									Acquista su Amazon
+								</a>
+								</div>
+							</div>
+						)}
+					</div>
+				))}
+        </div>
+			<div class="mt-16 max-w-md mx-auto">
+				<div class="rounded-3xl bg-gradient-to-br from-brand-primary to-brand-dark p-6 md:p-8 text-white shadow-xl shadow-brand-primary/20 overflow-hidden relative">
+					<div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+					<div class="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+					
+					<div class="relative z-10">
+						<div class="flex items-center gap-3 mb-4">
+							<div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+								</svg>
+							</div>
+							<h3 class="text-lg font-semibold">Presentazione</h3>
+						</div>
+						
+						<p class="text-white/80 leading-relaxed mb-5 text-sm">
+							Scopri chi sono, il mio metodo di lavoro e come posso aiutarti nella gestione del tuo patrimonio.
+						</p>
+						
+						<a href="/brochure.pdf" download class="group flex items-center gap-3 w-full rounded-2xl bg-white px-5 py-4 text-brand-primary font-bold hover:bg-brand-accent hover:text-white transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+							<div class="w-10 h-10 rounded-xl bg-brand-primary/10 group-hover:bg-white/20 flex items-center justify-center transition-colors">
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+								</svg>
+							</div>
+							<div class="flex-1 text-left">
+								<span class="block text-sm">Scarica PDF</span>
+								<span class="block text-xs opacity-70 group-hover:opacity-100">Presentazione Sergio Contegiacomo</span>
+							</div>
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
 							</svg>
 						</a>
 					</div>
 				</div>
+			</div>
+		</div>
+	</section>	<section class="py-24 lg:py-32 bg-neutral-50 dark:bg-neutral-900">
+		<div class="mx-auto max-w-6xl px-6">
+			<div class="grid lg:grid-cols-12 gap-12 lg:gap-24 items-start">
+				<div class="lg:col-span-4 lg:sticky lg:top-32">
+					<SectionHeading
+						eyebrow="IL VALORE AGGIUNTO"
+						title="Il metodo Sergio Contegiacomo"
+						description="Interessarmi ed occuparmi delle persone e delle famiglie a 360 gradi prima che dei loro patrimoni."
+					/>
+				</div>
 				<div class="lg:col-span-8 grid gap-6 md:grid-cols-2">
-					{services.map((service) => (
-						<ServiceCard {...service} />
+					{valoreAggiunto.map((item) => (
+						<ServiceCard {...item} />
 					))}
 				</div>
 			</div>
@@ -116,29 +250,192 @@ const testimonials = [
 		</div>
 		<div class="mx-auto max-w-6xl px-6 relative z-10">
 			<div class="max-w-3xl mx-auto text-center mb-16">
-				<h2 class="text-3xl md:text-4xl font-serif mb-6">Risultati concreti, fiducia duratura</h2>
+				<h2 class="text-3xl md:text-5xl font-serif mb-6">Dicono di me</h2>
 				<p class="text-neutral-400 text-lg leading-relaxed">
 					La vera misura del successo è la serenità dei miei clienti nel tempo.
 				</p>
 			</div>
-			<div class="grid gap-8 md:grid-cols-3">
-				{testimonials.map((item) => (
-					<div class="bg-white/5 backdrop-blur-sm border border-white/10 p-8 rounded-3xl hover:bg-white/10 transition duration-300">
-						<div class="mb-6 text-brand-accent">
-							<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-								<path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 8.44772 14.017 9V11C14.017 11.5523 13.5693 12 13.017 12H12.017V5H22.017V15C22.017 18.3137 19.3307 21 16.017 21H14.017ZM5.0166 21L5.0166 18C5.0166 16.8954 5.91203 16 7.0166 16H10.0166C10.5689 16 11.0166 15.5523 11.0166 15V9C11.0166 8.44772 10.5689 8 10.0166 8H6.0166C5.46432 8 5.0166 8.44772 5.0166 9V11C5.0166 11.5523 4.56889 12 4.0166 12H3.0166V5H13.0166V15C13.0166 18.3137 10.3303 21 7.0166 21H5.0166Z" />
-							</svg>
-						</div>
-						<p class="text-neutral-300 italic mb-6 leading-relaxed">"{item.quote}"</p>
-						<div>
-							<p class="font-semibold text-white">{item.author}</p>
-							<p class="text-xs text-neutral-500 uppercase tracking-wider mt-1">{item.role}</p>
-						</div>
+			
+			<!-- Carousel Container -->
+			<div class="relative" id="testimonial-carousel">
+				<!-- Carousel Track -->
+				<div class="overflow-hidden">
+					<div class="flex transition-transform duration-500 ease-out" id="carousel-track">
+						{testimonials.map((item, index) => (
+							<div class="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-4" data-index={index}>
+								<div class="bg-white/5 backdrop-blur-sm border border-white/10 p-8 pt-12 rounded-3xl hover:bg-white/10 transition duration-300 h-full flex flex-col relative overflow-hidden">
+									<!-- Virgolette grandi dorate decorative -->
+									<span class="absolute top-4 left-6 text-5xl text-amber-400/70 font-serif select-none" aria-hidden="true">“</span>
+									<div class="relative z-10">
+										<p class="text-neutral-300 italic leading-relaxed text-base md:text-lg">{item.quote}</p>
+									</div>
+									<div class="pt-6 mt-auto flex items-center gap-3">
+										<div class="w-10 h-10 rounded-full bg-amber-400/20 flex items-center justify-center text-amber-400 font-semibold text-sm">
+											{item.author.charAt(0)}
+										</div>
+										<p class="font-semibold text-white">{item.author}</p>
+									</div>
+								</div>
+							</div>
+						))}
 					</div>
-				))}
+				</div>
+				
+				<!-- Navigation Buttons -->
+				<button id="carousel-prev" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-12 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-brand-primary hover:border-brand-primary transition-all duration-300 z-10">
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+					</svg>
+				</button>
+				<button id="carousel-next" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-12 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-brand-primary hover:border-brand-primary transition-all duration-300 z-10">
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+					</svg>
+				</button>
+				
+				<!-- Dots Indicator -->
+				<div class="flex justify-center gap-2 mt-8" id="carousel-dots">
+					{testimonials.map((_, index) => (
+						<button class={`w-2 h-2 rounded-full transition-all duration-300 ${index === 0 ? 'bg-brand-primary w-6' : 'bg-white/30 hover:bg-white/50'}`} data-dot={index}></button>
+					))}
+				</div>
+			</div>
+			
+			<!-- Link to LinkedIn -->
+			<div class="text-center mt-12">
+				<a href="https://www.linkedin.com/in/sergio-contegiacomo-b180b921" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 rounded-full border-2 border-white/30 px-8 py-4 text-sm font-bold uppercase tracking-wider text-white hover:bg-white hover:text-neutral-900 transition-all duration-300">
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+						<path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+					</svg>
+					Seguimi su LinkedIn
+				</a>
+				</a>
 			</div>
 		</div>
 	</section>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const track = document.getElementById('carousel-track');
+			const prevBtn = document.getElementById('carousel-prev');
+			const nextBtn = document.getElementById('carousel-next');
+			const dotsContainer = document.getElementById('carousel-dots');
+			const dots = dotsContainer?.querySelectorAll('button');
+			
+			if (!track || !prevBtn || !nextBtn || !dots) return;
+			
+			const slides = track.children;
+			const totalSlides = slides.length;
+			let currentIndex = 0;
+			let slidesPerView = 1;
+			let autoplayInterval: ReturnType<typeof setInterval>;
+			
+			const updateSlidesPerView = () => {
+				if (window.innerWidth >= 1024) slidesPerView = 3;
+				else if (window.innerWidth >= 768) slidesPerView = 2;
+				else slidesPerView = 1;
+			};
+			
+			const updateCarousel = () => {
+				const slideWidth = 100 / slidesPerView;
+				track.style.transform = `translateX(-${currentIndex * slideWidth}%)`;
+				
+				// Update dots
+				dots.forEach((dot, index) => {
+					if (index === currentIndex) {
+						dot.classList.remove('bg-white/30', 'w-2');
+						dot.classList.add('bg-brand-primary', 'w-6');
+					} else {
+						dot.classList.remove('bg-brand-primary', 'w-6');
+						dot.classList.add('bg-white/30', 'w-2');
+					}
+				});
+			};
+			
+			const goToSlide = (index: number) => {
+				const maxIndex = Math.max(0, totalSlides - slidesPerView);
+				currentIndex = Math.max(0, Math.min(index, maxIndex));
+				updateCarousel();
+			};
+			
+			const nextSlide = () => {
+				const maxIndex = Math.max(0, totalSlides - slidesPerView);
+				if (currentIndex >= maxIndex) {
+					goToSlide(0);
+				} else {
+					goToSlide(currentIndex + 1);
+				}
+			};
+			
+			const prevSlide = () => {
+				const maxIndex = Math.max(0, totalSlides - slidesPerView);
+				if (currentIndex <= 0) {
+					goToSlide(maxIndex);
+				} else {
+					goToSlide(currentIndex - 1);
+				}
+			};
+			
+			const startAutoplay = () => {
+				autoplayInterval = setInterval(nextSlide, 5000);
+			};
+			
+			const stopAutoplay = () => {
+				clearInterval(autoplayInterval);
+			};
+			
+			// Event Listeners
+			nextBtn.addEventListener('click', () => {
+				stopAutoplay();
+				nextSlide();
+				startAutoplay();
+			});
+			
+			prevBtn.addEventListener('click', () => {
+				stopAutoplay();
+				prevSlide();
+				startAutoplay();
+			});
+			
+			dots.forEach((dot, index) => {
+				dot.addEventListener('click', () => {
+					stopAutoplay();
+					goToSlide(index);
+					startAutoplay();
+				});
+			});
+			
+			// Touch/Swipe support
+			let touchStartX = 0;
+			let touchEndX = 0;
+			
+			track.addEventListener('touchstart', (e) => {
+				touchStartX = e.changedTouches[0].screenX;
+				stopAutoplay();
+			}, { passive: true });
+			
+			track.addEventListener('touchend', (e) => {
+				touchEndX = e.changedTouches[0].screenX;
+				const diff = touchStartX - touchEndX;
+				if (Math.abs(diff) > 50) {
+					if (diff > 0) nextSlide();
+					else prevSlide();
+				}
+				startAutoplay();
+			}, { passive: true });
+			
+			// Responsive handling
+			window.addEventListener('resize', () => {
+				updateSlidesPerView();
+				goToSlide(currentIndex);
+			});
+			
+			// Initialize
+			updateSlidesPerView();
+			updateCarousel();
+			startAutoplay();
+		});
+	</script>
 
 	<section class="py-24 lg:py-32 bg-white dark:bg-neutral-950">
 		<div class="mx-auto max-w-6xl px-6 space-y-16">

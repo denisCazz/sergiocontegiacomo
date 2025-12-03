@@ -1,0 +1,297 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAudioPillole } from '../../lib/cms';
+
+// Leggi le AudioPillole dal database
+const audioItems = await getAudioPillole();
+---
+
+<BaseLayout title="AudioPillole" activePath="/blog">
+	<section class="relative min-h-screen py-24 lg:py-32 bg-gradient-to-br from-neutral-900 via-neutral-950 to-neutral-900 overflow-hidden">
+		<!-- Background decorativo -->
+		<div class="absolute inset-0 overflow-hidden pointer-events-none">
+			<div class="absolute top-1/4 -left-32 w-96 h-96 bg-brand-primary/20 rounded-full blur-3xl animate-pulse"></div>
+			<div class="absolute bottom-1/4 -right-32 w-80 h-80 bg-brand-accent/15 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+			<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-primary/5 rounded-full blur-3xl"></div>
+			
+			<!-- Pattern di onde sonore decorative -->
+			<svg class="absolute bottom-0 left-0 w-full h-32 text-brand-primary/10" viewBox="0 0 1440 120" preserveAspectRatio="none">
+				<path d="M0,64 C360,128 720,0 1080,64 C1260,96 1350,32 1440,64 L1440,120 L0,120 Z" fill="currentColor"/>
+			</svg>
+		</div>
+
+		<div class="mx-auto max-w-4xl px-6 relative z-10">
+			<!-- Header -->
+			<div class="text-center mb-16">
+				<div class="inline-flex items-center gap-3 rounded-full bg-brand-primary/20 backdrop-blur-sm px-5 py-2 text-sm font-semibold uppercase tracking-wider text-brand-light mb-6 border border-brand-primary/30">
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+					</svg>
+					AudioPillole
+				</div>
+				<h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-medium text-white mb-6">
+					Ascolta, impara, <span class="text-brand-primary">cresci</span>
+				</h1>
+				<p class="text-xl text-neutral-400 leading-relaxed max-w-2xl mx-auto">
+					Brevi contenuti audio per approfondire temi di finanza personale, mindset e crescita patrimoniale. Ascoltali dove e quando vuoi.
+				</p>
+			</div>
+
+			<!-- Audio Player Cards -->
+			{audioItems.length > 0 ? (
+				<div class="space-y-6">
+					{audioItems.map((audio, index) => (
+						<div class="audio-card group relative rounded-3xl bg-white/5 backdrop-blur-lg border border-white/10 p-6 transition-all duration-500 hover:bg-white/10 hover:border-brand-primary/30 hover:shadow-2xl hover:shadow-brand-primary/10">
+							<div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+								<!-- Numero e icona -->
+								<div class="flex items-center gap-4">
+									<div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-primary to-brand-accent flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-brand-primary/30">
+										{String(index + 1).padStart(2, '0')}
+									</div>
+								</div>
+
+								<!-- Info e player -->
+								<div class="flex-1 w-full space-y-4">
+									<div class="text-center sm:text-left">
+										<h3 class="text-lg font-semibold text-white group-hover:text-brand-light transition-colors">
+											{audio.title}
+										</h3>
+										{audio.description && (
+											<p class="text-sm text-neutral-400 mt-1">{audio.description}</p>
+										)}
+									</div>
+									
+									<!-- Custom Audio Player -->
+									<div class="audio-player-container">
+										<audio class="audio-element" preload="metadata">
+											<source src={audio.file_url} type="audio/mpeg" />
+											Il tuo browser non supporta l'elemento audio.
+										</audio>
+										
+										<div class="flex items-center gap-4">
+											<!-- Play/Pause Button -->
+											<button class="play-btn flex-shrink-0 w-12 h-12 rounded-full bg-brand-primary text-white flex items-center justify-center hover:bg-brand-light hover:scale-110 transition-all duration-300 shadow-lg shadow-brand-primary/30">
+												<svg class="play-icon w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+													<path d="M8 5v14l11-7z"/>
+												</svg>
+												<svg class="pause-icon w-5 h-5 hidden" fill="currentColor" viewBox="0 0 24 24">
+													<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+												</svg>
+											</button>
+											
+											<!-- Progress Bar -->
+											<div class="flex-1 space-y-1">
+												<div class="progress-container h-2 bg-white/10 rounded-full cursor-pointer overflow-hidden group/progress">
+													<div class="progress-bar h-full bg-gradient-to-r from-brand-primary to-brand-accent rounded-full transition-all duration-150" style="width: 0%"></div>
+												</div>
+												<div class="flex justify-between text-xs text-neutral-500 font-mono">
+													<span class="current-time">0:00</span>
+													<span class="duration">0:00</span>
+												</div>
+											</div>
+											
+											<!-- Volume -->
+											<div class="hidden sm:flex items-center gap-2">
+												<button class="volume-btn text-neutral-400 hover:text-white transition-colors">
+													<svg class="volume-icon w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M11 5L6 9H2v6h4l5 4V5z" />
+													</svg>
+													<svg class="volume-mute-icon w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+													</svg>
+												</button>
+												<input type="range" class="volume-slider w-20 h-1 accent-brand-primary" min="0" max="1" step="0.1" value="1" />
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- Decorative gradient line -->
+							<div class="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-brand-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+						</div>
+					))}
+				</div>
+			) : (
+				<!-- Empty state -->
+				<div class="text-center py-20 rounded-3xl border-2 border-dashed border-white/10 bg-white/5 backdrop-blur-sm">
+					<div class="inline-flex h-20 w-20 items-center justify-center rounded-full bg-brand-primary/20 text-brand-primary mb-6">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+						</svg>
+					</div>
+					<h3 class="text-2xl font-semibold text-white mb-3">Nessuna AudioPillola disponibile</h3>
+					<p class="text-neutral-400 max-w-md mx-auto mb-6">
+						I contenuti audio sono in preparazione. Torna presto per ascoltare nuove pillole di saggezza finanziaria!
+					</p>
+					<a href="/blog" class="inline-flex items-center gap-2 text-brand-primary hover:text-brand-light transition-colors font-medium">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+						</svg>
+						Torna al Blog
+					</a>
+				</div>
+			)}
+
+			<!-- Back to blog link -->
+			{audioItems.length > 0 && (
+				<div class="text-center mt-16">
+					<a href="/blog" class="inline-flex items-center gap-3 text-neutral-400 hover:text-white transition-colors group">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+						</svg>
+						Torna al Blog
+					</a>
+				</div>
+			)}
+		</div>
+	</section>
+</BaseLayout>
+
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		const audioCards = document.querySelectorAll('.audio-card');
+		let currentlyPlaying: HTMLAudioElement | null = null;
+
+		audioCards.forEach((card) => {
+			const audio = card.querySelector('.audio-element') as HTMLAudioElement;
+			const playBtn = card.querySelector('.play-btn') as HTMLButtonElement;
+			const playIcon = card.querySelector('.play-icon') as SVGElement;
+			const pauseIcon = card.querySelector('.pause-icon') as SVGElement;
+			const progressContainer = card.querySelector('.progress-container') as HTMLDivElement;
+			const progressBar = card.querySelector('.progress-bar') as HTMLDivElement;
+			const currentTimeEl = card.querySelector('.current-time') as HTMLSpanElement;
+			const durationEl = card.querySelector('.duration') as HTMLSpanElement;
+			const volumeSlider = card.querySelector('.volume-slider') as HTMLInputElement;
+			const volumeBtn = card.querySelector('.volume-btn') as HTMLButtonElement;
+			const volumeIcon = card.querySelector('.volume-icon') as SVGElement;
+			const volumeMuteIcon = card.querySelector('.volume-mute-icon') as SVGElement;
+
+			// Format time helper
+			const formatTime = (seconds: number): string => {
+				const mins = Math.floor(seconds / 60);
+				const secs = Math.floor(seconds % 60);
+				return `${mins}:${secs.toString().padStart(2, '0')}`;
+			};
+
+			// Update duration when metadata loads
+			audio.addEventListener('loadedmetadata', () => {
+				durationEl.textContent = formatTime(audio.duration);
+			});
+
+			// Play/Pause
+			playBtn.addEventListener('click', () => {
+				if (currentlyPlaying && currentlyPlaying !== audio) {
+					currentlyPlaying.pause();
+					const otherCard = currentlyPlaying.closest('.audio-card');
+					if (otherCard) {
+						otherCard.querySelector('.play-icon')?.classList.remove('hidden');
+						otherCard.querySelector('.pause-icon')?.classList.add('hidden');
+					}
+				}
+
+				if (audio.paused) {
+					audio.play();
+					currentlyPlaying = audio;
+					playIcon.classList.add('hidden');
+					pauseIcon.classList.remove('hidden');
+				} else {
+					audio.pause();
+					currentlyPlaying = null;
+					playIcon.classList.remove('hidden');
+					pauseIcon.classList.add('hidden');
+				}
+			});
+
+			// Update progress bar
+			audio.addEventListener('timeupdate', () => {
+				const progress = (audio.currentTime / audio.duration) * 100;
+				progressBar.style.width = `${progress}%`;
+				currentTimeEl.textContent = formatTime(audio.currentTime);
+			});
+
+			// Click on progress bar to seek
+			progressContainer.addEventListener('click', (e) => {
+				const rect = progressContainer.getBoundingClientRect();
+				const percent = (e.clientX - rect.left) / rect.width;
+				audio.currentTime = percent * audio.duration;
+			});
+
+			// Volume control
+			if (volumeSlider) {
+				volumeSlider.addEventListener('input', () => {
+					audio.volume = parseFloat(volumeSlider.value);
+					updateVolumeIcon();
+				});
+			}
+
+			if (volumeBtn) {
+				volumeBtn.addEventListener('click', () => {
+					audio.muted = !audio.muted;
+					updateVolumeIcon();
+				});
+			}
+
+			const updateVolumeIcon = () => {
+				if (audio.muted || audio.volume === 0) {
+					volumeIcon?.classList.add('hidden');
+					volumeMuteIcon?.classList.remove('hidden');
+				} else {
+					volumeIcon?.classList.remove('hidden');
+					volumeMuteIcon?.classList.add('hidden');
+				}
+			};
+
+			// Reset when audio ends
+			audio.addEventListener('ended', () => {
+				playIcon.classList.remove('hidden');
+				pauseIcon.classList.add('hidden');
+				progressBar.style.width = '0%';
+				currentlyPlaying = null;
+			});
+		});
+	});
+</script>
+
+<style>
+	.volume-slider {
+		-webkit-appearance: none;
+		appearance: none;
+		background: rgba(255, 255, 255, 0.1);
+		border-radius: 999px;
+		cursor: pointer;
+	}
+
+	.volume-slider::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		background: var(--brand-primary, #2563eb);
+		cursor: pointer;
+	}
+
+	.volume-slider::-moz-range-thumb {
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		background: var(--brand-primary, #2563eb);
+		cursor: pointer;
+		border: none;
+	}
+
+	@keyframes pulse {
+		0%, 100% {
+			opacity: 0.2;
+		}
+		50% {
+			opacity: 0.4;
+		}
+	}
+
+	.animate-pulse {
+		animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+	}
+</style>

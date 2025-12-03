@@ -1,0 +1,368 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { getPressItem, updatePressItem } from '../../../lib/cms';
+
+const id = Astro.url.searchParams.get('id');
+if (!id) {
+  return Astro.redirect('/admin/press');
+}
+
+let pressItem = await getPressItem(Number(id));
+if (!pressItem) {
+  return Astro.redirect('/admin/press');
+}
+
+let error = '';
+
+if (Astro.request.method === 'POST') {
+  try {
+    const formData = await Astro.request.formData();
+    
+    const title = formData.get('title') as string;
+    const testata = formData.get('testata') as string;
+    const description = formData.get('description') as string;
+    const file_url = formData.get('file_url') as string;
+    const published_at = formData.get('published_at') as string;
+
+    if (!title || !testata || !file_url || !published_at) {
+      error = 'Titolo, testata, file PDF e data sono obbligatori';
+    } else {
+      await updatePressItem(Number(id), {
+        title,
+        testata,
+        description: description || undefined,
+        file_url,
+        published_at,
+      });
+      return Astro.redirect('/admin/press');
+    }
+  } catch (e) {
+    error = 'Errore durante il salvataggio';
+    console.error(e);
+  }
+}
+
+const currentFileUrl = pressItem.file_url;
+const currentFileName = currentFileUrl?.split('/').pop() || 'File PDF';
+---
+
+<AdminLayout title="Modifica Articolo">
+  <div class="mb-8">
+    <a href="/admin/press" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-brand-primary transition mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      </svg>
+      Torna alla lista
+    </a>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Modifica Articolo</h1>
+    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Aggiorna i dettagli dell'articolo.</p>
+  </div>
+
+  {error && (
+    <div class="mb-6 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
+      <p class="text-sm text-red-600 dark:text-red-400">{error}</p>
+    </div>
+  )}
+
+  <div id="error-container" class="hidden mb-6 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
+    <p id="error-message" class="text-sm text-red-600 dark:text-red-400"></p>
+  </div>
+
+  <form method="POST" class="max-w-2xl" id="press-form">
+    <div class="space-y-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      
+      <div>
+        <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Titolo Articolo *
+        </label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          required
+          value={pressItem.title}
+          class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+        />
+      </div>
+
+      <div>
+        <label for="testata" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Testata / Rivista *
+        </label>
+        <input
+          type="text"
+          id="testata"
+          name="testata"
+          required
+          value={pressItem.testata}
+          class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+        />
+      </div>
+
+      <div>
+        <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Descrizione / Sottotitolo
+        </label>
+        <textarea
+          id="description"
+          name="description"
+          rows="3"
+          class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+        >{pressItem.description}</textarea>
+      </div>
+
+      <!-- File Upload Dropzone -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          File PDF *
+        </label>
+        
+        <div
+          id="dropzone"
+          class="relative border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center cursor-pointer transition-all hover:border-brand-primary hover:bg-brand-primary/5"
+        >
+          <input
+            type="file"
+            id="file-input"
+            accept=".pdf,application/pdf"
+            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          />
+          
+          <div id="dropzone-content" class="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+            <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+              <span class="font-medium text-brand-primary">Clicca per selezionare</span> o trascina qui il file PDF
+            </p>
+            <p class="mt-2 text-xs text-gray-500">PDF fino a 50MB</p>
+          </div>
+
+          <div id="file-preview">
+            <div class="flex items-center justify-center gap-4">
+              <div class="flex-shrink-0 w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div class="text-left flex-1 min-w-0">
+                <p id="file-name" class="text-sm font-medium text-gray-900 dark:text-white truncate">{currentFileName}</p>
+                <p id="file-size" class="text-xs text-gray-500">File PDF attuale</p>
+              </div>
+              <button type="button" id="change-file" class="flex-shrink-0 text-brand-primary hover:text-brand-dark transition text-sm font-medium">
+                Cambia file
+              </button>
+            </div>
+          </div>
+
+          <div id="upload-progress" class="hidden mt-4">
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div id="progress-bar" class="bg-brand-primary h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <p id="progress-text" class="mt-2 text-xs text-gray-500">Caricamento in corso...</p>
+          </div>
+
+          <div id="upload-success" class="hidden">
+            <div class="flex items-center justify-center gap-2 text-green-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span class="text-sm font-medium">Nuovo PDF caricato</span>
+            </div>
+          </div>
+        </div>
+
+        <input type="hidden" id="file_url" name="file_url" value={pressItem.file_url} />
+      </div>
+
+      <div>
+        <label for="published_at" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Data Pubblicazione *
+        </label>
+        <input
+          type="date"
+          id="published_at"
+          name="published_at"
+          required
+          value={pressItem.published_at?.split('T')[0]}
+          class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+        />
+      </div>
+
+      <div class="flex items-center justify-end gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <a
+          href="/admin/press"
+          class="rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition"
+        >
+          Annulla
+        </a>
+        <button
+          type="submit"
+          id="submit-btn"
+          class="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-dark transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          Salva Modifiche
+        </button>
+      </div>
+    </div>
+  </form>
+</AdminLayout>
+
+<script>
+  import { supabase } from '../../../lib/supabase';
+
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('file-input') as HTMLInputElement;
+  const dropzoneContent = document.getElementById('dropzone-content');
+  const filePreview = document.getElementById('file-preview');
+  const fileName = document.getElementById('file-name');
+  const fileSize = document.getElementById('file-size');
+  const changeFile = document.getElementById('change-file');
+  const uploadProgress = document.getElementById('upload-progress');
+  const progressBar = document.getElementById('progress-bar');
+  const progressText = document.getElementById('progress-text');
+  const uploadSuccess = document.getElementById('upload-success');
+  const fileUrlInput = document.getElementById('file_url') as HTMLInputElement;
+  const errorContainer = document.getElementById('error-container');
+  const errorMessage = document.getElementById('error-message');
+
+  function formatFileSize(bytes: number): string {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  function showError(message: string) {
+    if (errorContainer && errorMessage) {
+      errorMessage.textContent = message;
+      errorContainer.classList.remove('hidden');
+    }
+  }
+
+  function hideError() {
+    if (errorContainer) {
+      errorContainer.classList.add('hidden');
+    }
+  }
+
+  async function handleFile(file: File) {
+    hideError();
+
+    // Validate file type
+    if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+      showError('Tipo file non valido. Carica un file PDF');
+      return;
+    }
+
+    // Validate file size (50MB)
+    if (file.size > 50 * 1024 * 1024) {
+      showError('File troppo grande. Massimo 50MB');
+      return;
+    }
+
+    // Show file preview
+    if (fileName) fileName.textContent = file.name;
+    if (fileSize) fileSize.textContent = formatFileSize(file.size);
+    if (uploadSuccess) uploadSuccess.classList.add('hidden');
+
+    // Show upload progress
+    if (uploadProgress) uploadProgress.classList.remove('hidden');
+    if (progressBar) progressBar.style.width = '0%';
+    if (progressText) progressText.textContent = 'Caricamento in corso...';
+
+    try {
+      // Get session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        showError('Sessione scaduta. Effettua nuovamente il login.');
+        return;
+      }
+
+      // Upload file
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('bucket', 'press');
+
+      // Simulate progress
+      let progress = 0;
+      const progressInterval = setInterval(() => {
+        progress += Math.random() * 15;
+        if (progress > 90) progress = 90;
+        if (progressBar) progressBar.style.width = progress + '%';
+      }, 200);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: formData,
+      });
+
+      clearInterval(progressInterval);
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Errore durante l\'upload');
+      }
+
+      // Success
+      if (progressBar) progressBar.style.width = '100%';
+      if (progressText) progressText.textContent = 'Completato!';
+      
+      setTimeout(() => {
+        if (uploadProgress) uploadProgress.classList.add('hidden');
+        if (uploadSuccess) uploadSuccess.classList.remove('hidden');
+        if (fileSize) fileSize.textContent = formatFileSize(file.size);
+      }, 500);
+
+      if (fileUrlInput) fileUrlInput.value = result.url;
+
+    } catch (err: any) {
+      console.error('Upload error:', err);
+      showError(err.message || 'Errore durante l\'upload del file');
+      if (uploadProgress) uploadProgress.classList.add('hidden');
+    }
+  }
+
+  // Event listeners
+  if (dropzone) {
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('border-brand-primary', 'bg-brand-primary/5');
+    });
+
+    dropzone.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('border-brand-primary', 'bg-brand-primary/5');
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('border-brand-primary', 'bg-brand-primary/5');
+      const files = e.dataTransfer?.files;
+      if (files && files.length > 0) {
+        handleFile(files[0]);
+      }
+    });
+  }
+
+  if (fileInput) {
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files && fileInput.files.length > 0) {
+        handleFile(fileInput.files[0]);
+      }
+    });
+  }
+
+  if (changeFile) {
+    changeFile.addEventListener('click', (e) => {
+      e.stopPropagation();
+      fileInput?.click();
+    });
+  }
+</script>

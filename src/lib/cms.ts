@@ -2,6 +2,99 @@ import { supabase } from './supabase';
 import dayjs from 'dayjs';
 import { sampleArticles } from './dataFallback';
 
+// ==================== FILE STORAGE ====================
+
+export type UploadResult = {
+  success: boolean;
+  url?: string;
+  error?: string;
+};
+
+/**
+ * Upload a file to Supabase Storage
+ * @param file - The file to upload
+ * @param bucket - Storage bucket name ('audio' or 'press')
+ * @returns Upload result with public URL
+ */
+export async function uploadFile(file: File, bucket: 'audio' | 'press'): Promise<UploadResult> {
+  try {
+    // Generate unique filename
+    const timestamp = Date.now();
+    const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const fileName = `${timestamp}_${sanitizedName}`;
+
+    // Upload to Supabase Storage
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+
+    if (error) {
+      console.error('Upload error:', error);
+      return { success: false, error: error.message };
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(data.path);
+
+    return { success: true, url: urlData.publicUrl };
+  } catch (err) {
+    console.error('Upload exception:', err);
+    return { success: false, error: 'Errore durante l\'upload del file' };
+  }
+}
+
+/**
+ * Delete a file from Supabase Storage
+ * @param fileUrl - The public URL of the file to delete
+ * @param bucket - Storage bucket name ('audio' or 'press')
+ */
+export async function deleteStorageFile(fileUrl: string, bucket: 'audio' | 'press'): Promise<boolean> {
+  try {
+    // Extract file path from URL
+    const url = new URL(fileUrl);
+    const pathParts = url.pathname.split(`/storage/v1/object/public/${bucket}/`);
+    if (pathParts.length < 2) {
+      console.warn('Could not extract file path from URL:', fileUrl);
+      return false;
+    }
+    const filePath = decodeURIComponent(pathParts[1]);
+
+    const { error } = await supabase.storage
+      .from(bucket)
+      .remove([filePath]);
+
+    if (error) {
+      console.error('Delete error:', error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error('Delete exception:', err);
+    return false;
+  }
+}
+
+/**
+ * Get audio duration from file (client-side only)
+ */
+export function getAudioDuration(file: File): Promise<string> {
+  return new Promise((resolve) => {
+    const audio = new Audio();
+    audio.onloadedmetadata = () => {
+      const minutes = Math.floor(audio.duration / 60);
+      const seconds = Math.floor(audio.duration % 60);
+      resolve(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+    };
+    audio.onerror = () => resolve('');
+    audio.src = URL.createObjectURL(file);
+  });
+}
+
 type FetchOptions = {
   populate?: string;
   filters?: Record<string, unknown>;
@@ -369,5 +462,163 @@ export async function getEventBySlug(slug: string) {
 
 export function isEventUpcoming(event: EventItem) {
   return dayjs(event.date).isSame(dayjs(), 'day') || dayjs(event.date).isAfter(dayjs(), 'day');
+}
+
+// ==================== PRESS (Rassegna Stampa) ====================
+
+export type PressItem = {
+  id?: number;
+  title: string;
+  testata: string;
+  published_at: string;
+  file_url: string;
+  description?: string;
+  created_at?: string;
+};
+
+export async function getPressItems() {
+  const { data, error } = await supabase
+    .from('press')
+    .select('*')
+    .order('published_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching press items:', error);
+    return [];
+  }
+  return data as PressItem[];
+}
+
+export async function getPressItem(id: number) {
+  const { data, error } = await supabase
+    .from('press')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Error fetching press item:', error);
+    return null;
+  }
+  return data as PressItem;
+}
+
+export async function createPressItem(item: Omit<PressItem, 'id' | 'created_at'>) {
+  const { data, error } = await supabase
+    .from('press')
+    .insert([item])
+    .select();
+
+  if (error) {
+    console.error('Error creating press item:', error);
+    throw error;
+  }
+  return data[0] as PressItem;
+}
+
+export async function updatePressItem(id: number, item: Partial<PressItem>) {
+  const { data, error } = await supabase
+    .from('press')
+    .update(item)
+    .eq('id', id)
+    .select();
+
+  if (error) {
+    console.error('Error updating press item:', error);
+    throw error;
+  }
+  return data[0] as PressItem;
+}
+
+export async function deletePressItem(id: number) {
+  const { error } = await supabase
+    .from('press')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting press item:', error);
+    return false;
+  }
+  return true;
+}
+
+// ==================== AUDIO PILLOLE ====================
+
+export type AudioPillola = {
+  id?: number;
+  title: string;
+  description?: string;
+  file_url: string;
+  duration?: string;
+  published_at: string;
+  created_at?: string;
+};
+
+export async function getAudioPillole() {
+  const { data, error } = await supabase
+    .from('audio_pillole')
+    .select('*')
+    .order('published_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching audio pillole:', error);
+    return [];
+  }
+  return data as AudioPillola[];
+}
+
+export async function getAudioPillola(id: number) {
+  const { data, error } = await supabase
+    .from('audio_pillole')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Error fetching audio pillola:', error);
+    return null;
+  }
+  return data as AudioPillola;
+}
+
+export async function createAudioPillola(item: Omit<AudioPillola, 'id' | 'created_at'>) {
+  const { data, error } = await supabase
+    .from('audio_pillole')
+    .insert([item])
+    .select();
+
+  if (error) {
+    console.error('Error creating audio pillola:', error);
+    throw error;
+  }
+  return data[0] as AudioPillola;
+}
+
+export async function updateAudioPillola(id: number, item: Partial<AudioPillola>) {
+  const { data, error } = await supabase
+    .from('audio_pillole')
+    .update(item)
+    .eq('id', id)
+    .select();
+
+  if (error) {
+    console.error('Error updating audio pillola:', error);
+    throw error;
+  }
+  return data[0] as AudioPillola;
+}
+
+export async function deleteAudioPillola(id: number) {
+  const { error } = await supabase
+    .from('audio_pillole')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting audio pillola:', error);
+    return false;
+  }
+  return true;
 }
 

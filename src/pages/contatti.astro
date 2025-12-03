@@ -94,17 +94,39 @@ const contactChannels = [
              </ul>
           </div>
 
-          <div class="rounded-3xl md:rounded-[2.5rem] bg-brand-primary p-5 md:p-10 text-white shadow-xl shadow-brand-primary/20">
-            <h3 class="text-xs uppercase tracking-[0.3em] text-brand-accent mb-4 md:mb-6 font-bold">Documentazione</h3>
-            <p class="text-brand-light/90 leading-relaxed mb-6 md:mb-8 text-base md:text-lg">
-              Riceverai brochure servizi, informativa privacy e checklist pre-call al momento della richiesta.
-            </p>
-            <a href="mailto:info@sergiocontegiacomo.it?subject=Richiesta Documentazione" class="inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-brand-accent transition">
-              Richiedi materiali
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-              </svg>
-            </a>
+          <div class="rounded-3xl md:rounded-[2.5rem] bg-gradient-to-br from-brand-primary to-brand-dark p-6 md:p-10 text-white shadow-xl shadow-brand-primary/20 overflow-hidden relative">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+            <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+            
+            <div class="relative z-10">
+              <div class="flex items-center gap-3 mb-5">
+                <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <h3 class="text-lg font-semibold">Presentazione</h3>
+              </div>
+              
+              <p class="text-white/80 leading-relaxed mb-6 text-sm md:text-base">
+                Scopri chi sono, il mio metodo di lavoro e come posso aiutarti nella gestione del tuo patrimonio.
+              </p>
+              
+              <a href="/brochure.pdf" download class="group flex items-center gap-3 w-full rounded-2xl bg-white px-5 py-4 text-brand-primary font-bold hover:bg-brand-accent hover:text-white transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+                <div class="w-10 h-10 rounded-xl bg-brand-primary/10 group-hover:bg-white/20 flex items-center justify-center transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <span class="block text-sm">Scarica PDF</span>
+                  <span class="block text-xs opacity-70 group-hover:opacity-100">Presentazione Sergio Contegiacomo</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
 
