@@ -1,0 +1,53 @@
+---
+interface Props {
+  class?: string;
+  variant?: 'text' | 'circle' | 'rect';
+  width?: string;
+  height?: string;
+}
+
+const { class: className = '', variant = 'rect', width, height } = Astro.props;
+
+const baseClasses = 'animate-pulse bg-neutral-200 dark:bg-neutral-700';
+
+const variantClasses = {
+  text: 'rounded',
+  circle: 'rounded-full',
+  rect: 'rounded-2xl',
+};
+
+const style = [
+  width ? `width: ${width}` : '',
+  height ? `height: ${height}` : '',
+].filter(Boolean).join('; ');
+---
+
+<div 
+  class:list={[baseClasses, variantClasses[variant], className]}
+  style={style}
+  aria-hidden="true"
+/>
+
+<style>
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+  
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+</style>

@@ -1,0 +1,13 @@
+# Robots.txt per sergiocontegiacomo.it
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://www.sergiocontegiacomo.it/sitemap-index.xml
+
+# Disallow admin/api routes
+Disallow: /api/
+Disallow: /_astro/
+
+# Crawl delay per essere gentili con il server
+Crawl-delay: 1

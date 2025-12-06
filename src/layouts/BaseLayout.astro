@@ -2,6 +2,7 @@
 import '../styles/base.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import PageLoader from '../components/PageLoader.astro';
 import { siteConfig } from '../lib/config';
 
 export interface Props {
@@ -9,13 +10,19 @@ export interface Props {
   description?: string;
   ogImage?: string;
   activePath?: string;
+  showLoader?: boolean;
+  keywords?: string;
+  noindex?: boolean;
+  article?: boolean;
 }
 
-const { title, description, ogImage, activePath } = Astro.props;
+const { title, description, ogImage, activePath, showLoader = true, keywords, noindex = false, article = false } = Astro.props;
 const pageTitle = title ? `${title} | ${siteConfig.name}` : `${siteConfig.name} - ${siteConfig.role}`;
 const pageDescription = description ??
   'Consulenza patrimoniale su misura, coaching finanziario e percorsi di educazione economica per imprenditori e famiglie.';
 const image = ogImage ?? '/sergio.jpg';
+const canonicalUrl = new URL(Astro.url.pathname, siteConfig.siteUrl).toString();
+const defaultKeywords = 'consulente patrimoniale, coach finanziario, educazione finanziaria, wealth management, pianificazione patrimoniale, Sergio Contegiacomo, Bra, Cuneo, Piemonte';
 ---
 
 <html lang="it">
@@ -24,14 +31,29 @@ const image = ogImage ?? '/sergio.jpg';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
+    
+    <!-- SEO Meta -->
+    <link rel="canonical" href={canonicalUrl} />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+    <meta name="author" content="Sergio Contegiacomo" />
+    <meta name="keywords" content={keywords ?? defaultKeywords} />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- Open Graph -->
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
     <meta property="og:image" content={new URL(image, Astro.site ?? siteConfig.siteUrl).toString()} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content={siteConfig.name} />
+    <meta property="og:locale" content="it_IT" />
+    
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={pageDescription} />
     <meta name="twitter:image" content={new URL(image, Astro.site ?? siteConfig.siteUrl).toString()} />
+    <meta name="twitter:creator" content="@sergiocontegiacomo" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -39,15 +61,19 @@ const image = ogImage ?? '/sergio.jpg';
       rel="stylesheet"
     />
     <link rel="icon" type="image/x-icon" href="/logo_sergio.ico" />
+    <!-- Schema.org FinancialService -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "FinancialService",
-        "name": "Sergio Contegiacomo",
-        "image": "https://www.sergiocontegiacomo.it/logo_sergio.png",
+        "name": "Sergio Contegiacomo - Consulente Patrimoniale",
+        "image": "https://www.sergiocontegiacomo.it/sergio.jpg",
         "@id": "https://www.sergiocontegiacomo.it",
         "url": "https://www.sergiocontegiacomo.it",
-        "telephone": "0172 44191",
+        "telephone": "+39 0172 44191",
+        "email": "info@sergiocontegiacomo.it",
+        "priceRange": "€€€",
+        "description": "Consulenza patrimoniale, coaching finanziario e educazione economica per imprenditori e famiglie. Oltre 15 anni di esperienza nel private banking e wealth management.",
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "Piazza Roma, 39",
@@ -61,6 +87,10 @@ const image = ogImage ?? '/sergio.jpg';
           "latitude": 44.698,
           "longitude": 7.855
         },
+        "areaServed": ["Piemonte", "Italia"],
+        "sameAs": [
+          "https://www.linkedin.com/in/sergio-contegiacomo-b180b921"
+        ],
         "openingHoursSpecification": [
           {
             "@type": "OpeningHoursSpecification",
@@ -95,6 +125,60 @@ const image = ogImage ?? '/sergio.jpg';
         ]
       }
     </script>
+    
+    <!-- Schema.org Person -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Sergio Contegiacomo",
+        "jobTitle": "Consulente Patrimoniale & Coach Finanziario",
+        "description": "Consulente patrimoniale con oltre 15 anni di esperienza nel private banking. Coach finanziario ed educatore certificato.",
+        "image": "https://www.sergiocontegiacomo.it/sergio.jpg",
+        "url": "https://www.sergiocontegiacomo.it",
+        "email": "info@sergiocontegiacomo.it",
+        "telephone": "+39 0172 44191",
+        "sameAs": [
+          "https://www.linkedin.com/in/sergio-contegiacomo-b180b921"
+        ],
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Allianz Bank Financial Advisors",
+          "url": "https://www.allianzbank.it"
+        },
+        "alumniOf": [
+          {
+            "@type": "EducationalOrganization",
+            "name": "SDA Bocconi School of Management"
+          }
+        ],
+        "hasCredential": [
+          {
+            "@type": "EducationalOccupationalCredential",
+            "name": "Wealth Planner",
+            "credentialCategory": "Professional Certification"
+          },
+          {
+            "@type": "EducationalOccupationalCredential",
+            "name": "Iscrizione ANASF",
+            "credentialCategory": "Professional License"
+          }
+        ],
+        "knowsAbout": [
+          "Wealth Management",
+          "Financial Planning",
+          "Private Banking",
+          "Financial Coaching",
+          "Patrimony Governance"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Bra",
+          "addressRegion": "Piemonte",
+          "addressCountry": "Italia"
+        }
+      }
+    </script>
     <script>
       {`(() => {
         if (typeof window === 'undefined' || typeof document === 'undefined') {
@@ -125,6 +209,7 @@ const image = ogImage ?? '/sergio.jpg';
     </script>
   </head>
   <body class="min-h-screen flex flex-col bg-white text-neutral-text dark:bg-neutral-950 dark:text-neutral-100">
+    {showLoader && <PageLoader />}
     <Header activePath={activePath ?? Astro.url.pathname} />
     <main class="flex-1">
       <slot />

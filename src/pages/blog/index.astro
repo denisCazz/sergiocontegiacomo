@@ -26,7 +26,12 @@ const tags = Array.from(tagSet).sort();
 const pagination = meta?.pagination ?? { page: 1, pageCount: 1 };
 ---
 
-<BaseLayout title="Blog" activePath="/blog">
+<BaseLayout 
+  title="Blog" 
+  description="Blog di Sergio Contegiacomo: articoli su gestione patrimoniale, finanza comportamentale, wealth management e strategie di investimento."
+  keywords="blog finanza personale, articoli wealth management, consigli investimento, finanza comportamentale, educazione finanziaria"
+  activePath="/blog"
+>
   <section class="relative py-24 lg:py-32 bg-neutral-base dark:bg-neutral-950 overflow-hidden">
     <div class="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none">
       <div class="absolute -top-24 -right-24 w-96 h-96 bg-brand-primary/5 rounded-full blur-3xl"></div>
