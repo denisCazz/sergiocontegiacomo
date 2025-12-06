@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { supabase, supabaseAdmin } from './supabase';
 import dayjs from 'dayjs';
 import { sampleArticles } from './dataFallback';
 
@@ -504,7 +504,7 @@ export async function getPressItem(id: number) {
 }
 
 export async function createPressItem(item: Omit<PressItem, 'id' | 'created_at'>) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('press')
     .insert([item])
     .select();
@@ -517,7 +517,7 @@ export async function createPressItem(item: Omit<PressItem, 'id' | 'created_at'>
 }
 
 export async function updatePressItem(id: number, item: Partial<PressItem>) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('press')
     .update(item)
     .eq('id', id)
@@ -531,7 +531,7 @@ export async function updatePressItem(id: number, item: Partial<PressItem>) {
 }
 
 export async function deletePressItem(id: number) {
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from('press')
     .delete()
     .eq('id', id);
@@ -583,7 +583,7 @@ export async function getAudioPillola(id: number) {
 }
 
 export async function createAudioPillola(item: Omit<AudioPillola, 'id' | 'created_at'>) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('audio_pillole')
     .insert([item])
     .select();
@@ -596,7 +596,7 @@ export async function createAudioPillola(item: Omit<AudioPillola, 'id' | 'create
 }
 
 export async function updateAudioPillola(id: number, item: Partial<AudioPillola>) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('audio_pillole')
     .update(item)
     .eq('id', id)
@@ -610,7 +610,7 @@ export async function updateAudioPillola(id: number, item: Partial<AudioPillola>
 }
 
 export async function deleteAudioPillola(id: number) {
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from('audio_pillole')
     .delete()
     .eq('id', id);

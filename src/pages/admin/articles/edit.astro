@@ -180,7 +180,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       }
     });
 
-    // Image Upload
+    // Image Upload to R2
     const fileInput = document.getElementById('coverImage') as HTMLInputElement;
     const urlInput = document.getElementById('coverImageUrl') as HTMLInputElement;
     const preview = document.getElementById('imagePreview');
@@ -190,23 +190,40 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
 
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      // Get auth token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        alert('Sessione scaduta, effettua il login');
+        window.location.href = '/admin/login';
+        return;
+      }
 
-      const { data, error } = await supabase.storage
-        .from('images')
-        .upload(filePath, file);
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('category', 'images');
 
-      if (error) {
-        alert('Errore caricamento immagine: ' + error.message);
-      } else {
-        const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(filePath);
-        if (urlInput) urlInput.value = publicUrl;
+      try {
+        const response = await fetch('/api/upload-r2', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          },
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Errore caricamento');
+        }
+
+        if (urlInput) urlInput.value = result.url;
         if (preview && previewImg) {
-          previewImg.src = publicUrl;
+          previewImg.src = result.url;
           preview.classList.remove('hidden');
         }
+      } catch (error: any) {
+        alert('Errore caricamento immagine: ' + error.message);
       }
     });
 
