@@ -4,10 +4,61 @@ import SectionHeading from '../components/SectionHeading.astro';
 import CTASection from '../components/CTASection.astro';
 
 const skills = [
-  "Pianificazione patrimoniale olistica",
-  "Coordinamento di team multidisciplinari",
-  "Analisi di rischi e opportunita' per patrimoni complessi",
-  "Formazione e coaching decisionale",
+  "Analisi situazione socio-economica personale/familiare",
+  "Analisi rischi \"invisibili\"",
+  "Identificazione bisogni palesi e latenti + definizione obiettivi",
+  "Associazione risorse a bisogni e obiettivi",
+  "Verifica efficacia ed efficienza soluzioni in essere",
+  "Proposta Strategia migliorativa",
+];
+
+const certificazioni = [
+  {
+    anno: "1987",
+    titolo: "Diploma di ragioniere e perito commerciale",
+    ente: "Istituto Tecnico Commerciale e per Geometri Luigi Einaudi di Alba (Cn)",
+  },
+  {
+    anno: "1993",
+    titolo: "Iscrizione Albo Consulenti Finanziari",
+    ente: "Delibera Consob n. 7415 del 28/09/1993",
+  },
+  {
+    anno: "2004",
+    titolo: "Certificazione Wealth Planner",
+    ente: "Università Cattolica di Milano",
+  },
+  {
+    anno: "2011",
+    titolo: "Abilitazione di Coach",
+    ente: "Istituto Universitario di Scienze della Mediazione Linguistica di Varese – 1° Master di Alta Formazione Universitaria in Coaching",
+  },
+  {
+    anno: "2013",
+    titolo: "Abilitazione Educatore/Formatore finanziario",
+    ente: "ANASF – Associazione Nazionale Consulenti Finanziari",
+  },
+];
+
+const teamwork = [
+  {
+    nome: "Simone Contegiacomo",
+    ruolo: "Consulente Finanziario",
+    descrizione: "Consulente finanziario di nuova generazione, specializzato in soluzioni digitali e pianificazione patrimoniale per giovani professionisti e famiglie.",
+    link: "https://simonecontegiacomo.it",
+  },
+  {
+    nome: "Avv. Prof. Andrea Ballancin",
+    ruolo: "Avvocato, Dottore Commercialista e Professore di Diritto Tributario",
+    descrizione: "Socio equity MBA Tax. Professore Associato di Diritto Tributario presso l'Università del Piemonte Orientale. Laurea in Economia (Bocconi) e Giurisprudenza (Milano-Bicocca) con lode. Master LL.M. in International Taxation (Leiden). Dottore di Ricerca in Diritto Tributario. Autore di saggi in materia tributaria.",
+    link: "https://www.mba-tax.it/team/avvocato-andrea-ballancin/",
+  },
+  {
+    nome: "Prof. Alessandro Ciatti",
+    ruolo: "Professore Ordinario di Diritto Privato",
+    descrizione: "Ordinario di Diritto Privato all'Università di Torino. Avvocato e Dottore di ricerca in Diritto Privato (Pisa). Insegna Istituzioni di Diritto Privato, Diritto Civile e Diritto Privato Europeo. Membro della redazione di Contratto e Impresa/Europa e Giurisprudenza Italiana. Autore di numerose pubblicazioni in materia civilistica.",
+    link: "https://www.civilistiitaliani.eu/soci/soci-effettivi/221-ciatti-alessandro",
+  },
 ];
 ---
 
@@ -29,10 +80,10 @@ const skills = [
             Chi Sono
           </div>
           <h1 class="text-5xl md:text-7xl font-serif font-medium text-neutral-text leading-[1.1] dark:text-white tracking-tight">
-            Una guida che unisce <br/> <span class="text-brand-primary italic">consulenza</span> e <span class="text-brand-primary italic">coaching</span>.
+            L'Architetto delle Tue <br/> <span class="text-brand-primary italic">giuste scelte patrimoniali</span>.
           </h1>
           <p class="text-xl text-neutral-muted leading-relaxed dark:text-neutral-300 max-w-lg">
-            Dopo oltre quindici anni nel private banking e nel wealth management per famiglie imprenditoriali, ho scelto di costruire un modello indipendente che integra finanza, governance e comportamenti decisionali.
+            Nel cervello umano, secondo Daniel Kahneman, Premio Nobel per l'Economia 2002, esistono oltre 150 trappole mentali (bias) che portano a decisioni finanziarie irrazionali, sbagliate, inefficaci e perdenti. Le trappole mentali sono "virus", schemi di pensiero automatici distorti e ripetitivi. Riconoscerle è cruciale per migliorare la gestione dei propri risparmi e investimenti.
           </p>
         </div>
         <div class="relative lg:pl-12">
@@ -52,10 +103,14 @@ const skills = [
           <h3 class="text-xs uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light mb-6 md:mb-8 font-bold">Il mio Percorso</h3>
           <div class="prose prose-lg prose-neutral dark:prose-invert max-w-none">
             <p class="text-lg md:text-xl leading-relaxed text-neutral-800 dark:text-neutral-100 font-medium">
-              Ho lavorato in realtà internazionali, seguendo patrimoni familiari e manageriali, coordinando private banker, fiscalisti e consulenti legali. Oggi metto a disposizione questa esperienza in maniera indipendente, affiancando imprenditori e famiglie nei momenti strategici.
+              Da oltre 35 anni nel Private Banking e nel Wealth Management mi occupo di risparmio, investimenti, patrimoni e ricchezza. Assisto famiglie e aziende nella gestione integrata di tutto il loro patrimonio, affiancato e coadiuvato dai migliori commercialisti, legali e fiscalisti italiani.
             </p>
-            <p class="text-neutral-600 dark:text-neutral-400 mt-6 leading-relaxed text-base md:text-lg">
-              La mia missione è facilitare scelte consapevoli: trasformare numeri e scenari in decisioni condivise, con un metodo replicabile che mette al centro la persona e i suoi obiettivi di vita.
+            <blockquote class="border-l-4 border-brand-primary pl-6 my-6 italic text-neutral-600 dark:text-neutral-400">
+              "Il sapere vero non sta soltanto nel sapere, ma nel sapere dove sta il vero sapere."
+              <footer class="text-sm font-semibold text-brand-primary mt-2">— Sergio Contegiacomo</footer>
+            </blockquote>
+            <p class="text-neutral-600 dark:text-neutral-400 leading-relaxed text-base md:text-lg">
+              La mia missione è facilitare scelte giuste, consapevoli e lungimiranti con un metodo replicabile che mette sempre al centro la persona con i suoi valori ed i suoi progetti di vita.
             </p>
           </div>
         </div>
@@ -63,27 +118,16 @@ const skills = [
         <div class="lg:col-span-5 space-y-6 md:space-y-8">
           <div class="rounded-3xl md:rounded-[2.5rem] border border-neutral-border bg-neutral-50 p-6 md:p-10 dark:border-neutral-800 dark:bg-neutral-900/50 h-full">
             <h3 class="text-xs uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light mb-6 font-bold">Le mie Certificazioni</h3>
-            <ul class="space-y-4 md:space-y-5">
-              <li class="flex items-start gap-4 text-neutral-700 dark:text-neutral-300">
-                <div class="h-2.5 w-2.5 rounded-full bg-brand-accent shrink-0 mt-2"></div>
-                <span class="text-base md:text-lg">SDA BOCCONI</span>
-              </li>
-            </ul>
-            
-            <h3 class="text-xs uppercase tracking-[0.3em] text-brand-primary dark:text-brand-light mt-8 mb-6 font-bold">Altri Corsi e Certificazioni</h3>
-            <ul class="space-y-4 md:space-y-5">
-              <li class="flex items-start gap-4 text-neutral-700 dark:text-neutral-300">
-                <div class="h-2.5 w-2.5 rounded-full bg-brand-accent shrink-0 mt-2"></div>
-                <span class="text-base md:text-lg">Abilitazione di educatore finanziario presso l'Anasf - 2013</span>
-              </li>
-              <li class="flex items-start gap-4 text-neutral-700 dark:text-neutral-300">
-                <div class="h-2.5 w-2.5 rounded-full bg-brand-accent shrink-0 mt-2"></div>
-                <span class="text-base md:text-lg">Abilitazione di Coach - Istituto universitario di Scienze della mediazione Linguistica di Varese - 2011</span>
-              </li>
-              <li class="flex items-start gap-4 text-neutral-700 dark:text-neutral-300">
-                <div class="h-2.5 w-2.5 rounded-full bg-brand-accent shrink-0 mt-2"></div>
-                <span class="text-base md:text-lg">Certificazione di Wealth Planner dell'università Cattolica di Milano - 2005</span>
-              </li>
+            <ul class="space-y-5">
+              {certificazioni.map((cert) => (
+                <li class="flex items-start gap-4 text-neutral-700 dark:text-neutral-300">
+                  <div class="shrink-0 w-14 text-sm font-bold text-brand-primary">{cert.anno}</div>
+                  <div>
+                    <span class="block font-semibold text-neutral-800 dark:text-white">{cert.titolo}</span>
+                    <span class="text-sm text-neutral-500 dark:text-neutral-400">{cert.ente}</span>
+                  </div>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -111,15 +155,13 @@ const skills = [
           </div>
           
           <div class="bg-white/10 rounded-3xl p-8 backdrop-blur-sm border border-white/10">
-            <ul class="space-y-6">
-              {skills.map((skill) => (
+            <ul class="space-y-5">
+              {skills.map((skill, i) => (
                 <li class="flex items-start gap-4 group">
-                  <div class="mt-1 w-6 h-6 rounded-full bg-brand-accent flex items-center justify-center shrink-0 shadow-lg shadow-brand-accent/30 group-hover:scale-110 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-dark" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                    </svg>
+                  <div class="mt-0.5 w-7 h-7 rounded-full bg-brand-accent flex items-center justify-center shrink-0 shadow-lg shadow-brand-accent/30 group-hover:scale-110 transition-transform text-brand-dark font-bold text-sm">
+                    {i + 1}
                   </div>
-                  <span class="text-lg font-medium text-white group-hover:text-brand-accent transition-colors">{skill}</span>
+                  <span class="text-base font-medium text-white group-hover:text-brand-accent transition-colors">{skill}</span>
                 </li>
               ))}
             </ul>
@@ -129,8 +171,45 @@ const skills = [
     </div>
   </section>
 
+  <!-- SEZIONE IL MIO TEAMWORK -->
+  <section class="py-24 lg:py-32 bg-neutral-50 dark:bg-neutral-900">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="text-center mb-16">
+        <div class="inline-flex items-center gap-2 rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand-primary dark:bg-brand-primary/20 dark:text-brand-light mb-4">
+          <span class="h-1.5 w-1.5 rounded-full bg-brand-primary dark:bg-brand-light"></span>
+          Il Mio Teamwork
+        </div>
+        <h2 class="text-3xl md:text-5xl font-serif font-medium text-neutral-text dark:text-white mb-4">Professionisti al tuo fianco</h2>
+        <p class="text-lg text-neutral-muted dark:text-neutral-300 max-w-2xl mx-auto">
+          Collaboro stabilmente con i migliori commercialisti, legali e fiscalisti italiani per offrirti una consulenza integrata a 360 gradi.
+        </p>
+      </div>
+      
+      <div class="grid gap-8 md:grid-cols-3">
+        {teamwork.map((member) => (
+          <div class="rounded-3xl border border-neutral-border bg-white p-8 shadow-sm hover:shadow-card hover:-translate-y-1 transition duration-300 dark:border-neutral-800 dark:bg-neutral-950">
+            <div class="w-16 h-16 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary text-2xl font-bold mb-6">
+              {member.nome.charAt(0)}
+            </div>
+            <h3 class="text-xl font-semibold text-neutral-text dark:text-white mb-1">{member.nome}</h3>
+            <p class="text-sm text-brand-primary font-medium mb-4">{member.ruolo}</p>
+            <p class="text-neutral-muted text-sm leading-relaxed mb-6 dark:text-neutral-300">{member.descrizione}</p>
+            {member.link && (
+              <a href={member.link} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-semibold text-brand-primary hover:text-brand-light transition">
+                Visita il sito
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
   <CTASection
-    title="Ti accompagno nel prendere decisioni patrimoniali lucide"
+    title="Ti accompagno nel prendere le decisioni giuste per te"
     description="Definiamo insieme i tuoi obiettivi e creiamo un framework di governance che ti permetta di agire con chiarezza e controllo."
     primaryCta={{ label: 'Prenota una consulenza', href: '/contatti' }}
     secondaryCta={{ label: 'Richiedi il profilo completo', href: '/contatti?richiedi=profilo' }}
