@@ -5,35 +5,63 @@ import type { Article } from '../lib/cms';
 
 interface Props {
   article: Article;
+  rating?: number;
+  commentCount?: number;
 }
 
-const { article } = Astro.props;
+const { article, rating, commentCount } = Astro.props;
 const formattedDate = dayjs(article.publishedAt).locale('it').format('DD MMMM YYYY');
 ---
 
-<article class="group rounded-3xl border border-neutral-border bg-white overflow-hidden shadow-sm transition hover:shadow-card dark:border-neutral-800 dark:bg-neutral-900">
-  {article.coverImage && (
-    <a href={`/blog/${article.slug}`} class="block aspect-[16/10] overflow-hidden">
+<article class="group h-full flex flex-col rounded-3xl border border-neutral-border bg-white overflow-hidden shadow-sm transition hover:shadow-card dark:border-neutral-800 dark:bg-neutral-900">
+  {article.coverImage ? (
+    <a href={`/blog/${article.slug}`} class="block aspect-[16/10] overflow-hidden relative flex-shrink-0">
       <img
         src={article.coverImage}
         alt={`Copertina articolo ${article.title}`}
         loading="lazy"
         class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
       />
+      {(rating !== undefined && rating > 0) && (
+        <div class="absolute bottom-3 left-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm rounded-full px-2.5 py-1">
+          <div class="flex items-center gap-0.5">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class={`h-3.5 w-3.5 ${star <= Math.round(rating) ? 'text-amber-400' : 'text-neutral-500'}`}
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+            ))}
+          </div>
+          <span class="text-xs font-medium text-white">{rating.toFixed(1)}</span>
+          {commentCount !== undefined && commentCount > 0 && (
+            <span class="text-xs text-neutral-300">({commentCount})</span>
+          )}
+        </div>
+      )}
     </a>
+  ) : (
+    <div class="aspect-[16/10] bg-gradient-to-br from-brand-primary/10 to-brand-accent/10 flex items-center justify-center flex-shrink-0">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-brand-primary/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+      </svg>
+    </div>
   )}
-  <div class="p-6 space-y-4">
-    <div class="flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-neutral-muted dark:text-neutral-400">
+  <div class="p-6 flex flex-col flex-grow">
+    <div class="flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-neutral-muted dark:text-neutral-400 mb-3">
       <span>{formattedDate}</span>
       {article.tags && article.tags.length > 0 && <span class="text-brand-primary">{article.tags[0]}</span>}
     </div>
-    <a href={`/blog/${article.slug}`} class="block space-y-3">
-      <h3 class="text-xl font-semibold text-neutral-text group-hover:text-brand-primary transition dark:text-white">
+    <a href={`/blog/${article.slug}`} class="block flex-grow">
+      <h3 class="text-xl font-semibold text-neutral-text group-hover:text-brand-primary transition dark:text-white mb-2 line-clamp-2">
         {article.title}
       </h3>
-      {article.excerpt && <p class="text-sm text-neutral-muted leading-relaxed dark:text-neutral-300">{article.excerpt}</p>}
+      {article.excerpt && <p class="text-sm text-neutral-muted leading-relaxed dark:text-neutral-300 line-clamp-3">{article.excerpt}</p>}
     </a>
-    <div class="flex items-center justify-between text-xs text-neutral-muted dark:text-neutral-400">
+    <div class="flex items-center justify-between text-xs text-neutral-muted dark:text-neutral-400 mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-800">
       <span>Autore: {article.author}</span>
       <a href={`/blog/${article.slug}`} class="inline-flex items-center gap-1 font-semibold text-brand-primary">
         Leggi

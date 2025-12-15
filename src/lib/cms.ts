@@ -302,7 +302,13 @@ export async function getArticles(options: FetchOptions = {}) {
     if (options.filters.slug) {
       query = query.eq('slug', options.filters.slug);
     }
-    // Handle other filters if needed, e.g. tags
+    // Handle tag filter - tags is a JSONB array in Supabase
+    if (options.filters.tags && typeof options.filters.tags === 'object') {
+      const tagFilter = options.filters.tags as { $containsi?: string };
+      if (tagFilter.$containsi) {
+        query = query.contains('tags', [tagFilter.$containsi]);
+      }
+    }
   }
 
   // Sort
