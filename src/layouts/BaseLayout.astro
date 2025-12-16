@@ -20,7 +20,7 @@ const { title, description, ogImage, activePath, showLoader = true, keywords, no
 const pageTitle = title ? `${title} | ${siteConfig.name}` : `${siteConfig.name} - ${siteConfig.role}`;
 const pageDescription = description ??
   'Consulenza patrimoniale su misura, coaching finanziario e percorsi di educazione economica per imprenditori e famiglie.';
-const image = ogImage ?? '/sergio.jpg';
+const image = ogImage ?? '/sergio.avif';
 const canonicalUrl = new URL(Astro.url.pathname, siteConfig.siteUrl).toString();
 const defaultKeywords = 'consulente patrimoniale, coach finanziario, educazione finanziaria, wealth management, pianificazione patrimoniale, Sergio Contegiacomo, Bra, Cuneo, Piemonte';
 ---
@@ -67,7 +67,7 @@ const defaultKeywords = 'consulente patrimoniale, coach finanziario, educazione 
         "@context": "https://schema.org",
         "@type": "FinancialService",
         "name": "Sergio Contegiacomo - Consulente Patrimoniale",
-        "image": "https://www.sergiocontegiacomo.it/sergio.jpg",
+        "image": "https://www.sergiocontegiacomo.it/sergio.avif",
         "@id": "https://www.sergiocontegiacomo.it",
         "url": "https://www.sergiocontegiacomo.it",
         "telephone": "+39 0172 44191",
@@ -134,7 +134,7 @@ const defaultKeywords = 'consulente patrimoniale, coach finanziario, educazione 
         "name": "Sergio Contegiacomo",
         "jobTitle": "Consulente Patrimoniale & Coach Finanziario",
         "description": "Consulente patrimoniale con oltre 15 anni di esperienza nel private banking. Coach finanziario ed educatore certificato.",
-        "image": "https://www.sergiocontegiacomo.it/sergio.jpg",
+        "image": "https://www.sergiocontegiacomo.it/sergio.avif",
         "url": "https://www.sergiocontegiacomo.it",
         "email": "info@sergiocontegiacomo.it",
         "telephone": "+39 0172 44191",

@@ -58,7 +58,7 @@ const valoreAggiunto = [
 	},
 	{
 		title: "Misurazione dei Rischi",
-		image: "/icons/allerta.jpg",
+		image: "/icons/allerta.avif",
 		imageAlt: "Scudo rischio patrimoniale",
 		imageSize: "w-14 h-14",
 		description: "Verifica approfondita delle garanzie e degli aspetti legali di tutti i tuoi prodotti d'investimento.",
@@ -66,7 +66,7 @@ const valoreAggiunto = [
 	},
 	{
 		title: "Rendimenti Ottimizzati",
-		image: "/icons/crescita.jpg",
+		image: "/icons/crescita.avif",
 		imageAlt: "Crescita rendimenti",
 		imageSize: "w-14 h-14",
 		description: "Perseguire a parità di rischio il maggior rendimento possibile, o ridurre al minimo il rischio a parità di rendimento atteso.",
@@ -74,7 +74,7 @@ const valoreAggiunto = [
 	},
 	{
 		title: "Pianificazione Fiscale",
-		image: "/icons/calendario.jpg",
+		image: "/icons/calendario.avif",
 		imageAlt: "Ottimizzazione fiscale",
 		imageSize: "w-14 h-14",
 		description: "Verificare se è possibile alleggerire il prelievo fiscale che grava su tutti i tuoi redditi e patrimoni.",
@@ -82,7 +82,7 @@ const valoreAggiunto = [
 	},
 	{
 		title: "Protezione del Patrimonio",
-		image: "/icons/cassaforte.jpg",
+		image: "/icons/cassaforte.avif",
 		imageAlt: "Protezione patrimonio",
 		imageSize: "w-10 h-10",
 		description: "Individuare la strada giuridica percorribile per blindare il tuo patrimonio di famiglia dagli imprevisti della vita.",
@@ -308,12 +308,12 @@ const testimonials = [
 				</div>
 				
 				<!-- Navigation Buttons -->
-				<button id="carousel-prev" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-12 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-brand-primary hover:border-brand-primary transition-all duration-300 z-10">
+				<button id="carousel-prev" aria-label="Vai alla slide precedente" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-12 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-brand-primary hover:border-brand-primary transition-all duration-300 z-10">
 					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
 					</svg>
 				</button>
-				<button id="carousel-next" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-12 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-brand-primary hover:border-brand-primary transition-all duration-300 z-10">
+				<button id="carousel-next" aria-label="Vai alla slide successiva" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-12 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-brand-primary hover:border-brand-primary transition-all duration-300 z-10">
 					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
 					</svg>
@@ -322,7 +322,13 @@ const testimonials = [
 				<!-- Dots Indicator -->
 				<div class="flex justify-center gap-2 mt-8" id="carousel-dots">
 					{testimonials.map((_, index) => (
-						<button class={`w-2 h-2 rounded-full transition-all duration-300 ${index === 0 ? 'bg-brand-primary w-6' : 'bg-white/30 hover:bg-white/50'}`} data-dot={index}></button>
+						<button 
+							class="w-12 h-12 flex items-center justify-center focus:outline-none group" 
+							data-dot={index}
+							aria-label={`Vai alla slide ${index + 1}`}
+						>
+							<span class={`h-2 rounded-full transition-all duration-300 ${index === 0 ? 'bg-brand-primary w-6' : 'bg-white/30 w-2 group-hover:bg-white/50'}`}></span>
+						</button>
 					))}
 				</div>
 			</div>
@@ -373,13 +379,16 @@ const testimonials = [
 				track.style.transform = `translateX(-${currentIndex * slideWidth}%)`;
 				
 				// Update dots
-				dots.forEach((dot, index) => {
+				dots.forEach((dotBtn, index) => {
+					const dotSpan = dotBtn.querySelector('span');
+					if (!dotSpan) return;
+
 					if (index === currentIndex) {
-						dot.classList.remove('bg-white/30', 'w-2');
-						dot.classList.add('bg-brand-primary', 'w-6');
+						dotSpan.classList.remove('bg-white/30', 'w-2');
+						dotSpan.classList.add('bg-brand-primary', 'w-6');
 					} else {
-						dot.classList.remove('bg-brand-primary', 'w-6');
-						dot.classList.add('bg-white/30', 'w-2');
+						dotSpan.classList.remove('bg-brand-primary', 'w-6');
+						dotSpan.classList.add('bg-white/30', 'w-2');
 					}
 				});
 			};
