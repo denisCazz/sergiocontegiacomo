@@ -159,10 +159,10 @@ const contactChannels = [
             </button>
             
             <div class="mt-4 text-center">
-              <p class="text-sm font-medium text-green-600 dark:text-green-400 hidden" data-success-message>
+              <p class="text-sm font-medium text-green-600 dark:text-green-400" data-success-message hidden>
                 Grazie per il messaggio. Ti risponderò entro 24 ore.
               </p>
-              <p class="text-sm font-medium text-red-600 dark:text-red-400 hidden" data-error-message>
+              <p class="text-sm font-medium text-red-600 dark:text-red-400" data-error-message hidden>
                 Si è verificato un errore. Riprova più tardi.
               </p>
             </div>
@@ -290,35 +290,52 @@ const contactChannels = [
 </BaseLayout>
 
 <script is:inline>
-  const form = document.querySelector('[data-contact-form]');
-  const successMsg = document.querySelector('[data-success-message]');
-  const errorMsg = document.querySelector('[data-error-message]');
+  (() => {
+    const contactForm = document.querySelector('[data-contact-form]');
+    const successMsg = document.querySelector('[data-success-message]');
+    const errorMsg = document.querySelector('[data-error-message]');
 
-  form?.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    if (!(form instanceof HTMLFormElement)) return;
+    contactForm?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!(contactForm instanceof HTMLFormElement)) return;
 
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalBtnText = submitBtn.textContent;
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Invio in corso...";
+      const submitBtn = contactForm.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn?.textContent ?? '';
+      if (submitBtn instanceof HTMLButtonElement) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Invio in corso...';
+      }
 
-    const data = Object.fromEntries(new FormData(form));
+      const data = Object.fromEntries(new FormData(contactForm));
 
-    try {
-      // Simulazione invio (o endpoint reale se esistente)
-      // const res = await fetch('/api/contact', { ... });
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Fake delay
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
 
-      if (successMsg instanceof HTMLElement) successMsg.hidden = false;
-      if (errorMsg instanceof HTMLElement) errorMsg.hidden = true;
-      form.reset();
-    } catch (error) {
-      if (errorMsg instanceof HTMLElement) errorMsg.hidden = false;
-      if (successMsg instanceof HTMLElement) successMsg.hidden = true;
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalBtnText;
-    }
-  });
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(json?.message || 'Request failed');
+        }
+
+        if (successMsg instanceof HTMLElement) successMsg.hidden = false;
+        if (errorMsg instanceof HTMLElement) errorMsg.hidden = true;
+        contactForm.reset();
+      } catch (error) {
+        if (errorMsg instanceof HTMLElement) {
+          errorMsg.hidden = false;
+          const message = error instanceof Error ? error.message : 'Errore inatteso';
+          errorMsg.textContent = message || 'Si è verificato un errore. Riprova più tardi.';
+        }
+        if (successMsg instanceof HTMLElement) successMsg.hidden = true;
+      } finally {
+        if (submitBtn instanceof HTMLButtonElement) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalBtnText;
+        }
+      }
+    });
+  })();
 </script>

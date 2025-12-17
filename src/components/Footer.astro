@@ -85,39 +85,44 @@ import { siteConfig } from '../lib/config';
 </footer>
 
 <script is:inline>
-  const form = document.querySelector('[data-newsletter]');
-  const feedback = document.querySelector('[data-feedback]');
-  const endpoint = form?.getAttribute?.('data-endpoint') || '/api/newsletter';
+  (() => {
+    const newsletterForm = document.querySelector('[data-newsletter]');
+    const feedback = document.querySelector('[data-feedback]');
+    const endpoint = newsletterForm?.getAttribute?.('data-endpoint') || '/api/newsletter';
 
-  form?.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    if (!(form instanceof HTMLFormElement)) return;
+    newsletterForm?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!(newsletterForm instanceof HTMLFormElement)) return;
 
-    const formData = new FormData(form);
-    const email = formData.get('email');
+      const formData = new FormData(newsletterForm);
+      const email = formData.get('email');
 
-    if (!email) return;
+      if (!email) return;
 
-    try {
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        });
 
-      if (!res.ok) throw new Error('Request failed');
-      if (feedback instanceof HTMLElement) {
-        feedback.hidden = false;
-        feedback.textContent = 'Grazie! Riceverai un\'email di conferma entro pochi minuti.';
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(json?.message || 'Request failed');
+
+        if (feedback instanceof HTMLElement) {
+          feedback.hidden = false;
+          feedback.textContent = json?.message || 'Grazie! Riceverai un\'email di conferma entro pochi minuti.';
+        }
+        newsletterForm.reset();
+      } catch (error) {
+        if (feedback instanceof HTMLElement) {
+          feedback.hidden = false;
+          const message = error instanceof Error ? error.message : 'Si e\' verificato un problema. Riprova piu\' tardi.';
+          feedback.textContent = message;
+        }
       }
-      form.reset();
-    } catch (error) {
-      if (feedback instanceof HTMLElement) {
-        feedback.hidden = false;
-        feedback.textContent = 'Si e\' verificato un problema. Riprova piu\' tardi.';
-      }
-    }
-  });
+    });
+  })();
 </script>
