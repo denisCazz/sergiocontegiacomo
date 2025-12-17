@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+---
+
+<BaseLayout
+  title="Pagina non trovata"
+  description="La pagina che stai cercando non esiste oppure è stata spostata."
+  activePath=""
+  noindex={true}
+>
+  <section class="relative py-20 lg:py-28 bg-neutral-base dark:bg-neutral-950 min-h-[70vh]">
+    <div class="mx-auto max-w-5xl px-6">
+      <SectionHeading
+        eyebrow="404"
+        title="Pagina non trovata"
+        description="La pagina che stai cercando non esiste oppure è stata spostata."
+        align="center"
+      />
+
+      <div class="mt-10 flex flex-col items-center gap-4">
+        <div class="flex flex-col sm:flex-row gap-3">
+          <a
+            href="/"
+            class="inline-flex items-center justify-center rounded-full bg-brand-primary px-6 py-3 text-sm font-semibold text-white shadow-md shadow-brand-primary/20 hover:bg-brand-light transition"
+          >
+            Torna alla Home
+          </a>
+          <a
+            href="/blog"
+            class="inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-6 py-3 text-sm font-semibold text-neutral-700 hover:border-brand-primary hover:text-brand-primary transition dark:bg-neutral-900 dark:border-neutral-800 dark:text-neutral-300"
+          >
+            Vai al Blog
+          </a>
+          <a
+            href="/contatti"
+            class="inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-6 py-3 text-sm font-semibold text-neutral-700 hover:border-brand-primary hover:text-brand-primary transition dark:bg-neutral-900 dark:border-neutral-800 dark:text-neutral-300"
+          >
+            Contatti
+          </a>
+        </div>
+
+        <p class="mt-4 text-sm text-neutral-muted dark:text-neutral-400 text-center max-w-xl">
+          Se pensi che questo sia un errore, scrivimi da <a href="/contatti" class="text-brand-primary font-semibold hover:underline">Contatti</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

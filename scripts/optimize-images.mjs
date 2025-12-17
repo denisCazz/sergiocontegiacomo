@@ -51,9 +51,9 @@ function mb(bytes) {
 
 const targets = [
   // Used in Hero + OG image. Current source is ~3112px wide; this is overkill.
-  { relPath: 'public/sergio.avif', maxWidth: 1400, quality: 45, effort: 5 },
+  { relPath: 'public/sergio.avif', maxWidth: 1000, quality: 45, effort: 5 },
   // Used in /chi-sono. Current source is ~5257px wide; also overkill.
-  { relPath: 'public/sergio_2.avif', maxWidth: 1600, quality: 45, effort: 5 },
+  { relPath: 'public/sergio_2.avif', maxWidth: 1200, quality: 45, effort: 5 },
 ];
 
 console.log('\nOptimizing AVIF images (in-place, only if smaller)...');

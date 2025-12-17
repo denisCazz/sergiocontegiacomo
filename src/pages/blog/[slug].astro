@@ -4,6 +4,9 @@ import SectionHeading from '../../components/SectionHeading.astro';
 import CTASection from '../../components/CTASection.astro';
 import { getArticleBySlug, getArticles, type Article } from '../../lib/cms';
 import { renderMarkdown } from '../../lib/markdown';
+import { siteConfig } from '../../lib/config';
+
+export const prerender = true;
 
 const { slug } = Astro.params;
 
@@ -24,6 +27,34 @@ const formattedDate = new Intl.DateTimeFormat('it-IT', {
 }).format(new Date(article.publishedAt));
 const htmlContent = renderMarkdown(article.content);
 
+const canonicalUrl = new URL(`/blog/${article.slug}`, siteConfig.siteUrl).toString();
+const ogImage = article.coverImage ?? '/sergio.avif';
+const publishedTime = article.publishedAt ? new Date(article.publishedAt).toISOString() : undefined;
+const modifiedTime = article.publishedAt ? new Date(article.publishedAt).toISOString() : undefined;
+const articleStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: article.title,
+  description: article.excerpt,
+  image: [new URL(ogImage, siteConfig.siteUrl).toString()],
+  datePublished: publishedTime,
+  dateModified: modifiedTime,
+  author: {
+    '@type': 'Person',
+    name: article.author ?? siteConfig.name,
+    url: siteConfig.siteUrl,
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: siteConfig.name,
+    url: siteConfig.siteUrl,
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': canonicalUrl,
+  },
+};
+
 export async function getStaticPaths() {
   const { data } = await getArticles();
 
@@ -34,7 +65,17 @@ export async function getStaticPaths() {
 }
 ---
 
-<BaseLayout title={article.title} description={article.excerpt} activePath="/blog">
+<BaseLayout
+  title={article.title}
+  description={article.excerpt}
+  ogImage={ogImage}
+  canonical={canonicalUrl}
+  activePath="/blog"
+  article={true}
+  publishedTime={publishedTime}
+  modifiedTime={modifiedTime}
+  structuredData={articleStructuredData}
+>
   <article class="bg-neutral-base dark:bg-neutral-950">
     <div class="mx-auto max-w-7xl px-6 py-20">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">

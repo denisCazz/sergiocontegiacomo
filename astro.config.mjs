@@ -3,26 +3,19 @@ import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
-import robotsTxt from 'astro-robots-txt';
+
+const resolvedSite =
+  process.env.PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://www.sergiocontegiacomo.it');
 
 // https://astro.build/config
 export default defineConfig({
-    site: 'https://www.sergiocontegiacomo.it',
+    site: resolvedSite,
     output: 'server',
     adapter: vercel(),
     integrations: [
       tailwind({ configFile: './tailwind.config.cjs' }),
       sitemap(),
-      robotsTxt({
-        policy: [
-          { 
-						userAgent: 'Googlebot',
-						allow: '/',
-						disallow: ['/admin', '/admin/*'],
-						crawlDelay: 2,
-					 },
-        ],
-      }),
 		],
     scopedStyleStrategy: 'where',
 });

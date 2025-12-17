@@ -4,8 +4,11 @@ import SectionHeading from '../../components/SectionHeading.astro';
 import CTASection from '../../components/CTASection.astro';
 import { getEventBySlug, getEvents, type EventItem } from '../../lib/cms';
 import { renderMarkdown } from '../../lib/markdown';
+import { siteConfig } from '../../lib/config';
 import dayjs from 'dayjs';
 import 'dayjs/locale/it';
+
+export const prerender = true;
 
 const { slug } = Astro.params;
 
@@ -28,6 +31,38 @@ const plainDescription = htmlDescription
   : undefined;
 const isOnline = event.tags?.some((tag) => tag.toLowerCase() === 'online');
 
+const canonicalUrl = new URL(`/eventi/${event.slug}`, siteConfig.siteUrl).toString();
+const ogImage = event.coverImage ?? '/sergio.avif';
+const startDateCandidate = event.time ? dayjs(`${event.date}T${event.time}`) : dayjs(event.date);
+const startDateIso = (startDateCandidate.isValid() ? startDateCandidate.toDate() : dayjs(event.date).toDate()).toISOString();
+const eventStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: event.title,
+  description: plainDescription,
+  image: [new URL(ogImage, siteConfig.siteUrl).toString()],
+  startDate: startDateIso,
+  eventAttendanceMode: isOnline
+    ? 'https://schema.org/OnlineEventAttendanceMode'
+    : 'https://schema.org/OfflineEventAttendanceMode',
+  eventStatus: 'https://schema.org/EventScheduled',
+  location: isOnline
+    ? {
+        '@type': 'VirtualLocation',
+        url: siteConfig.siteUrl,
+      }
+    : {
+        '@type': 'Place',
+        name: event.location,
+      },
+  organizer: {
+    '@type': 'Person',
+    name: siteConfig.name,
+    url: siteConfig.siteUrl,
+  },
+  url: canonicalUrl,
+};
+
 export async function getStaticPaths() {
   const { data } = await getEvents();
 
@@ -38,7 +73,14 @@ export async function getStaticPaths() {
 }
 ---
 
-<BaseLayout title={event.title} description={event.description} activePath="/eventi">
+<BaseLayout
+  title={event.title}
+  description={plainDescription ?? event.title}
+  ogImage={ogImage}
+  canonical={canonicalUrl}
+  activePath="/eventi"
+  structuredData={eventStructuredData}
+>
   <article class="bg-neutral-base dark:bg-neutral-950" data-slug={event.slug} id="event-article">
     <div class="mx-auto max-w-4xl px-6 py-20 space-y-12">
       <SectionHeading
