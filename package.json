@@ -2,11 +2,17 @@
   "name": "sergiocontegiacomo",
   "type": "module",
   "version": "1.0.0",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "assets:report": "node scripts/assets-report.mjs",
+    "assets:optimize": "node scripts/optimize-images.mjs",
+    "pdf:optimize": "powershell -ExecutionPolicy Bypass -File scripts/optimize-pdfs.ps1 -Preset ebook"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.5",
@@ -14,7 +20,6 @@
     "@astrojs/tailwind": "^5.1.0",
     "@astrojs/vercel": "^8.0.0",
     "@aws-sdk/client-s3": "^3.946.0",
-    "@playform/compress": "^0.2.0",
     "@supabase/supabase-js": "^2.86.0",
     "astro": "^5.15.3",
     "astro-robots-txt": "^1.0.0",
