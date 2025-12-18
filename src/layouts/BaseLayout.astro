@@ -237,7 +237,7 @@ gtag('config', '${gaMeasurementId}', { anonymize_ip: true });`}
         }
 
         // Use a new key to avoid old stored values forcing the site theme.
-        // Default should follow the device preference.
+        // Default is light unless the user explicitly chooses otherwise.
         const storageKey = 'theme-preference';
         const legacyStorageKey = 'preferred-theme';
         const root = document.documentElement;
@@ -263,15 +263,17 @@ gtag('config', '${gaMeasurementId}', { anonymize_ip: true });`}
           const preference = stored === 'dark' || stored === 'light' || stored === 'auto' ? stored : null;
           const initialTheme = preference === 'dark' || preference === 'light'
             ? preference
-            : (prefersDark() ? 'dark' : 'light');
+            : preference === 'auto'
+              ? (prefersDark() ? 'dark' : 'light')
+              : 'light';
 
           applyTheme(initialTheme);
 
           const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
           const handlePreferredScheme = (event) => {
-            // Follow OS only when the user hasn't set an override.
+            // Follow OS only when the user explicitly chose auto.
             const pref = localStorage.getItem(storageKey);
-            if (pref && pref !== 'auto') return;
+            if (pref !== 'auto') return;
             applyTheme(event.matches ? 'dark' : 'light');
           };
 
@@ -281,7 +283,7 @@ gtag('config', '${gaMeasurementId}', { anonymize_ip: true });`}
             mediaQuery.addListener(handlePreferredScheme);
           }
         } catch (error) {
-          applyTheme(prefersDark() ? 'dark' : 'light');
+          applyTheme('light');
         }
       })();`}
     </script>

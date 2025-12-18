@@ -35,6 +35,9 @@ const isActive = (href: string) => {
   if (href === '/') return activePath === '/';
   return activePath.startsWith(href);
 };
+
+const desktopNavHover =
+  "relative inline-flex items-center transition-colors duration-200 after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:bg-brand-primary after:transition-transform after:duration-200 hover:after:scale-x-100";
 ---
 
 <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-neutral-border dark:bg-neutral-900/90 dark:border-neutral-800">
@@ -52,7 +55,7 @@ const isActive = (href: string) => {
           <div class="relative group">
             <button
               type="button"
-              class={`inline-flex items-center gap-1 transition hover:text-brand-primary ${isActive(link.href) ? 'text-brand-primary' : 'text-neutral-muted dark:text-neutral-300'}`}
+              class={`${desktopNavHover} gap-1 ${isActive(link.href) ? 'text-brand-primary after:scale-x-100' : 'text-neutral-muted dark:text-neutral-300 hover:text-brand-primary'}`}
             >
               {link.label}
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -65,8 +68,8 @@ const isActive = (href: string) => {
                 {link.children.map((child) => (
                   <a
                     href={child.href}
-                    class={`flex items-center gap-3 px-4 py-2.5 text-sm transition hover:bg-brand-primary/5 hover:text-brand-primary ${
-                      activePath === child.href ? 'text-brand-primary bg-brand-primary/5' : 'text-neutral-muted dark:text-neutral-300'
+                    class={`flex items-center gap-3 px-4 py-2.5 text-sm transition hover:bg-brand-primary/10 hover:text-brand-primary ${
+                      activePath === child.href ? 'text-brand-primary bg-brand-primary/10' : 'text-neutral-muted dark:text-neutral-300'
                     }`}
                   >
                     {child.icon === 'articles' && (
@@ -93,7 +96,7 @@ const isActive = (href: string) => {
         ) : (
           <a
             href={link.href}
-            class={`transition hover:text-brand-primary ${isActive(link.href) ? 'text-brand-primary' : 'text-neutral-muted dark:text-neutral-300'}`}
+            class={`${desktopNavHover} ${isActive(link.href) ? 'text-brand-primary after:scale-x-100' : 'text-neutral-muted dark:text-neutral-300 hover:text-brand-primary'}`}
           >
             {link.label}
           </a>
@@ -144,7 +147,7 @@ const isActive = (href: string) => {
           <div class="border-b border-neutral-border">
             <a
               href={link.href}
-              class={`block py-2 transition ${
+              class={`block py-2 transition hover:text-brand-primary ${
                 isActive(link.href) ? 'text-brand-primary font-semibold' : 'text-neutral-muted dark:text-neutral-300'
               }`}
             >
@@ -154,7 +157,7 @@ const isActive = (href: string) => {
               {link.children.map((child) => (
                 <a
                   href={child.href}
-                  class={`flex items-center gap-2 py-1.5 text-sm transition ${
+                  class={`flex items-center gap-2 py-1.5 text-sm transition hover:text-brand-primary ${
                     activePath === child.href ? 'text-brand-primary' : 'text-neutral-muted/80 dark:text-neutral-400'
                   }`}
                 >
@@ -181,7 +184,7 @@ const isActive = (href: string) => {
         ) : (
           <a
             href={link.href}
-            class={`py-2 transition border-b border-neutral-border ${
+            class={`py-2 transition border-b border-neutral-border hover:text-brand-primary ${
               isActive(link.href) ? 'text-brand-primary font-semibold' : 'text-neutral-muted dark:text-neutral-300'
             }`}
           >
@@ -268,7 +271,7 @@ const isActive = (href: string) => {
     const getAppliedTheme = () => (root.dataset.theme === 'dark' || root.classList.contains('dark') ? 'dark' : 'light');
     const getPreference = () => {
       const stored = getStoredTheme();
-      return stored === 'dark' || stored === 'light' || stored === 'auto' ? stored : 'auto';
+      return stored === 'dark' || stored === 'light' || stored === 'auto' ? stored : 'light';
     };
 
     const updateIcons = (preference) => {
@@ -313,15 +316,14 @@ const isActive = (href: string) => {
     toggles.forEach((toggle) => {
       toggle.addEventListener('click', () => {
         const currentPreference = getPreference();
-        const appliedTheme = getAppliedTheme();
 
-        // Cycle: auto -> (force opposite) -> (force other) -> auto
+        // Cycle: light -> dark -> auto -> light
         const nextPreference =
-          currentPreference === 'auto'
-            ? (appliedTheme === 'dark' ? 'light' : 'dark')
+          currentPreference === 'light'
+            ? 'dark'
             : currentPreference === 'dark'
-              ? 'light'
-              : 'auto';
+              ? 'auto'
+              : 'light';
 
         applyPreference(nextPreference, true);
       });
