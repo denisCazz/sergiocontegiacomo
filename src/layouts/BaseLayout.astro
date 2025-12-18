@@ -236,7 +236,10 @@ gtag('config', '${gaMeasurementId}', { anonymize_ip: true });`}
           return;
         }
 
-        const storageKey = 'preferred-theme';
+        // Use a new key to avoid old stored values forcing the site theme.
+        // Default should follow the device preference.
+        const storageKey = 'theme-preference';
+        const legacyStorageKey = 'preferred-theme';
         const root = document.documentElement;
 
         const applyTheme = (theme) => {
@@ -248,13 +251,37 @@ gtag('config', '${gaMeasurementId}', { anonymize_ip: true });`}
           root.dataset.theme = theme;
         };
 
+        const prefersDark = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
+
         try {
+          // Clear legacy key so it won't override OS defaults.
+          if (localStorage.getItem(legacyStorageKey)) {
+            localStorage.removeItem(legacyStorageKey);
+          }
+
           const stored = localStorage.getItem(storageKey);
-          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          applyTheme(stored ?? (prefersDark ? 'dark' : 'light'));
+          const preference = stored === 'dark' || stored === 'light' || stored === 'auto' ? stored : null;
+          const initialTheme = preference === 'dark' || preference === 'light'
+            ? preference
+            : (prefersDark() ? 'dark' : 'light');
+
+          applyTheme(initialTheme);
+
+          const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+          const handlePreferredScheme = (event) => {
+            // Follow OS only when the user hasn't set an override.
+            const pref = localStorage.getItem(storageKey);
+            if (pref && pref !== 'auto') return;
+            applyTheme(event.matches ? 'dark' : 'light');
+          };
+
+          if (typeof mediaQuery.addEventListener === 'function') {
+            mediaQuery.addEventListener('change', handlePreferredScheme);
+          } else if (typeof mediaQuery.addListener === 'function') {
+            mediaQuery.addListener(handlePreferredScheme);
+          }
         } catch (error) {
-          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          applyTheme(prefersDark ? 'dark' : 'light');
+          applyTheme(prefersDark() ? 'dark' : 'light');
         }
       })();`}
     </script>

@@ -75,10 +75,42 @@ import { siteConfig } from '../lib/config';
         <span class="hidden md:inline text-neutral-300 dark:text-neutral-700">|</span>
         <p>Realizzato da <a href="https://bitora.it" target="_blank" rel="noopener noreferrer" class="hover:text-brand-primary transition">Bitora.it</a> - un prodotto di Cazzulo Denis</p>
       </div>
-      <div class="flex gap-4">
+      <div class="flex items-center gap-4">
         <a href="/privacy" class="hover:text-brand-primary transition">Privacy</a>
         <a href="/cookie" class="hover:text-brand-primary transition">Cookie</a>
         <a href="/admin" class="hover:text-brand-primary transition">Admin</a>
+        <button
+          type="button"
+          class="inline-flex items-center gap-2 rounded-full border border-neutral-border bg-white px-3 py-1.5 text-xs font-semibold text-neutral-muted transition hover:border-brand-primary hover:text-brand-primary dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300"
+          data-theme-toggle
+          aria-label="Cambia tema"
+          title="Cambia tema"
+        >
+          <span data-theme-icon="auto" class="inline-flex items-center gap-2">
+            <span class="inline-flex h-4 w-4 items-center justify-center rounded-full border border-neutral-border text-[10px] leading-none dark:border-neutral-700">A</span>
+            Automatico
+          </span>
+          <span data-theme-icon="sun" class="hidden inline-flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2" />
+              <path d="M12 20v2" />
+              <path d="m4.93 4.93 1.41 1.41" />
+              <path d="m17.66 17.66 1.41 1.41" />
+              <path d="M2 12h2" />
+              <path d="M20 12h2" />
+              <path d="m6.34 17.66-1.41 1.41" />
+              <path d="m19.07 4.93-1.41 1.41" />
+            </svg>
+            Tema chiaro
+          </span>
+          <span data-theme-icon="moon" class="hidden inline-flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+            </svg>
+            Tema scuro
+          </span>
+        </button>
       </div>
     </div>
   </div>

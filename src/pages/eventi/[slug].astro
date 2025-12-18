@@ -100,7 +100,7 @@ export async function getStaticPaths() {
         <div class="rounded-3xl border border-neutral-border bg-white p-8 space-y-4 dark:border-neutral-800 dark:bg-neutral-900">
           <h2 class="text-lg font-semibold text-neutral-text dark:text-white">Dettagli completi</h2>
           <div
-            class="text-sm text-neutral-muted leading-relaxed dark:text-neutral-300"
+            class="prose prose-sm prose-neutral max-w-none prose-headings:font-serif dark:prose-invert prose-p:my-3 prose-p:leading-6 prose-li:my-1 prose-ul:my-3 prose-ol:my-3 prose-headings:mt-8 prose-headings:mb-3"
             set:html={htmlDescription || '<p>Descrizione disponibile a breve.</p>'}
           ></div>
         </div>

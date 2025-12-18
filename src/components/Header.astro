@@ -99,31 +99,6 @@ const isActive = (href: string) => {
           </a>
         )
       ))}
-      <button
-        type="button"
-        class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-border text-neutral-muted transition hover:border-brand-primary hover:text-brand-primary dark:border-neutral-700 dark:text-neutral-300"
-        data-theme-toggle
-        aria-label="Cambia tema"
-      >
-        <span data-theme-icon="sun">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="12" cy="12" r="4" />
-            <path d="M12 2v2" />
-            <path d="M12 20v2" />
-            <path d="m4.93 4.93 1.41 1.41" />
-            <path d="m17.66 17.66 1.41 1.41" />
-            <path d="M2 12h2" />
-            <path d="M20 12h2" />
-            <path d="m6.34 17.66-1.41 1.41" />
-            <path d="m19.07 4.93-1.41 1.41" />
-          </svg>
-        </span>
-        <span data-theme-icon="moon" class="hidden">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
-          </svg>
-        </span>
-      </button>
       <a
         href="/contatti"
         class="ml-6 inline-flex items-center rounded-full bg-brand-primary px-4 py-2 text-white text-sm font-semibold shadow-md shadow-brand-primary/20 hover:bg-brand-light transition"
@@ -215,33 +190,6 @@ const isActive = (href: string) => {
         )
       ))}
     </nav>
-    <button
-      type="button"
-      class="inline-flex h-12 w-full items-center justify-center rounded-full border border-neutral-border text-neutral-muted font-semibold transition hover:border-brand-primary hover:text-brand-primary dark:border-neutral-700 dark:text-neutral-300"
-      data-theme-toggle
-      aria-label="Cambia tema"
-    >
-      <span data-theme-icon="sun" class="inline-flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2" />
-          <path d="M12 20v2" />
-          <path d="m4.93 4.93 1.41 1.41" />
-          <path d="m17.66 17.66 1.41 1.41" />
-          <path d="M2 12h2" />
-          <path d="M20 12h2" />
-          <path d="m6.34 17.66-1.41 1.41" />
-          <path d="m19.07 4.93-1.41 1.41" />
-        </svg>
-        Tema chiaro
-      </span>
-      <span data-theme-icon="moon" class="hidden inline-flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
-        </svg>
-        Tema scuro
-      </span>
-    </button>
     <a
       href="/contatti"
       class="mt-auto inline-flex items-center justify-center rounded-full bg-brand-primary px-4 py-3 text-white font-semibold shadow-md shadow-brand-primary/20 hover:bg-brand-light transition"
@@ -290,7 +238,8 @@ const isActive = (href: string) => {
   };
 
   const initThemeToggle = () => {
-    const storageKey = 'preferred-theme';
+    const storageKey = 'theme-preference';
+    const legacyStorageKey = 'preferred-theme';
     const root = document.documentElement;
     const toggles = document.querySelectorAll('[data-theme-toggle]');
 
@@ -306,52 +255,85 @@ const isActive = (href: string) => {
 
     const getStoredTheme = () => {
       try {
+        // Clear legacy key so it won't override OS defaults.
+        if (localStorage.getItem(legacyStorageKey)) {
+          localStorage.removeItem(legacyStorageKey);
+        }
         return localStorage.getItem(storageKey);
       } catch (error) {
         return null;
       }
     };
 
-    const getCurrentTheme = () => (root.dataset.theme === 'dark' || root.classList.contains('dark') ? 'dark' : 'light');
+    const getAppliedTheme = () => (root.dataset.theme === 'dark' || root.classList.contains('dark') ? 'dark' : 'light');
+    const getPreference = () => {
+      const stored = getStoredTheme();
+      return stored === 'dark' || stored === 'light' || stored === 'auto' ? stored : 'auto';
+    };
 
-    const updateIcons = (theme) => {
+    const updateIcons = (preference) => {
       toggles.forEach((toggle) => {
         const sun = toggle.querySelector('[data-theme-icon="sun"]');
         const moon = toggle.querySelector('[data-theme-icon="moon"]');
+        const auto = toggle.querySelector('[data-theme-icon="auto"]');
         if (sun instanceof HTMLElement) {
-          sun.classList.toggle('hidden', theme === 'dark');
+          sun.classList.toggle('hidden', preference !== 'light');
         }
         if (moon instanceof HTMLElement) {
-          moon.classList.toggle('hidden', theme === 'light');
+          moon.classList.toggle('hidden', preference !== 'dark');
+        }
+        if (auto instanceof HTMLElement) {
+          auto.classList.toggle('hidden', preference !== 'auto');
         }
       });
     };
 
-    const applyTheme = (theme) => {
+    const applyAppliedTheme = (theme) => {
       root.classList.toggle('dark', theme === 'dark');
       root.dataset.theme = theme;
-      updateIcons(theme);
-      storeTheme(theme);
     };
 
-    const storedTheme = getStoredTheme();
-    if (storedTheme === 'dark' || storedTheme === 'light') {
-      applyTheme(storedTheme);
-    } else {
-      updateIcons(getCurrentTheme());
-    }
+    const applyPreference = (preference, persist = true) => {
+      if (persist) {
+        storeTheme(preference);
+      }
+
+      if (preference === 'auto') {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        applyAppliedTheme(prefersDark ? 'dark' : 'light');
+      } else {
+        applyAppliedTheme(preference);
+      }
+
+      updateIcons(preference);
+    };
+
+    applyPreference(getPreference(), false);
 
     toggles.forEach((toggle) => {
       toggle.addEventListener('click', () => {
-        const nextTheme = getCurrentTheme() === 'dark' ? 'light' : 'dark';
-        applyTheme(nextTheme);
+        const currentPreference = getPreference();
+        const appliedTheme = getAppliedTheme();
+
+        // Cycle: auto -> (force opposite) -> (force other) -> auto
+        const nextPreference =
+          currentPreference === 'auto'
+            ? (appliedTheme === 'dark' ? 'light' : 'dark')
+            : currentPreference === 'dark'
+              ? 'light'
+              : 'auto';
+
+        applyPreference(nextPreference, true);
       });
     });
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handlePreferredScheme = (event) => {
-      if (getStoredTheme()) return;
-      applyTheme(event.matches ? 'dark' : 'light');
+      const pref = getPreference();
+      if (pref !== 'auto') return;
+      // Follow OS preference in auto mode. Do not change the preference.
+      applyAppliedTheme(event.matches ? 'dark' : 'light');
+      updateIcons('auto');
     };
 
     if (typeof mediaQuery.addEventListener === 'function') {
