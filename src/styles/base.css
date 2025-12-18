@@ -27,6 +27,10 @@ body {
     @apply text-brand-primary font-medium underline decoration-brand-accent/40 underline-offset-4;
   }
 
+  .dark .prose :where(a):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    @apply text-brand-light decoration-brand-accent/50;
+  }
+
   .prose :where(blockquote):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
     @apply border-l-4 border-brand-accent/40 text-neutral-muted;
   }
