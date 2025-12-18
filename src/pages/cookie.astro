@@ -1,18 +1,88 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteConfig } from '../lib/config';
 ---
 
 <BaseLayout title="Cookie Policy" activePath="/cookie" noindex={true}>
   <section class="bg-neutral-base py-20">
-    <div class="mx-auto max-w-4xl px-6 space-y-8 text-sm leading-relaxed text-neutral-muted">
-      <h1 class="text-3xl font-semibold text-neutral-text">Cookie Policy</h1>
-      <p>
-        Questa pagina funge da segnaposto. Inserisci la cookie policy completa che descrive le tipologie di cookie utilizzati,
-        le finalita', le durate di conservazione e come l'utente puo' gestire o revocare il consenso tramite il cookie banner.
-      </p>
-      <p>
-        Assicurati di integrare un sistema di gestione del consenso (CMP) conforme alla normativa italiana e alle linee guida del Garante Privacy.
-      </p>
+    <div class="mx-auto max-w-4xl px-6">
+      <div class="prose prose-neutral max-w-none dark:prose-invert prose-headings:font-serif">
+        <h1>Cookie Policy</h1>
+        <p>
+          La presente Cookie Policy descrive l’uso di cookie e tecnologie simili sul sito
+          <a href={siteConfig.siteUrl}>{siteConfig.siteUrl}</a> (di seguito, il “Sito”).
+        </p>
+
+        <h2>Cosa sono i cookie</h2>
+        <p>
+          I cookie sono piccoli file di testo che i siti possono salvare sul dispositivo dell’utente per migliorare l’esperienza di navigazione,
+          abilitare funzionalità, o raccogliere statistiche.
+        </p>
+
+        <h2>Cookie e tecnologie utilizzate su questo Sito</h2>
+        <h3>1) Cookie tecnici (necessari)</h3>
+        <p>
+          Il Sito può utilizzare cookie tecnici indispensabili per il funzionamento e la sicurezza (ad esempio, gestione della sessione nell’area amministrativa,
+          bilanciamento del carico, protezione da abusi). Questi cookie non richiedono, di norma, il consenso preventivo.
+        </p>
+
+        <h3>2) Preferenze (tema)</h3>
+        <p>
+          La scelta del tema (chiaro/scuro/automatico) viene memorizzata tramite <strong>localStorage</strong> del browser (chiave: <code>theme-preference</code>),
+          non tramite cookie. In modalità <strong>Automatico</strong> il Sito segue la preferenza di sistema (prefers-color-scheme).
+        </p>
+
+        <h3>3) Funzionalità (anti-duplicazione RSVP)</h3>
+        <p>
+          Per alcune funzionalità (es. RSVP evento) può essere usata una memorizzazione locale (localStorage) per ridurre invii ripetuti
+          (es. chiavi del tipo <code>rsvp_&lt;slug&gt;</code>). Anche in questo caso non si tratta di cookie.
+        </p>
+
+        <h3>4) Cookie analitici (Google Analytics, se configurato)</h3>
+        <p>
+          Il Sito può integrare Google Analytics per raccogliere statistiche aggregate sull’uso del Sito (pagine visitate, tempi di permanenza, ecc.).
+          L’integrazione è prevista con anonimizzazione dell’IP a livello di configurazione tecnica.
+        </p>
+        <p>
+          In base alla normativa applicabile ai cookie (e alle linee guida del Garante Privacy), l’uso di cookie analitici e/o di terze parti può richiedere
+          il consenso dell’utente. Se il servizio non è configurato o non viene attivato, questa sezione non si applica.
+        </p>
+
+        <h3>5) Contenuti e servizi di terze parti</h3>
+        <p>
+          Il Sito può contenere link o contenuti di terze parti (es. social). La visita a tali risorse potrebbe comportare l’uso di cookie e tecnologie
+          di tracciamento da parte dei rispettivi fornitori, secondo le loro policy.
+        </p>
+
+        <h2>Come gestire cookie e preferenze</h2>
+        <ul>
+          <li>
+            <strong>Browser</strong>: puoi eliminare o bloccare i cookie tramite le impostazioni del browser (Chrome, Firefox, Safari, Edge). La disabilitazione dei cookie tecnici
+            può compromettere alcune funzionalità del Sito.
+          </li>
+          <li>
+            <strong>Tema</strong>: puoi modificare il tema dal pulsante “Tema” nel footer (Chiaro/Scuro/Automatico).
+          </li>
+          <li>
+            <strong>Google Analytics</strong> (se attivo): puoi usare strumenti di opt-out disponibili da Google o impostazioni del browser per limitare la raccolta.
+          </li>
+        </ul>
+
+        <h2>Collegamenti utili</h2>
+        <ul>
+          <li><a href="/privacy">Informativa Privacy</a></li>
+        </ul>
+
+        <h2>Aggiornamenti</h2>
+        <p>
+          Questa Cookie Policy può essere aggiornata nel tempo. Ultimo aggiornamento: <strong>18/12/2025</strong>.
+        </p>
+
+        <p>
+          <em>Nota</em>: questa policy è un testo informativo basato sulle funzionalità presenti nel Sito; se vengono introdotti cookie di profilazione o un sistema CMP/banner,
+          la policy potrebbe richiedere ulteriori dettagli (elenco cookie, durata, terze parti, ecc.).
+        </p>
+      </div>
     </div>
   </section>
 </BaseLayout>

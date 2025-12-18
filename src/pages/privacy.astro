@@ -1,19 +1,139 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteConfig } from '../lib/config';
 ---
 
 <BaseLayout title="Informativa Privacy" activePath="/privacy" noindex={true}>
   <section class="bg-neutral-base py-20">
-    <div class="mx-auto max-w-4xl px-6 space-y-8 text-sm leading-relaxed text-neutral-muted">
-      <h1 class="text-3xl font-semibold text-neutral-text">Informativa sul trattamento dei dati personali</h1>
-      <p>
-        Questa pagina e' un placeholder. Inserisci qui l'informativa completa conforme al Regolamento (UE) 2016/679 (GDPR) e alla
-        normativa italiana vigente. Prevedi sezioni dedicate a finalita', basi giuridiche, diritti degli interessati, tempi di
-        conservazione e contatti del titolare/responsabile del trattamento.
-      </p>
-      <p>
-        Aggiorna il contenuto in collaborazione con il consulente legale o privacy specialist di riferimento prima della messa online del sito.
-      </p>
+    <div class="mx-auto max-w-4xl px-6">
+      <div class="prose prose-neutral max-w-none dark:prose-invert prose-headings:font-serif">
+        <h1>Informativa sul trattamento dei dati personali</h1>
+
+        <p>
+          La presente informativa descrive come vengono trattati i dati personali degli utenti che visitano e utilizzano il sito
+          <a href={siteConfig.siteUrl}>{siteConfig.siteUrl}</a> (di seguito, il “Sito”), in conformità al Regolamento (UE) 2016/679 (“GDPR”)
+          e alla normativa italiana applicabile.
+        </p>
+
+        <h2>Titolare del trattamento</h2>
+        <p>
+          <strong>{siteConfig.name}</strong><br />
+          Indirizzo: {siteConfig.address}<br />
+          Email: <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a><br />
+          Telefono: <a href={`tel:${siteConfig.phone.replace(/\s+/g, '')}`}>{siteConfig.phone}</a>
+        </p>
+
+        <h2>Tipologie di dati trattati</h2>
+        <ul>
+          <li><strong>Dati di navigazione</strong>: log tecnici, indirizzo IP, user-agent, informazioni sul dispositivo e sul browser, data/ora e pagine visitate.</li>
+          <li><strong>Dati forniti dall’utente</strong>: es. nome, cognome, email, telefono e contenuto del messaggio tramite form contatti.</li>
+          <li><strong>Dati per la newsletter</strong>: indirizzo email e informazioni tecniche relative alla gestione dell’iscrizione.</li>
+          <li><strong>Commenti/recensioni</strong> (se utilizzati): nome visualizzato, valutazione e testo del commento.</li>
+          <li><strong>RSVP/partecipazione eventi</strong> (se utilizzati): email e scelta di partecipazione (es. “parteciperò/non parteciperò”).</li>
+        </ul>
+
+        <h2>Finalità e basi giuridiche</h2>
+        <h3>1) Gestione richieste di contatto</h3>
+        <ul>
+          <li><strong>Finalità</strong>: rispondere a richieste inviate dall’utente, ricontattarlo, gestire appuntamenti o informazioni.</li>
+          <li><strong>Dati</strong>: nome, cognome, email, telefono (se indicato), messaggio.</li>
+          <li><strong>Base giuridica</strong>: esecuzione di misure precontrattuali/contrattuali (art. 6.1.b GDPR) e/o consenso (art. 6.1.a) quando richiesto.</li>
+        </ul>
+
+        <h3>2) Iscrizione e invio newsletter</h3>
+        <ul>
+          <li><strong>Finalità</strong>: inviare aggiornamenti, contenuti informativi e comunicazioni relative a iniziative/servizi.</li>
+          <li><strong>Dati</strong>: email.</li>
+          <li><strong>Base giuridica</strong>: consenso (art. 6.1.a GDPR). È possibile revocare in qualunque momento tramite link di disiscrizione o contattando il Titolare.</li>
+        </ul>
+
+        <h3>3) Pubblicazione e gestione commenti/recensioni</h3>
+        <ul>
+          <li><strong>Finalità</strong>: permettere l’inserimento e la visualizzazione pubblica di commenti/recensioni collegati ai contenuti del Sito.</li>
+          <li><strong>Dati</strong>: nome visualizzato, valutazione, contenuto del commento.</li>
+          <li><strong>Base giuridica</strong>: consenso (art. 6.1.a) e/o legittimo interesse del Titolare alla moderazione e sicurezza del servizio (art. 6.1.f).</li>
+        </ul>
+
+        <h3>4) Gestione RSVP/partecipazione ad eventi</h3>
+        <ul>
+          <li><strong>Finalità</strong>: raccogliere la manifestazione di interesse/partecipazione e statistiche aggregate di partecipazione.</li>
+          <li><strong>Dati</strong>: email e scelta di partecipazione.</li>
+          <li><strong>Base giuridica</strong>: consenso (art. 6.1.a GDPR) e/o esecuzione di misure precontrattuali (art. 6.1.b) a seconda dell’iniziativa.</li>
+        </ul>
+
+        <h3>5) Sicurezza e funzionamento del Sito</h3>
+        <ul>
+          <li><strong>Finalità</strong>: garantire sicurezza, prevenire abusi e frodi, diagnosi di errori e manutenzione.</li>
+          <li><strong>Base giuridica</strong>: legittimo interesse (art. 6.1.f GDPR).</li>
+        </ul>
+
+        <h3>6) Statistiche (Google Analytics, se configurato)</h3>
+        <ul>
+          <li><strong>Finalità</strong>: misurare e migliorare prestazioni e fruibilità del Sito tramite statistiche aggregate.</li>
+          <li><strong>Dati</strong>: dati di utilizzo e identificativi online (cookie/ID) che possono essere trattati dal fornitore del servizio.</li>
+          <li><strong>Base giuridica</strong>: consenso (art. 6.1.a GDPR), ove richiesto dalla normativa applicabile ai cookie.</li>
+          <li><strong>Nota</strong>: sul Sito è prevista l’anonimizzazione dell’IP tramite configurazione tecnica. Se il servizio non è configurato, questa finalità non si applica.</li>
+        </ul>
+
+        <h2>Modalità del trattamento</h2>
+        <p>
+          Il trattamento avviene con strumenti informatici e telematici, con misure di sicurezza adeguate per proteggere i dati da accessi non autorizzati,
+          divulgazione, modifica o distruzione.
+        </p>
+
+        <h2>Destinatari e fornitori (responsabili del trattamento)</h2>
+        <p>
+          Per l’erogazione del Sito e dei servizi connessi, il Titolare può avvalersi di fornitori che agiscono, ove applicabile, come responsabili del trattamento,
+          ad esempio:
+        </p>
+        <ul>
+          <li><strong>Hosting e infrastruttura</strong>: piattaforme di hosting/deployment (es. Vercel).</li>
+          <li><strong>Database e autenticazione</strong>: Supabase (gestione contenuti dinamici come commenti/RSVP e area admin).</li>
+          <li><strong>Email marketing e gestione contatti</strong>: Brevo (invio email e gestione iscrizioni/newsletter e contatti).</li>
+          <li><strong>Statistica</strong>: Google Analytics (se attivato).</li>
+        </ul>
+
+        <h2>Trasferimenti extra UE</h2>
+        <p>
+          Alcuni fornitori potrebbero trattare dati anche al di fuori dello Spazio Economico Europeo. In tali casi, i trasferimenti avvengono nel rispetto del GDPR,
+          mediante garanzie adeguate (es. Clausole Contrattuali Standard) ove applicabile.
+        </p>
+
+        <h2>Tempi di conservazione</h2>
+        <ul>
+          <li><strong>Richieste di contatto</strong>: per il tempo necessario a gestire la richiesta e, in seguito, per un periodo congruo a fini organizzativi e di tutela (tipicamente fino a 12 mesi), salvo obblighi diversi.</li>
+          <li><strong>Newsletter</strong>: fino alla revoca del consenso/disiscrizione.</li>
+          <li><strong>Commenti/recensioni</strong>: fino a richiesta di rimozione o per il tempo necessario alla finalità di pubblicazione e moderazione.</li>
+          <li><strong>RSVP eventi</strong>: per il tempo necessario alla gestione dell’evento e per eventuali statistiche aggregate; i dati identificativi possono essere cancellati o anonimizzati successivamente.</li>
+          <li><strong>Log tecnici</strong>: secondo le policy del fornitore di hosting e per il tempo strettamente necessario a sicurezza e manutenzione.</li>
+        </ul>
+
+        <h2>Diritti dell’interessato</h2>
+        <p>
+          In presenza dei presupposti di legge, l’utente può esercitare i diritti di cui agli artt. 15-22 GDPR (accesso, rettifica, cancellazione, limitazione,
+          portabilità, opposizione, revoca del consenso). È inoltre possibile proporre reclamo al Garante per la protezione dei dati personali.
+        </p>
+
+        <h2>Come esercitare i diritti</h2>
+        <p>
+          Per richieste relative alla privacy: <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>.
+        </p>
+
+        <h2>Cookie e tecnologie simili</h2>
+        <p>
+          Per maggiori informazioni sull’uso di cookie e strumenti analoghi, consulta la <a href="/cookie">Cookie Policy</a>.
+        </p>
+
+        <h2>Aggiornamenti</h2>
+        <p>
+          Questa informativa può essere aggiornata nel tempo. Ultimo aggiornamento: <strong>18/12/2025</strong>.
+        </p>
+
+        <p>
+          <em>Nota</em>: questo testo è un modello informativo basato sulle funzionalità presenti nel Sito; per esigenze specifiche (es. profili fiscali/societari,
+          cookie di profilazione, trasferimenti particolari) è consigliata una verifica con un consulente legale/privacy.
+        </p>
+      </div>
     </div>
   </section>
 </BaseLayout>
