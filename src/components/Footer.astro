@@ -48,6 +48,10 @@ import { siteConfig } from '../lib/config';
         <label class="block text-xs font-semibold text-neutral-muted uppercase tracking-[0.3em]" for="newsletter-email">
           Email
         </label>
+        <div class="hidden" aria-hidden="true">
+          <label for="newsletter-company">Company</label>
+          <input id="newsletter-company" name="company" type="text" tabindex="-1" autocomplete="off" />
+        </div>
         <input
           id="newsletter-email"
           name="email"
@@ -128,6 +132,7 @@ import { siteConfig } from '../lib/config';
 
       const formData = new FormData(newsletterForm);
       const email = formData.get('email');
+      const company = formData.get('company');
 
       if (!email) return;
 
@@ -137,7 +142,7 @@ import { siteConfig } from '../lib/config';
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email }),
+          body: JSON.stringify({ email, company }),
         });
 
         const json = await res.json().catch(() => ({}));

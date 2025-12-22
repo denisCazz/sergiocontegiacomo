@@ -4,7 +4,7 @@ import SectionHeading from '../../components/SectionHeading.astro';
 import EventCard from '../../components/EventCard.astro';
 import TagFilter from '../../components/TagFilter.astro';
 import Pagination from '../../components/Pagination.astro';
-import { getEvents, type EventItem } from '../../lib/cms';
+import { getEvents, getUniqueEventTags, type EventItem } from '../../lib/cms';
 import dayjs from 'dayjs';
 
 const page = Number(Astro.url.searchParams.get('page') ?? '1');
@@ -31,10 +31,7 @@ const { data: eventEntries, meta } = await getEvents({
 
 const events = (eventEntries ?? []).map((entry) => entry.attributes as EventItem);
 
-const tagSet = new Set<string>();
-const allEvents = (await getEvents()).data?.map((entry) => entry.attributes as EventItem) ?? [];
-allEvents.forEach((event) => event.tags?.forEach((tag) => tagSet.add(tag)));
-const tags = Array.from(tagSet).sort();
+const tags = await getUniqueEventTags();
 
 const pagination = meta?.pagination ?? { page: 1, pageCount: 1 };
 ---

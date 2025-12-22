@@ -2,10 +2,37 @@ export const prerender = false;
 
 import { brevoRequest, isValidEmail } from '../../lib/brevo';
 
+function getString(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  return trimmed ? trimmed : undefined;
+}
+
 export async function POST({ request }: { request: Request }) {
   try {
-    const payload = await request.json();
-    const email = payload?.email?.toString().trim();
+    const payload = await request.json().catch(() => ({}));
+
+    // Honeypot anti-bot: se compilato, rispondiamo OK senza fare nulla.
+    // Non deve essere usato dagli utenti reali.
+    const honey = getString((payload as any)?.company) || getString((payload as any)?.website);
+    if (honey) {
+      return new Response(JSON.stringify({ success: true, message: 'Iscrizione completata.' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const email = getString((payload as any)?.email);
+    const nome =
+      getString((payload as any)?.nome) ||
+      getString((payload as any)?.firstName) ||
+      getString((payload as any)?.firstname) ||
+      getString((payload as any)?.first_name);
+    const cognome =
+      getString((payload as any)?.cognome) ||
+      getString((payload as any)?.lastName) ||
+      getString((payload as any)?.lastname) ||
+      getString((payload as any)?.last_name);
 
     if (!email) {
       return new Response(JSON.stringify({ success: false, message: 'Email mancante' }), {
@@ -31,12 +58,17 @@ export async function POST({ request }: { request: Request }) {
       import.meta.env.PUBLIC_SITE_URL?.toString().trim() ||
       (import.meta.env.VERCEL_URL ? `https://${import.meta.env.VERCEL_URL}` : '');
 
+    const attributes: Record<string, unknown> = {};
+    if (nome) attributes.FIRSTNAME = nome;
+    if (cognome) attributes.LASTNAME = cognome;
+
     // Se configuri un template DOI su Brevo, inviamo sempre la conferma.
     if (doiTemplateId) {
       const result = await brevoRequest('/contacts/doubleOptinConfirmation', {
         method: 'POST',
         body: {
           email,
+          attributes: Object.keys(attributes).length ? attributes : undefined,
           includeListIds: listId ? [listId] : undefined,
           templateId: doiTemplateId,
           redirectionUrl: doiRedirectUrl,
@@ -66,6 +98,7 @@ export async function POST({ request }: { request: Request }) {
       body: {
         email,
         listIds: listId ? [listId] : undefined,
+        attributes: Object.keys(attributes).length ? attributes : undefined,
         updateEnabled: true,
       },
     });

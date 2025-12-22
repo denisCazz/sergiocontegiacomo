@@ -8,7 +8,7 @@
  * Usa AWS SDK S3 per compatibilità con R2
  */
 
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import type { S3Client } from '@aws-sdk/client-s3';
 
 // Configurazione R2 dalle variabili d'ambiente
 const R2_ACCOUNT_ID = import.meta.env.R2_ACCOUNT_ID;
@@ -66,6 +66,7 @@ export function validateFileType(file: File, category: FileCategory): boolean {
  * @param category - La categoria: 'images', 'audio', o 'press'
  */
 export async function uploadToR2(file: File, category: FileCategory = 'press'): Promise<R2UploadResult> {
+  const { S3Client, PutObjectCommand } = await import('@aws-sdk/client-s3');
   const client = getR2Client();
   
   if (!client) {
@@ -124,6 +125,7 @@ export async function uploadToR2(file: File, category: FileCategory = 'press'): 
  * Elimina un file da Cloudflare R2
  */
 export async function deleteFromR2(fileUrl: string): Promise<boolean> {
+  const { DeleteObjectCommand } = await import('@aws-sdk/client-s3');
   const client = getR2Client();
   
   if (!client) {

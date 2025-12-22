@@ -2,6 +2,42 @@ import { supabase, supabaseAdmin } from './supabase';
 import dayjs from 'dayjs';
 import { sampleArticles } from './dataFallback';
 
+type CacheEntry<T> = {
+  value: T;
+  expiresAt: number;
+};
+
+const runtimeCache = new Map<string, CacheEntry<unknown>>();
+
+function getCached<T>(key: string): T | undefined {
+  const entry = runtimeCache.get(key);
+  if (!entry) return undefined;
+  if (Date.now() >= entry.expiresAt) {
+    runtimeCache.delete(key);
+    return undefined;
+  }
+  return entry.value as T;
+}
+
+function setCached<T>(key: string, value: T, ttlMs: number) {
+  runtimeCache.set(key, { value, expiresAt: Date.now() + ttlMs });
+}
+
+function normalizeSearchQuery(raw: unknown): string | undefined {
+  if (typeof raw !== 'string') return undefined;
+  const trimmed = raw.trim();
+  if (!trimmed) return undefined;
+
+  // Avoid breaking PostgREST `or()` syntax and keep URL size reasonable.
+  const safe = trimmed
+    .slice(0, 80)
+    .replace(/[,%()]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return safe || undefined;
+}
+
 // ==================== FILE STORAGE ====================
 
 export type UploadResult = {
@@ -251,6 +287,50 @@ export async function getAllArticleStats() {
   return data as ArticleStats[];
 }
 
+export async function getArticleStatsForSlugs(slugs: string[]) {
+  const uniqueSlugs = Array.from(new Set(slugs)).filter(Boolean);
+  if (uniqueSlugs.length === 0) return [] as ArticleStats[];
+
+  const { data, error } = await supabase
+    .from('article_stats')
+    .select('*')
+    .in('article_slug', uniqueSlugs);
+
+  if (error) {
+    console.error('Error fetching article stats by slugs:', error);
+    return [];
+  }
+
+  return (data ?? []) as ArticleStats[];
+}
+
+export async function getUniqueArticleTags() {
+  const cacheKey = 'articles:tags:v1';
+  const cached = getCached<string[]>(cacheKey);
+  if (cached) return cached;
+
+  const { data, error } = await supabase
+    .from('articles')
+    .select('tags')
+    .not('published_at', 'is', null);
+
+  if (error) {
+    console.error('Error fetching article tags:', error);
+    return [] as string[];
+  }
+
+  const tagSet = new Set<string>();
+  (data ?? []).forEach((row: any) => {
+    (row?.tags ?? []).forEach((tag: unknown) => {
+      if (typeof tag === 'string' && tag.trim()) tagSet.add(tag);
+    });
+  });
+
+  const tags = Array.from(tagSet).sort();
+  setCached(cacheKey, tags, 10 * 60 * 1000);
+  return tags;
+}
+
 export async function getEventRSVPs(slug: string) {
   const { data, error } = await supabase
     .from('event_rsvps')
@@ -302,6 +382,12 @@ export async function getArticles(options: FetchOptions = {}) {
     if (options.filters.slug) {
       query = query.eq('slug', options.filters.slug);
     }
+
+    const search = normalizeSearchQuery((options.filters as any).q);
+    if (search) {
+      query = query.or(`title.ilike.%${search}%,excerpt.ilike.%${search}%,content.ilike.%${search}%`);
+    }
+
     // Handle tag filter - tags is a JSONB array in Supabase
     if (options.filters.tags && typeof options.filters.tags === 'object') {
       const tagFilter = options.filters.tags as { $containsi?: string };
@@ -388,9 +474,18 @@ export async function getEvents(options: FetchOptions = {}) {
     if (options.filters.date && typeof options.filters.date === 'object') {
        // Handle date filters like $gte
        const dateFilter = options.filters.date as any;
-       if (dateFilter.$gte) {
-         query = query.gte('date', dateFilter.$gte);
-       }
+       if (dateFilter.$gte) query = query.gte('date', dateFilter.$gte);
+       if (dateFilter.$gt) query = query.gt('date', dateFilter.$gt);
+       if (dateFilter.$lte) query = query.lte('date', dateFilter.$lte);
+       if (dateFilter.$lt) query = query.lt('date', dateFilter.$lt);
+    }
+
+    // Handle tag filter - tags is a JSONB array in Supabase
+    if ((options.filters as any).tags && typeof (options.filters as any).tags === 'object') {
+      const tagFilter = (options.filters as any).tags as { $containsi?: string };
+      if (tagFilter.$containsi) {
+        query = query.contains('tags', [tagFilter.$containsi]);
+      }
     }
   }
 
@@ -439,6 +534,32 @@ export async function getEvents(options: FetchOptions = {}) {
       },
     },
   } satisfies StrapiResponse<EventItem>;
+}
+
+export async function getUniqueEventTags() {
+  const cacheKey = 'events:tags:v1';
+  const cached = getCached<string[]>(cacheKey);
+  if (cached) return cached;
+
+  const { data, error } = await supabase
+    .from('events')
+    .select('tags');
+
+  if (error) {
+    console.error('Error fetching event tags:', error);
+    return [] as string[];
+  }
+
+  const tagSet = new Set<string>();
+  (data ?? []).forEach((row: any) => {
+    (row?.tags ?? []).forEach((tag: unknown) => {
+      if (typeof tag === 'string' && tag.trim()) tagSet.add(tag);
+    });
+  });
+
+  const tags = Array.from(tagSet).sort();
+  setCached(cacheKey, tags, 10 * 60 * 1000);
+  return tags;
 }
 
 export async function getEventBySlug(slug: string) {

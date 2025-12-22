@@ -2,6 +2,8 @@ import rss from '@astrojs/rss';
 import { getArticles } from '../lib/cms';
 import { siteConfig } from '../lib/config';
 
+export const prerender = true;
+
 export async function GET() {
   const { data } = await getArticles();
   const articles = data ?? [];

@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogCard from '../../components/BlogCard.astro';
 import Pagination from '../../components/Pagination.astro';
-import { getArticles, getAllArticleStats, type Article, type ArticleStats } from '../../lib/cms';
+import { getArticles, getArticleStatsForSlugs, getUniqueArticleTags, type Article, type ArticleStats } from '../../lib/cms';
 
 const page = Number(Astro.url.searchParams.get('page') ?? '1');
 const activeTag = Astro.url.searchParams.get('tag') ?? undefined;
@@ -10,35 +10,21 @@ const searchQuery = Astro.url.searchParams.get('q') ?? undefined;
 
 const { data: articleEntries, meta } = await getArticles({
   pagination: { page, pageSize: 12 },
-  filters: activeTag ? { tags: { $containsi: activeTag } } : undefined,
+  filters: {
+    ...(activeTag ? { tags: { $containsi: activeTag } } : {}),
+    ...(searchQuery ? { q: searchQuery } : {}),
+  },
 });
 
 let articles = (articleEntries ?? []).map((entry) => entry.attributes as Article);
 
-// Filter by search query
-if (searchQuery) {
-  const query = searchQuery.toLowerCase();
-  articles = articles.filter((article) =>
-    article.title.toLowerCase().includes(query) ||
-    article.excerpt?.toLowerCase().includes(query) ||
-    article.content?.toLowerCase().includes(query)
-  );
-}
+// Load article stats (ratings and comment counts) only for what's shown in page
+const pageSlugs = articles.map((article) => article.slug).filter(Boolean);
+const pageStats = await getArticleStatsForSlugs(pageSlugs);
+const statsMap = new Map<string, ArticleStats>(pageStats.map((stat) => [stat.article_slug, stat]));
 
-// Load article stats (ratings and comment counts)
-const allStats = await getAllArticleStats();
-const statsMap = new Map<string, ArticleStats>();
-allStats.forEach((stat) => {
-  statsMap.set(stat.article_slug, stat);
-});
-
-// Get all tags from all articles
-const allEntries = await getArticles();
-const tagSet = new Set<string>();
-(allEntries.data ?? []).forEach((entry) => {
-  (entry.attributes as Article).tags?.forEach((tag) => tagSet.add(tag));
-});
-const tags = Array.from(tagSet).sort();
+// Get all tags (cached in runtime to avoid recomputing per request)
+const tags = await getUniqueArticleTags();
 
 const pagination = meta?.pagination ?? { page: 1, pageCount: 1 };
 ---

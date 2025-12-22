@@ -3,6 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import { siteConfig } from '../lib/config';
 
+export const prerender = true;
+
 const contactChannels = [
   {
     label: 'Email',
