@@ -20,6 +20,15 @@ Configura le variabili d'ambiente creando un file `.env` alla radice:
 STRAPI_BASE_URL=https://cms.sergiocontegiacomo.it
 STRAPI_API_TOKEN=xxxxxxxxxxxxxxxx
 PUBLIC_EVENT_EMAIL=eventi@sergiocontegiacomo.it
+
+# (server-only) integrazione Bitora CRM (lead da contatti/newsletter)
+BITORA_CRM_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# opzionale (default: https://www.bitora-crm.it/api/leads)
+BITORA_CRM_LEADS_ENDPOINT=https://www.bitora-crm.it/api/leads
+
+# (server-only) API esterna contatti (CRM/Supabase) - endpoint /contact
+CONTACT_LEADS_ENDPOINT=https://tuo-dominio.tld/contact
+CONTACT_LEADS_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 > Se non imposti le variabili, il sito userà i contenuti di fallback definiti in `src/lib/dataFallback.ts`.

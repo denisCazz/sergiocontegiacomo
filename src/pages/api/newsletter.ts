@@ -1,6 +1,7 @@
 export const prerender = false;
 
 import { brevoRequest, isValidEmail } from '../../lib/brevo';
+import { sendBitoraCrmLead } from '../../lib/bitoraCrm';
 
 function getString(value: unknown): string | undefined {
   if (typeof value !== 'string') return undefined;
@@ -61,6 +62,22 @@ export async function POST({ request }: { request: Request }) {
     const attributes: Record<string, unknown> = {};
     if (nome) attributes.FIRSTNAME = nome;
     if (cognome) attributes.LASTNAME = cognome;
+
+    // Best-effort: salva lead anche su Bitora CRM (non blocca l'iscrizione se fallisce)
+    const bitoraLead = await sendBitoraCrmLead(
+      {
+        first_name: nome,
+        last_name: cognome,
+        email,
+        message: 'Iscrizione newsletter dal sito',
+        source: 'website-newsletter',
+      },
+      { request },
+    );
+
+    if (!bitoraLead.ok && !bitoraLead.skipped) {
+      console.error('[newsletter] errore bitora-crm (lead)', bitoraLead.status, bitoraLead.errorText);
+    }
 
     // Se configuri un template DOI su Brevo, inviamo sempre la conferma.
     if (doiTemplateId) {
