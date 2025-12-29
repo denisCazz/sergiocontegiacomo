@@ -6,7 +6,7 @@ import { siteConfig } from '../lib/config';
   <div class="mx-auto max-w-6xl px-6 py-12 grid gap-10 md:grid-cols-4 text-sm">
     <div class="space-y-3">
       <div class="flex items-center gap-3">
-        <img src="/logo_sergio.avif" alt="Logo Sergio Contegiacomo" class="h-12 w-auto rounded-full" />
+        <img src="/logo_sergio.avif" alt="Logo Sergio Contegiacomo" width="48" height="48" class="h-12 w-12 rounded-full object-cover" />
         <div>
           <p class="text-base font-semibold text-neutral-text dark:text-white">{siteConfig.name}</p>
           <p class="text-xs text-neutral-muted dark:text-neutral-300">{siteConfig.role}</p>
@@ -25,19 +25,19 @@ import { siteConfig } from '../lib/config';
       <p class="text-sm font-semibold text-neutral-text uppercase tracking-[0.2em] dark:text-white">Studio</p>
       <p class="text-neutral-muted leading-relaxed dark:text-neutral-300">
         {siteConfig.address}<br />
-        <a href={`tel:${siteConfig.phone.replace(/\s+/g, '')}`} class="block hover:text-brand-primary transition">{siteConfig.phone}</a>
-        <a href="tel:3339877939" class="block hover:text-brand-primary transition">333 987 7939</a>
-        <a href={`mailto:${siteConfig.contactEmail}`} class="block hover:text-brand-primary transition">{siteConfig.contactEmail}</a>
+        <a href={`tel:${siteConfig.phone.replace(/\s+/g, '')}`} class="block py-2 min-h-[44px] flex items-center hover:text-brand-primary transition underline decoration-transparent hover:decoration-brand-primary">{siteConfig.phone}</a>
+        <a href="tel:3339877939" class="block py-2 min-h-[44px] flex items-center hover:text-brand-primary transition underline decoration-transparent hover:decoration-brand-primary">333 987 7939</a>
+        <a href={`mailto:${siteConfig.contactEmail}`} class="block py-2 min-h-[44px] flex items-center hover:text-brand-primary transition underline decoration-transparent hover:decoration-brand-primary">{siteConfig.contactEmail}</a>
       </p>
     </div>
     <div class="space-y-3">
       <p class="text-sm font-semibold text-neutral-text uppercase tracking-[0.2em] dark:text-white">Pagine</p>
       <div class="flex flex-col gap-2 text-neutral-muted dark:text-neutral-300">
-        <a href="/chi-sono" class="hover:text-brand-primary transition">Chi Sono</a>
-        <a href="/cosa-faccio" class="hover:text-brand-primary transition">Cosa Faccio</a>
-        <a href="/blog" class="hover:text-brand-primary transition">Blog</a>
-        <a href="/eventi" class="hover:text-brand-primary transition">Eventi</a>
-        <a href="/contatti" class="hover:text-brand-primary transition">Contatti</a>
+        <a href="/chi-sono" class="py-2 min-h-[44px] flex items-center hover:text-brand-primary transition underline decoration-transparent hover:decoration-brand-primary">Chi Sono</a>
+        <a href="/cosa-faccio" class="py-2 min-h-[44px] flex items-center hover:text-brand-primary transition underline decoration-transparent hover:decoration-brand-primary">Cosa Faccio</a>
+        <a href="/blog" class="py-2 min-h-[44px] flex items-center hover:text-brand-primary transition underline decoration-transparent hover:decoration-brand-primary">Blog</a>
+        <a href="/eventi" class="py-2 min-h-[44px] flex items-center hover:text-brand-primary transition underline decoration-transparent hover:decoration-brand-primary">Eventi</a>
+        <a href="/contatti" class="py-2 min-h-[44px] flex items-center hover:text-brand-primary transition underline decoration-transparent hover:decoration-brand-primary">Contatti</a>
       </div>
     </div>
     <div class="space-y-4">

@@ -44,7 +44,7 @@ const desktopNavHover =
 <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-neutral-border dark:bg-neutral-900/90 dark:border-neutral-800">
   <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
     <a href="/" class="flex items-center gap-3 group">
-      <img src="/logo_sergio.avif" alt="Logo Sergio Contegiacomo" class="h-12 w-12 rounded-full object-cover flex-shrink-0" />
+      <img src="/logo_sergio.avif" alt="Logo Sergio Contegiacomo" width="48" height="48" class="h-12 w-12 rounded-full object-cover flex-shrink-0" />
       <div class="flex flex-col justify-center">
         <span class="text-sm uppercase tracking-[0.3em] text-brand-primary leading-tight">{siteConfig.name}</span>
         <span class="text-xs text-neutral-muted dark:text-neutral-300 leading-tight">{siteConfig.role}</span>
@@ -135,7 +135,7 @@ const desktopNavHover =
   <div class="fixed top-0 right-0 bottom-0 w-4/5 max-w-xs bg-white shadow-xl p-6 flex flex-col gap-6 dark:bg-neutral-900 z-[70]">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <img src="/logo_sergio.avif" alt="Logo Sergio Contegiacomo" class="h-10 w-auto rounded-full" />
+        <img src="/logo_sergio.avif" alt="Logo Sergio Contegiacomo" width="40" height="40" class="h-10 w-10 rounded-full object-cover" />
         <div>
           <p class="text-sm uppercase tracking-[0.3em] text-brand-primary">{siteConfig.name}</p>
           <p class="text-xs text-neutral-muted dark:text-neutral-300">{siteConfig.role}</p>
@@ -153,7 +153,7 @@ const desktopNavHover =
           <div class="border-b border-neutral-border">
             <a
               href={link.href}
-              class={`block py-2 transition hover:text-brand-primary ${
+              class={`block py-3 min-h-[44px] flex items-center transition hover:text-brand-primary underline decoration-transparent hover:decoration-brand-primary ${
                 isActive(link.href) ? 'text-brand-primary font-semibold' : 'text-neutral-muted dark:text-neutral-300'
               }`}
             >
