@@ -6,7 +6,7 @@ import vercel from '@astrojs/vercel';
 
 const resolvedSite =
   process.env.PUBLIC_SITE_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://www.sergiocontegiacomo.it');
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://sergiocontegiacomo.it');
 
 // https://astro.build/config
 export default defineConfig({

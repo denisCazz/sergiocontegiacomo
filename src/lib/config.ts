@@ -5,7 +5,7 @@ export const cmsConfig = {
 
 const resolvedPublicSiteUrl =
   import.meta.env.PUBLIC_SITE_URL ??
-  (import.meta.env.VERCEL_URL ? `https://${import.meta.env.VERCEL_URL}` : 'https://www.sergiocontegiacomo.it');
+  (import.meta.env.VERCEL_URL ? `https://${import.meta.env.VERCEL_URL}` : 'https://sergiocontegiacomo.it');
 
 export const siteConfig = {
   name: 'Sergio Contegiacomo',

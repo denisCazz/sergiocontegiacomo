@@ -18,7 +18,7 @@ export async function GET() {
         title: article.title,
         pubDate: article.publishedAt ? new Date(article.publishedAt) : new Date(),
         description: article.excerpt,
-        link: `/blog/${article.slug}`,
+        link: `${siteConfig.siteUrl}/blog/${article.slug}`,
       };
     }),
   });

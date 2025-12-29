@@ -1,12 +1,14 @@
 # Sito web Sergio Contegiacomo
 
-Sito istituzionale sviluppato con **Astro 5** e **TailwindCSS**, integrato con un headless CMS (Strapi) per la gestione autonoma di blog ed eventi.
+Sito istituzionale sviluppato con **Astro 5** e **TailwindCSS**, integrato con **Supabase** per database, autenticazione e storage.
+
+**Dominio produzione**: https://sergiocontegiacomo.it
 
 ## Requisiti
 
-- Node.js 18+
+- Node.js 22.x
 - npm 9+
-- Strapi 5.x (vedi `docs/cms-setup.md` per la configurazione)
+- Account Supabase (per database, autenticazione e storage)
 
 ## Installazione
 
@@ -14,24 +16,22 @@ Sito istituzionale sviluppato con **Astro 5** e **TailwindCSS**, integrato con u
 npm install
 ```
 
-Configura le variabili d'ambiente creando un file `.env` alla radice:
+Configura le variabili d'ambiente creando un file `.env` alla radice (vedi `.env.example`):
 
 ```bash
-STRAPI_BASE_URL=https://cms.sergiocontegiacomo.it
-STRAPI_API_TOKEN=xxxxxxxxxxxxxxxx
-PUBLIC_EVENT_EMAIL=eventi@sergiocontegiacomo.it
+# URL del sito
+PUBLIC_SITE_URL=https://sergiocontegiacomo.it
 
-# (server-only) integrazione Bitora CRM (lead da contatti/newsletter)
-BITORA_CRM_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-# opzionale (default: https://www.bitora-crm.it/api/leads)
-BITORA_CRM_LEADS_ENDPOINT=https://www.bitora-crm.it/api/leads
+# Supabase
+PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-# (server-only) API esterna contatti (CRM/Supabase) - endpoint /contact
-CONTACT_LEADS_ENDPOINT=https://tuo-dominio.tld/contact
-CONTACT_LEADS_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# Google Analytics (opzionale)
+PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
 ```
 
-> Se non imposti le variabili, il sito userà i contenuti di fallback definiti in `src/lib/dataFallback.ts`.
+> Per la configurazione completa, vedi il file `.env.example` e `DEPLOY.md`.
 
 ## Comandi utili
 
@@ -48,24 +48,31 @@ CONTACT_LEADS_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 src/
 ├─ components/          # UI atomiche e sezioni riutilizzabili
 ├─ layouts/             # Layout principali
-├─ lib/                 # Configurazioni e integrazione CMS
+├─ lib/                 # Configurazioni e integrazione Supabase
 ├─ pages/
-│  ├─ blog/             # Lista articoli + pagina dettaglio
-│  ├─ eventi/           # Calendario eventi + pagina dettaglio
-│  └─ api/              # Endpoint serverless (newsletter, contatti)
+│  ├─ admin/           # Pannello amministrazione
+│  ├─ blog/            # Lista articoli + pagina dettaglio
+│  ├─ eventi/          # Calendario eventi + pagina dettaglio
+│  └─ api/             # Endpoint serverless (newsletter, contatti, upload)
 └─ styles/              # File Tailwind base
 ```
 
-Documentazione operativa aggiuntiva:
+## Documentazione
 
-- `docs/cms-setup.md` — setup tecnico di Strapi.
-- `docs/training-guide.md` — guida rapida per la gestione contenuti da parte di Sergio.
+- **`DEPLOY.md`** — Guida completa al deploy in produzione
+- **`PRODUCTION_CHECKLIST.md`** — Checklist pre-produzione
+- **`supabase/`** — Script SQL per configurazione database
 
 ## Deploy
 
-1. Eseguire `npm run build`.
-2. Pubblicare la cartella `dist/` su hosting statico (Netlify, Vercel, Cloudflare Pages, ecc.).
-3. Configurare webhook dal CMS per rigenerare il sito alla pubblicazione di nuovi contenuti.
+Il progetto è configurato per **Vercel** con SSR (Server-Side Rendering).
+
+1. **Configura le variabili d'ambiente** in Vercel (vedi `.env.example`)
+2. **Connetti il repository** a Vercel
+3. **Aggiungi il dominio** `sergiocontegiacomo.it` in Vercel
+4. **Deploy automatico** ad ogni push su main
+
+Per dettagli completi, consulta **`DEPLOY.md`**.
 
 ## Licenza
 
