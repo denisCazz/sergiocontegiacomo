@@ -48,6 +48,7 @@ const teamwork = [
     ruolo: "Consulente Assicurativo",
     descrizione: "Consulente assicurativo di nuova generazione, specializzato in soluzioni digitali e pianificazione patrimoniale per giovani professionisti e famiglie.",
     link: "https://simonecontegiacomo.it",
+    brochure: "/brochure.pdf",
   },
   {
     nome: "Avv. Prof. Andrea Ballancin",
@@ -196,14 +197,27 @@ const teamwork = [
             <h3 class="text-xl font-semibold text-neutral-text dark:text-white mb-1">{member.nome}</h3>
             <p class="text-sm text-brand-primary font-medium mb-4">{member.ruolo}</p>
             <p class="text-neutral-muted text-sm leading-relaxed mb-6 dark:text-neutral-300">{member.descrizione}</p>
-            {member.link && (
-              <a href={member.link} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-semibold text-brand-primary hover:text-brand-light transition">
-                Visita il sito
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-              </a>
-            )}
+            <div class="flex flex-col gap-2">
+              {member.link && (
+                <a href={member.link} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-semibold text-brand-primary hover:text-brand-light transition">
+                  Visita il sito
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              )}
+              {member.brochure && (
+                <div class="space-y-2">
+                  <p class="text-xs text-neutral-muted dark:text-neutral-400 italic">Scopri di più sul mondo Allianz</p>
+                  <a href="https://pub-255ed4af919f43839c6c5480e6c8a5d9.r2.dev/press/1765378360025_casa_allianz.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg bg-brand-accent px-4 py-2 text-sm font-semibold text-white hover:bg-brand-primary transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    Brochure Casa Allianz
+                  </a>
+                </div>
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -211,9 +225,9 @@ const teamwork = [
   </section>
 
   <CTASection
-    title="Ti accompagno nel prendere le decisioni giuste per te"
-    description="Definiamo insieme i tuoi obiettivi e creiamo un framework di governance che ti permetta di agire con chiarezza e controllo."
-    primaryCta={{ label: 'Prenota una consulenza', href: '/contatti' }}
-    secondaryCta={{ label: 'Richiedi il profilo completo', href: '/contatti?richiedi=profilo' }}
+    title="Vuoi migliorare la gestione dei tuoi investimenti e del tuo portafoglio?"
+    description="Sono disponibile a mettere al tuo servizio le mie competenze e la mia esperienza di oltre 35 anni nel settore finanziario."
+    primaryCta={{ label: 'Prenota una call introduttiva', href: '/contatti' }}
+    secondaryCta={{ label: 'Richiedi case study', href: '/contatti?type=case-study' }}
   />
 </BaseLayout>

@@ -241,6 +241,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       const formData = new FormData(e.target as HTMLFormElement);
       const id = formData.get('id');
       
+      const publishedAtValue = formData.get('published_at') as string;
       const article = {
         title: formData.get('title'),
         slug: formData.get('slug'),
@@ -249,7 +250,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         content: formData.get('content'),
         cover_image: formData.get('cover_image'),
         tags: (formData.get('tags') as string).split(',').map(t => t.trim()).filter(Boolean),
-        published_at: formData.get('published_at') || null,
+        published_at: publishedAtValue && publishedAtValue.trim() ? publishedAtValue : null,
       };
 
       const { error } = await supabase

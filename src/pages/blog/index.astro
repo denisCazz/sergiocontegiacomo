@@ -231,7 +231,7 @@ const pagination = meta?.pagination ?? { page: 1, pageCount: 1 };
         <h2 class="text-2xl font-serif font-medium text-neutral-text dark:text-white mb-8 text-center">
           Esplora altri contenuti
         </h2>
-        <div class="grid md:grid-cols-2 gap-6">
+        <div class="grid md:grid-cols-3 gap-6">
           <!-- AudioPillole card -->
           <a href="/blog/audiopillole" class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-primary to-brand-primary/80 p-8 text-white shadow-xl shadow-brand-primary/20 hover:shadow-brand-primary/40 transition-all hover:-translate-y-1">
             <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
@@ -243,6 +243,26 @@ const pagination = meta?.pagination ?? { page: 1, pageCount: 1 };
               </div>
               <h3 class="text-2xl font-semibold mb-3">AudioPillole</h3>
               <p class="text-white/80 mb-6 leading-relaxed">Brevi contenuti audio per approfondire temi di finanza personale, investimenti e gestione patrimoniale. Ascolta ovunque tu sia.</p>
+              <span class="inline-flex items-center gap-2 font-medium">
+                Ascolta ora
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </span>
+            </div>
+          </a>
+          
+          <!-- Podcast card -->
+          <a href="/blog/podcast" class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-accent to-brand-accent/80 p-8 text-white shadow-xl shadow-brand-accent/20 hover:shadow-brand-accent/40 transition-all hover:-translate-y-1">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+            <div class="relative z-10">
+              <div class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                </svg>
+              </div>
+              <h3 class="text-2xl font-semibold mb-3">Podcast</h3>
+              <p class="text-white/80 mb-6 leading-relaxed">Episodi approfonditi su temi di finanza personale, investimenti e crescita patrimoniale. Ascolta le conversazioni con esperti del settore.</p>
               <span class="inline-flex items-center gap-2 font-medium">
                 Ascolta ora
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">

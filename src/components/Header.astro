@@ -17,6 +17,7 @@ const navLinks: NavLink[] = [
     children: [
       { label: 'Tutti gli articoli', href: '/blog', icon: 'articles' },
       { label: 'AudioPillole', href: '/blog/audiopillole', icon: 'audio' },
+      { label: 'Podcast', href: '/blog/podcast', icon: 'podcast' },
       { label: 'Rassegna Stampa', href: '/blog/rassegna-stampa', icon: 'press' },
     ]
   },
@@ -42,11 +43,11 @@ const desktopNavHover =
 
 <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-neutral-border dark:bg-neutral-900/90 dark:border-neutral-800">
   <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-3">
-      <img src="/logo_sergio.avif" alt="Logo Sergio Contegiacomo" class="h-12 w-auto rounded-full" />
-      <div class="flex flex-col">
-        <span class="text-sm uppercase tracking-[0.3em] text-brand-primary">{siteConfig.name}</span>
-        <span class="text-xs text-neutral-muted dark:text-neutral-300">{siteConfig.role}</span>
+    <a href="/" class="flex items-center gap-3 group">
+      <img src="/logo_sergio.avif" alt="Logo Sergio Contegiacomo" class="h-12 w-12 rounded-full object-cover flex-shrink-0" />
+      <div class="flex flex-col justify-center">
+        <span class="text-sm uppercase tracking-[0.3em] text-brand-primary leading-tight">{siteConfig.name}</span>
+        <span class="text-xs text-neutral-muted dark:text-neutral-300 leading-tight">{siteConfig.role}</span>
       </div>
     </a>
     <nav aria-label="Principale" class="hidden lg:flex items-center gap-6 text-sm font-medium">
@@ -80,6 +81,11 @@ const desktopNavHover =
                     {child.icon === 'audio' && (
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                      </svg>
+                    )}
+                    {child.icon === 'podcast' && (
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                       </svg>
                     )}
                     {child.icon === 'press' && (
@@ -169,6 +175,11 @@ const desktopNavHover =
                   {child.icon === 'audio' && (
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                    </svg>
+                  )}
+                  {child.icon === 'podcast' && (
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                     </svg>
                   )}
                   {child.icon === 'press' && (

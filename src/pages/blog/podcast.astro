@@ -1,0 +1,199 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// Placeholder per futuri podcast
+const podcastItems: Array<{
+  title: string;
+  description?: string;
+  file_url: string;
+  duration?: string;
+  published_at: string;
+}> = [];
+---
+
+<BaseLayout title="Podcast" activePath="/blog">
+	<section class="relative min-h-screen py-24 lg:py-32 bg-gradient-to-br from-brand-accent/10 via-neutral-50 to-brand-accent/5 dark:from-neutral-900 dark:via-neutral-950 dark:to-neutral-900 overflow-hidden">
+		<!-- Background decorativo -->
+		<div class="absolute inset-0 overflow-hidden pointer-events-none">
+			<div class="absolute top-1/4 -left-32 w-96 h-96 bg-brand-accent/20 rounded-full blur-3xl animate-pulse"></div>
+			<div class="absolute bottom-1/4 -right-32 w-80 h-80 bg-brand-primary/15 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+		</div>
+
+		<div class="mx-auto max-w-4xl px-6 relative z-10">
+			<!-- Header -->
+			<div class="text-center mb-16">
+				<div class="inline-flex items-center gap-3 rounded-full bg-brand-accent/20 backdrop-blur-sm px-5 py-2 text-sm font-semibold uppercase tracking-wider text-brand-accent mb-6 border border-brand-accent/30">
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+					</svg>
+					Podcast
+				</div>
+				<h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-medium text-neutral-text dark:text-white mb-6">
+					Conversazioni su <span class="text-brand-accent">finanza e crescita</span>
+				</h1>
+				<p class="text-xl text-neutral-muted dark:text-neutral-400 leading-relaxed max-w-2xl mx-auto">
+					Episodi approfonditi su temi di finanza personale, investimenti e crescita patrimoniale. Ascolta le conversazioni con esperti del settore.
+				</p>
+			</div>
+
+			<!-- Podcast Episodes -->
+			{podcastItems.length > 0 ? (
+				<div class="space-y-6">
+					{podcastItems.map((episode, index) => (
+						<div class="group relative rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 transition-all duration-500 hover:shadow-xl hover:-translate-y-1">
+							<div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+								<!-- Numero e icona -->
+								<div class="flex items-center gap-4">
+									<div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-accent to-brand-primary flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-brand-accent/30">
+										{String(index + 1).padStart(2, '0')}
+									</div>
+								</div>
+
+								<!-- Info e player -->
+								<div class="flex-1 w-full space-y-4">
+									<div class="text-center sm:text-left">
+										<h3 class="text-lg font-semibold text-neutral-text dark:text-white group-hover:text-brand-accent transition-colors">
+											{episode.title}
+										</h3>
+										{episode.description && (
+											<p class="text-sm text-neutral-muted dark:text-neutral-400 mt-1">{episode.description}</p>
+										)}
+									</div>
+									
+									<!-- Custom Audio Player -->
+									<div class="audio-player-container">
+										<audio class="audio-element" preload="metadata">
+											<source src={episode.file_url} type="audio/mpeg" />
+											Il tuo browser non supporta l'elemento audio.
+										</audio>
+										
+										<div class="flex items-center gap-4">
+											<!-- Play/Pause Button -->
+											<button class="play-btn flex-shrink-0 w-12 h-12 rounded-full bg-brand-accent text-white flex items-center justify-center hover:bg-brand-primary hover:scale-110 transition-all duration-300 shadow-lg shadow-brand-accent/30">
+												<svg class="play-icon w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+													<path d="M8 5v14l11-7z"/>
+												</svg>
+												<svg class="pause-icon w-5 h-5 hidden" fill="currentColor" viewBox="0 0 24 24">
+													<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+												</svg>
+											</button>
+											
+											<!-- Progress Bar -->
+											<div class="flex-1 space-y-1">
+												<div class="flex items-center justify-between text-xs text-neutral-muted dark:text-neutral-400">
+													<span class="current-time">0:00</span>
+													{episode.duration && <span class="duration">{episode.duration}</span>}
+												</div>
+												<div class="w-full h-2 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden cursor-pointer">
+													<div class="progress-bar h-full bg-brand-accent transition-all duration-150" style="width: 0%"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					))}
+				</div>
+			) : (
+				<!-- Empty state -->
+				<div class="text-center py-20 rounded-3xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-900/50">
+					<div class="inline-flex h-20 w-20 items-center justify-center rounded-full bg-brand-accent/10 text-brand-accent mb-6">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+						</svg>
+					</div>
+					<h3 class="text-2xl font-semibold text-neutral-text dark:text-white mb-3">Podcast in arrivo</h3>
+					<p class="text-neutral-muted dark:text-neutral-400 max-w-md mx-auto mb-6">
+						I primi episodi del podcast saranno disponibili a breve. Torna presto per ascoltare conversazioni approfondite su finanza e crescita patrimoniale!
+					</p>
+					<a href="/blog" class="inline-flex items-center gap-2 text-brand-accent hover:text-brand-primary transition-colors font-medium">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+						</svg>
+						Torna al Blog
+					</a>
+				</div>
+			)}
+		</div>
+	</section>
+</BaseLayout>
+
+<script>
+	// Audio player functionality (same as audiopillole)
+	document.addEventListener('DOMContentLoaded', () => {
+		const audioCards = document.querySelectorAll('.audio-card');
+		
+		audioCards.forEach((card) => {
+			const audio = card.querySelector('.audio-element') as HTMLAudioElement;
+			const playBtn = card.querySelector('.play-btn');
+			const playIcon = card.querySelector('.play-icon');
+			const pauseIcon = card.querySelector('.pause-icon');
+			const progressBar = card.querySelector('.progress-bar') as HTMLElement;
+			const currentTimeEl = card.querySelector('.current-time');
+			
+			if (!audio || !playBtn) return;
+			
+			let isPlaying = false;
+			
+			playBtn.addEventListener('click', () => {
+				if (isPlaying) {
+					audio.pause();
+				} else {
+					// Pause all other audios
+					document.querySelectorAll('.audio-element').forEach((a: HTMLAudioElement) => {
+						if (a !== audio) {
+							a.pause();
+							const otherCard = a.closest('.audio-card');
+							if (otherCard) {
+								const otherPlayIcon = otherCard.querySelector('.play-icon');
+								const otherPauseIcon = otherCard.querySelector('.pause-icon');
+								if (otherPlayIcon) otherPlayIcon.classList.remove('hidden');
+								if (otherPauseIcon) otherPauseIcon.classList.add('hidden');
+							}
+						}
+					});
+					audio.play();
+				}
+			});
+			
+			audio.addEventListener('play', () => {
+				isPlaying = true;
+				if (playIcon) playIcon.classList.add('hidden');
+				if (pauseIcon) pauseIcon.classList.remove('hidden');
+			});
+			
+			audio.addEventListener('pause', () => {
+				isPlaying = false;
+				if (playIcon) playIcon.classList.remove('hidden');
+				if (pauseIcon) pauseIcon.classList.add('hidden');
+			});
+			
+			audio.addEventListener('timeupdate', () => {
+				if (progressBar && audio.duration) {
+					const progress = (audio.currentTime / audio.duration) * 100;
+					progressBar.style.width = `${progress}%`;
+				}
+				if (currentTimeEl) {
+					const minutes = Math.floor(audio.currentTime / 60);
+					const seconds = Math.floor(audio.currentTime % 60);
+					currentTimeEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+				}
+			});
+			
+			// Click on progress bar to seek
+			const progressContainer = card.querySelector('.audio-player-container .bg-neutral-200');
+			if (progressContainer) {
+				progressContainer.addEventListener('click', (e) => {
+					const rect = progressContainer.getBoundingClientRect();
+					const x = e.clientX - rect.left;
+					const percentage = x / rect.width;
+					if (audio.duration) {
+						audio.currentTime = percentage * audio.duration;
+					}
+				});
+			}
+		});
+	});
+</script>
+
