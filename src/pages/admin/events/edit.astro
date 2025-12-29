@@ -1,0 +1,253 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+
+const id = Astro.url.searchParams.get('id');
+if (!id) {
+  return Astro.redirect('/admin/events');
+}
+---
+
+<AdminLayout title="Modifica Evento">
+  <div class="md:grid md:grid-cols-3 md:gap-6">
+    <div class="md:col-span-1">
+      <div class="px-4 sm:px-0">
+        <a href="/admin/events" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-brand-primary transition mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Torna alla lista
+        </a>
+        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">Modifica Evento</h3>
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+          Aggiorna le informazioni dell'evento.
+        </p>
+      </div>
+    </div>
+    <div class="mt-5 md:mt-0 md:col-span-2">
+      <form id="eventForm">
+        <input type="hidden" id="eventId" name="id" value={id} />
+        <div class="shadow sm:rounded-md sm:overflow-hidden">
+          <div class="px-4 py-5 bg-white dark:bg-gray-800 space-y-6 sm:p-6">
+            
+            <div class="grid grid-cols-6 gap-6">
+              <div class="col-span-6 sm:col-span-4">
+                <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Titolo</label>
+                <input type="text" name="title" id="title" required class="mt-1 focus:ring-brand-primary focus:border-brand-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+              </div>
+
+              <div class="col-span-6 sm:col-span-4">
+                <label for="slug" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Slug</label>
+                <input type="text" name="slug" id="slug" required class="mt-1 focus:ring-brand-primary focus:border-brand-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+              </div>
+
+              <div class="col-span-6 sm:col-span-3">
+                <label for="date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Data</label>
+                <input type="date" name="date" id="date" required class="mt-1 focus:ring-brand-primary focus:border-brand-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+              </div>
+
+              <div class="col-span-6 sm:col-span-3">
+                <label for="time" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Ora</label>
+                <input type="time" name="time" id="time" class="mt-1 focus:ring-brand-primary focus:border-brand-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+              </div>
+
+              <div class="col-span-6 sm:col-span-4">
+                <label for="location" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Luogo</label>
+                <input type="text" name="location" id="location" class="mt-1 focus:ring-brand-primary focus:border-brand-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+              </div>
+
+              <div class="col-span-6 sm:col-span-2">
+                <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Prezzo</label>
+                <input type="text" name="price" id="price" class="mt-1 focus:ring-brand-primary focus:border-brand-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+              </div>
+
+              <div class="col-span-6">
+                <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descrizione</label>
+                <textarea id="description" name="description" rows="5" class="shadow-sm focus:ring-brand-primary focus:border-brand-primary mt-1 block w-full sm:text-sm border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+              </div>
+
+              <div class="col-span-6">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Immagine di Copertina</label>
+                <div class="mt-1 flex items-center space-x-4">
+                  <input type="file" id="coverImage" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-primary file:text-white hover:file:bg-brand-dark"/>
+                  <input type="hidden" id="coverImageUrl" name="cover_image">
+                </div>
+                <div id="imagePreview" class="mt-2 hidden">
+                  <img src="" alt="Preview" class="h-32 w-auto rounded-md object-cover">
+                </div>
+              </div>
+
+              <div class="col-span-6 sm:col-span-4">
+                <label for="tags" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tags (separati da virgola)</label>
+                <input type="text" name="tags" id="tags" class="mt-1 focus:ring-brand-primary focus:border-brand-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+              </div>
+
+              <div class="col-span-6 sm:col-span-3">
+                <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Stato</label>
+                <select id="status" name="status" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                  <option value="upcoming">In programma</option>
+                  <option value="past">Passato</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 text-right sm:px-6">
+            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-brand-primary hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary">
+              Salva Modifiche
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    import { supabase } from '../../../lib/supabase';
+
+    const eventId = document.getElementById('eventId')?.getAttribute('value');
+    if (!eventId) {
+      window.location.href = '/admin/events';
+    }
+
+    // Load event data
+    const loadEvent = async () => {
+      const { data, error } = await supabase
+        .from('events')
+        .select('*')
+        .eq('id', eventId)
+        .single();
+
+      if (error || !data) {
+        alert('Evento non trovato');
+        window.location.href = '/admin/events';
+        return;
+      }
+
+      // Populate form
+      const titleInput = document.getElementById('title') as HTMLInputElement;
+      const slugInput = document.getElementById('slug') as HTMLInputElement;
+      const dateInput = document.getElementById('date') as HTMLInputElement;
+      const timeInput = document.getElementById('time') as HTMLInputElement;
+      const locationInput = document.getElementById('location') as HTMLInputElement;
+      const priceInput = document.getElementById('price') as HTMLInputElement;
+      const descriptionInput = document.getElementById('description') as HTMLTextAreaElement;
+      const tagsInput = document.getElementById('tags') as HTMLInputElement;
+      const statusInput = document.getElementById('status') as HTMLSelectElement;
+      const coverImageUrlInput = document.getElementById('coverImageUrl') as HTMLInputElement;
+      const preview = document.getElementById('imagePreview');
+      const previewImg = preview?.querySelector('img');
+
+      if (titleInput) titleInput.value = data.title || '';
+      if (slugInput) slugInput.value = data.slug || '';
+      if (dateInput) dateInput.value = data.date ? new Date(data.date).toISOString().split('T')[0] : '';
+      if (timeInput) timeInput.value = data.time || '';
+      if (locationInput) locationInput.value = data.location || '';
+      if (priceInput) priceInput.value = data.price || '';
+      if (descriptionInput) descriptionInput.value = data.description || '';
+      if (tagsInput) tagsInput.value = (data.tags || []).join(', ');
+      if (statusInput) statusInput.value = data.status || 'upcoming';
+      if (coverImageUrlInput) coverImageUrlInput.value = data.cover_image || '';
+      
+      if (data.cover_image && preview && previewImg) {
+        previewImg.src = data.cover_image;
+        preview.classList.remove('hidden');
+      }
+    };
+
+    loadEvent();
+
+    // Slug generation (only if slug is empty)
+    const titleInput = document.getElementById('title') as HTMLInputElement;
+    const slugInput = document.getElementById('slug') as HTMLInputElement;
+
+    titleInput?.addEventListener('input', () => {
+      if (!slugInput.value) {
+        const slug = titleInput.value
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)+/g, '');
+        if (slugInput) slugInput.value = slug;
+      }
+    });
+
+    // Image Upload to R2
+    const fileInput = document.getElementById('coverImage') as HTMLInputElement;
+    const urlInput = document.getElementById('coverImageUrl') as HTMLInputElement;
+    const preview = document.getElementById('imagePreview');
+    const previewImg = preview?.querySelector('img');
+
+    fileInput?.addEventListener('change', async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      // Get auth token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        alert('Sessione scaduta, effettua il login');
+        window.location.href = '/admin/login';
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('category', 'images');
+
+      try {
+        const response = await fetch('/api/upload-r2', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          },
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Errore caricamento');
+        }
+
+        if (urlInput) urlInput.value = result.url;
+        if (preview && previewImg) {
+          previewImg.src = result.url;
+          preview.classList.remove('hidden');
+        }
+      } catch (error: any) {
+        alert('Errore caricamento immagine: ' + error.message);
+      }
+    });
+
+    // Form Submit
+    const form = document.getElementById('eventForm');
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target as HTMLFormElement);
+      const id = formData.get('id');
+      
+      const event = {
+        title: formData.get('title'),
+        slug: formData.get('slug'),
+        date: formData.get('date'),
+        time: formData.get('time'),
+        location: formData.get('location'),
+        description: formData.get('description'),
+        price: formData.get('price'),
+        cover_image: formData.get('cover_image'),
+        tags: (formData.get('tags') as string).split(',').map(t => t.trim()).filter(Boolean),
+        status: formData.get('status'),
+      };
+
+      const { error } = await supabase
+        .from('events')
+        .update(event)
+        .eq('id', id);
+
+      if (error) {
+        alert('Errore aggiornamento: ' + error.message);
+      } else {
+        alert('Evento aggiornato con successo!');
+        window.location.href = '/admin/events';
+      }
+    });
+  </script>
+</AdminLayout>
+

@@ -73,7 +73,8 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
                 </div>
               </div>
               <div class="mt-2 flex justify-end gap-2">
-                 <button data-attendees="${event.slug}" class="text-brand-primary hover:text-brand-dark text-sm mr-4">Mostra Partecipanti</button>
+                 <a href="/admin/events/edit?id=${event.id}" class="text-brand-primary hover:text-brand-dark text-sm font-medium">Modifica</a>
+                 <button data-attendees="${event.slug}" class="text-brand-primary hover:text-brand-dark text-sm">Mostra Partecipanti</button>
                  <button data-delete="${event.id}" class="text-red-600 hover:text-red-900 text-sm">Elimina</button>
               </div>
               <div id="attendees-${event.slug}" class="hidden mt-4 border-t border-gray-100 pt-4">

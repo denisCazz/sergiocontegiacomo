@@ -749,3 +749,82 @@ export async function deleteAudioPillola(id: number) {
   return true;
 }
 
+// ==================== PODCAST ====================
+
+export type Podcast = {
+  id?: number;
+  title: string;
+  description?: string;
+  file_url: string;
+  duration?: string;
+  published_at: string;
+  created_at?: string;
+};
+
+export async function getPodcasts() {
+  const { data, error } = await supabase
+    .from('podcasts')
+    .select('*')
+    .order('published_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching podcasts:', error);
+    return [];
+  }
+  return data as Podcast[];
+}
+
+export async function getPodcast(id: number) {
+  const { data, error } = await supabase
+    .from('podcasts')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Error fetching podcast:', error);
+    return null;
+  }
+  return data as Podcast;
+}
+
+export async function createPodcast(item: Omit<Podcast, 'id' | 'created_at'>) {
+  const { data, error } = await supabaseAdmin
+    .from('podcasts')
+    .insert([item])
+    .select();
+
+  if (error) {
+    console.error('Error creating podcast:', error);
+    throw error;
+  }
+  return data[0] as Podcast;
+}
+
+export async function updatePodcast(id: number, item: Partial<Podcast>) {
+  const { data, error } = await supabaseAdmin
+    .from('podcasts')
+    .update(item)
+    .eq('id', id)
+    .select();
+
+  if (error) {
+    console.error('Error updating podcast:', error);
+    throw error;
+  }
+  return data[0] as Podcast;
+}
+
+export async function deletePodcast(id: number) {
+  const { error } = await supabaseAdmin
+    .from('podcasts')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting podcast:', error);
+    return false;
+  }
+  return true;
+}
+
