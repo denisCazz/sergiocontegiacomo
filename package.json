@@ -22,6 +22,7 @@
     "@astrojs/vercel": "^8.0.0",
     "@aws-sdk/client-s3": "^3.946.0",
     "@supabase/supabase-js": "^2.86.0",
+    "@vercel/analytics": "^1.6.1",
     "astro": "^5.15.3",
     "astro-robots-txt": "^1.0.0",
     "dayjs": "^1.11.13",
