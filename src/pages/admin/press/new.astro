@@ -278,7 +278,7 @@ if (Astro.request.method === 'POST') {
         return;
       }
 
-      // Upload file to R2
+      // Upload file to Supabase Storage
       const formData = new FormData();
       formData.append('file', file);
       formData.append('category', 'press');
@@ -291,8 +291,8 @@ if (Astro.request.method === 'POST') {
         if (progressBar) progressBar.style.width = progress + '%';
       }, 200);
 
-      // Usa il nuovo endpoint R2
-      const response = await fetch('/api/upload-r2', {
+      // Usa l'endpoint Supabase Storage
+      const response = await fetch('/api/upload-supabase', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${session.access_token}`,

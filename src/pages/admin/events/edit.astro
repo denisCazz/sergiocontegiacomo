@@ -169,7 +169,7 @@ if (!id) {
       }
     });
 
-    // Image Upload to R2
+    // Image Upload to Supabase Storage
     const fileInput = document.getElementById('coverImage') as HTMLInputElement;
     const urlInput = document.getElementById('coverImageUrl') as HTMLInputElement;
     const preview = document.getElementById('imagePreview');
@@ -192,7 +192,7 @@ if (!id) {
       formData.append('category', 'images');
 
       try {
-        const response = await fetch('/api/upload-r2', {
+        const response = await fetch('/api/upload-supabase', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${session.access_token}`

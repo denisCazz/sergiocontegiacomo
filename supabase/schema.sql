@@ -31,8 +31,17 @@ create table public.events (
   tags text[]
 );
 
--- Storage Bucket for Images
-insert into storage.buckets (id, name, public) values ('images', 'images', true);
+-- Storage Buckets
+-- Note: I bucket devono essere creati dalla Dashboard Supabase Storage
+-- Vai su Storage > New Bucket e crea:
+-- 1. Bucket "images" - Public = true (per immagini articoli/eventi)
+-- 2. Bucket "audio" - Public = true (per file audio/audiopillole/podcast)
+-- 3. Bucket "press" - Public = true (per PDF rassegna stampa)
+
+-- Se necessario, puoi creare i bucket anche via SQL (ma è meglio dalla dashboard):
+-- insert into storage.buckets (id, name, public) values ('images', 'images', true) on conflict do nothing;
+-- insert into storage.buckets (id, name, public) values ('audio', 'audio', true) on conflict do nothing;
+-- insert into storage.buckets (id, name, public) values ('press', 'press', true) on conflict do nothing;
 
 -- Security Policies (RLS)
 
@@ -79,6 +88,9 @@ create policy "Authenticated users can delete events"
   using (auth.role() = 'authenticated');
 
 -- Storage Policies
+-- Le policies dettagliate per tutti i bucket sono in supabase/storage-buckets.sql
+-- Qui manteniamo solo le policies base per compatibilità
+
 create policy "Public Access"
   on storage.objects for select
   using ( bucket_id = 'images' );

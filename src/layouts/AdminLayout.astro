@@ -11,10 +11,12 @@ const navItems = [
   { href: '/admin', label: 'Dashboard', icon: 'home', color: 'gray' },
   { href: '/admin/articles', label: 'Articoli', icon: 'article', color: 'blue' },
   { href: '/admin/audio', label: 'AudioPillole', icon: 'microphone', color: 'purple' },
+  { href: '/admin/podcast', label: 'Podcast', icon: 'podcast', color: 'brand-accent' },
   { href: '/admin/events', label: 'Eventi', icon: 'calendar', color: 'amber' },
   { href: '/admin/press', label: 'Rassegna Stampa', icon: 'document', color: 'rose' },
   { href: '/admin/reviews', label: 'Recensioni', icon: 'star', color: 'yellow' },
   { href: '/admin/users', label: 'Utenti', icon: 'users', color: 'green' },
+  { href: '/admin/migrate-r2', label: 'Migrazione R2', icon: 'migrate', color: 'indigo' },
 ];
 ---
 
@@ -89,6 +91,16 @@ const navItems = [
                   {item.icon === 'users' && (
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                  )}
+                  {item.icon === 'podcast' && (
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                    </svg>
+                  )}
+                  {item.icon === 'migrate' && (
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
                   )}
                 </span>
@@ -212,6 +224,16 @@ const navItems = [
                   {item.icon === 'users' && (
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                  )}
+                  {item.icon === 'podcast' && (
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                    </svg>
+                  )}
+                  {item.icon === 'migrate' && (
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
                   )}
                 </span>

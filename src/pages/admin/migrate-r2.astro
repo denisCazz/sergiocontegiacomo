@@ -1,0 +1,182 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Migrazione R2 → Supabase">
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Migrazione File da R2 a Supabase</h1>
+    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+      Questo strumento migra i file esistenti da Cloudflare R2 a Supabase Storage.
+    </p>
+  </div>
+
+  <div class="space-y-6">
+    <!-- Articoli -->
+    <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Articoli</h2>
+      <div id="articles-list" class="space-y-2">
+        <p class="text-sm text-gray-500">Caricamento...</p>
+      </div>
+    </div>
+
+    <!-- Eventi -->
+    <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Eventi</h2>
+      <div id="events-list" class="space-y-2">
+        <p class="text-sm text-gray-500">Caricamento...</p>
+      </div>
+    </div>
+
+    <!-- AudioPillole -->
+    <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">AudioPillole</h2>
+      <div id="audio-list" class="space-y-2">
+        <p class="text-sm text-gray-500">Caricamento...</p>
+      </div>
+    </div>
+
+    <!-- Podcast -->
+    <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Podcast</h2>
+      <div id="podcasts-list" class="space-y-2">
+        <p class="text-sm text-gray-500">Caricamento...</p>
+      </div>
+    </div>
+
+    <!-- Rassegna Stampa -->
+    <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Rassegna Stampa</h2>
+      <div id="press-list" class="space-y-2">
+        <p class="text-sm text-gray-500">Caricamento...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { supabase } from '../../lib/supabase';
+
+    const isR2Url = (url: string | null): boolean => {
+      if (!url) return false;
+      return url.includes('r2.dev') || url.includes('r2.cloudflarestorage.com');
+    };
+
+    const migrateFile = async (table: string, id: number, r2Url: string, element: HTMLElement) => {
+      const button = element.querySelector('button');
+      if (button) {
+        button.disabled = true;
+        button.textContent = 'Migrazione in corso...';
+      }
+
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          alert('Sessione scaduta. Effettua nuovamente il login.');
+          return;
+        }
+
+        const response = await fetch('/api/migrate-r2', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ table, id, r2Url }),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Errore durante la migrazione');
+        }
+
+        if (button) {
+          button.textContent = '✓ Migrato';
+          button.classList.remove('bg-brand-primary', 'hover:bg-brand-dark');
+          button.classList.add('bg-green-600', 'cursor-default');
+        }
+
+        // Reload the list
+        loadR2Files();
+
+      } catch (error: any) {
+        alert(`Errore: ${error.message}`);
+        if (button) {
+          button.disabled = false;
+          button.textContent = 'Migra';
+        }
+      }
+    };
+
+    const renderList = (containerId: string, items: any[], table: string, urlField: string) => {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const r2Items = items.filter(item => isR2Url(item[urlField]));
+
+      if (r2Items.length === 0) {
+        container.innerHTML = '<p class="text-sm text-gray-500">Nessun file R2 da migrare.</p>';
+        return;
+      }
+
+      container.innerHTML = r2Items.map(item => `
+        <div class="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-900">
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">${item.title || 'Senza titolo'}</p>
+            <p class="text-xs text-gray-500 truncate mt-1">${item[urlField]}</p>
+          </div>
+          <button
+            onclick="window.migrateFile('${table}', ${item.id}, '${item[urlField]}', this.parentElement)"
+            class="ml-4 flex-shrink-0 rounded-lg bg-brand-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Migra
+          </button>
+        </div>
+      `).join('');
+    };
+
+    const loadR2Files = async () => {
+      try {
+        // Load articles
+        const { data: articles } = await supabase
+          .from('articles')
+          .select('id, title, cover_image')
+          .not('cover_image', 'is', null);
+        renderList('articles-list', articles || [], 'articles', 'cover_image');
+
+        // Load events
+        const { data: events } = await supabase
+          .from('events')
+          .select('id, title, cover_image')
+          .not('cover_image', 'is', null);
+        renderList('events-list', events || [], 'events', 'cover_image');
+
+        // Load audio
+        const { data: audio } = await supabase
+          .from('audio_pillole')
+          .select('id, title, file_url');
+        renderList('audio-list', audio || [], 'audio_pillole', 'file_url');
+
+        // Load podcasts
+        const { data: podcasts } = await supabase
+          .from('podcasts')
+          .select('id, title, file_url');
+        renderList('podcasts-list', podcasts || [], 'podcasts', 'file_url');
+
+        // Load press
+        const { data: press } = await supabase
+          .from('press')
+          .select('id, title, file_url');
+        renderList('press-list', press || [], 'press', 'file_url');
+
+      } catch (error) {
+        console.error('Error loading files:', error);
+      }
+    };
+
+    // Expose migrateFile to window for onclick handlers
+    (window as any).migrateFile = migrateFile;
+
+    loadR2Files();
+  </script>
+</AdminLayout>
+
