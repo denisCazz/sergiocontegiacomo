@@ -304,7 +304,7 @@ const currentFileName = currentFileUrl?.split('/').pop() || 'File audio';
         return;
       }
 
-      // Upload file to Supabase Storage
+      // Upload file to R2
       const formData = new FormData();
       formData.append('file', file);
       formData.append('category', 'audio');
@@ -327,10 +327,21 @@ const currentFileName = currentFileUrl?.split('/').pop() || 'File audio';
 
       clearInterval(progressInterval);
 
-      const result = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      const isJson = contentType.includes('application/json');
+      const result = isJson ? await response.json() : null;
 
       if (!response.ok) {
-        throw new Error(result.error || 'Errore durante l\'upload');
+        const fallbackText = isJson ? '' : await response.text().catch(() => '');
+        throw new Error(
+          (result && (result.error || result.message)) ||
+            fallbackText ||
+            `Errore durante l'upload (${response.status})`
+        );
+      }
+
+      if (!result || !result.url) {
+        throw new Error('Risposta server non valida (URL mancante)');
       }
 
       // Success
