@@ -41,7 +41,7 @@ const pageDescription = description ??
   'Consulenza patrimoniale su misura, coaching finanziario e percorsi di educazione economica per imprenditori e famiglie.';
 const image = ogImage ?? '/sergio.avif';
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, siteConfig.siteUrl).toString();
-const defaultKeywords = 'consulente patrimoniale, coach finanziario, educazione finanziaria, wealth management, pianificazione patrimoniale, Sergio Contegiacomo, Bra, Cuneo, Piemonte';
+const defaultKeywords = 'consulente patrimoniale Bra, coach finanziario Piemonte, wealth management Cuneo, educazione finanziaria, pianificazione patrimoniale, Sergio Contegiacomo, consulenza finanziaria, private banking, gestione patrimonio, Allianz Bank, ANASF';
 const gaMeasurementId = siteConfig.analytics?.gaMeasurementId?.trim();
 ---
 
@@ -54,27 +54,46 @@ const gaMeasurementId = siteConfig.analytics?.gaMeasurementId?.trim();
     
     <!-- SEO Meta -->
     <link rel="canonical" href={canonicalUrl} />
-    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
     <meta name="author" content="Sergio Contegiacomo" />
     <meta name="keywords" content={keywords ?? defaultKeywords} />
     <meta name="generator" content={Astro.generator} />
+    <meta name="geo.region" content="IT-CN" />
+    <meta name="geo.placename" content="Bra" />
+    <meta name="geo.position" content="44.698;7.855" />
+    <meta name="ICBM" content="44.698, 7.855" />
+    <meta name="language" content="Italian" />
+    <meta name="revisit-after" content="7 days" />
+    <meta name="rating" content="general" />
+    <meta name="distribution" content="global" />
+    <meta name="coverage" content="worldwide" />
     
     <!-- Open Graph -->
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
     <meta property="og:image" content={new URL(image, Astro.site ?? siteConfig.siteUrl).toString()} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title ? `${title} - ${siteConfig.name}` : siteConfig.name} />
     <meta property="og:type" content={article ? 'article' : 'website'} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:site_name" content={siteConfig.name} />
     <meta property="og:locale" content="it_IT" />
+    <meta property="og:locale:alternate" content="en_US" />
     {article && publishedTime && <meta property="article:published_time" content={publishedTime} />}
     {article && modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+    {article && <meta property="article:author" content={siteConfig.name} />}
+    {article && <meta property="article:section" content="Consulenza Patrimoniale" />}
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={pageDescription} />
     <meta name="twitter:image" content={new URL(image, Astro.site ?? siteConfig.siteUrl).toString()} />
+    <meta name="twitter:image:alt" content={title ? `${title} - ${siteConfig.name}` : siteConfig.name} />
+    <meta name="twitter:site" content="@sergiocontegiacomo" />
+    <meta name="twitter:creator" content="@sergiocontegiacomo" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -94,7 +113,17 @@ const gaMeasurementId = siteConfig.analytics?.gaMeasurementId?.trim();
         href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;600&family=Work+Sans:wght@400;500;600;700&display=swap"
       />
     </noscript>
+    <!-- Favicons - Multi-format per massima compatibilità (Google richiede questi link) -->
+    <link rel="shortcut icon" href="/logo_sergio.ico" />
     <link rel="icon" type="image/x-icon" href="/logo_sergio.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/logo_sergio.avif" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/logo_sergio.avif" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/logo_sergio.avif" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#1a1a1a" />
+    <meta name="msapplication-TileColor" content="#1a1a1a" />
+    <meta name="msapplication-TileImage" content="/logo_sergio.avif" />
+    <meta name="application-name" content={siteConfig.name} />
 
     {gaMeasurementId && (
       <>
@@ -231,6 +260,30 @@ gtag('config', '${gaMeasurementId}', { anonymize_ip: true });`}
         type="application/ld+json"
         set:html={JSON.stringify(structuredData)}
       />
+    )}
+    
+    <!-- Breadcrumb Schema (se non già fornito) -->
+    {!structuredData && Astro.url.pathname !== '/' && (
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": siteConfig.siteUrl
+            },
+            ...(Astro.url.pathname.split('/').filter(Boolean).map((segment, index) => ({
+              "@type": "ListItem",
+              "position": index + 2,
+              "name": segment.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+              "item": `${siteConfig.siteUrl}/${Astro.url.pathname.split('/').slice(0, index + 2).join('/')}`
+            })))
+          ]
+        })}
+      </script>
     )}
     <script>
       {`(() => {
