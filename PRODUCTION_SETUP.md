@@ -28,12 +28,33 @@
 Vai su **Vercel Dashboard → Project → Settings → Environment Variables** e aggiungi:
 
 ```bash
-PUBLIC_SITE_URL=https://sergiocontegiacomo.it
+PUBLIC_SITE_URL=https://www.sergiocontegiacomo.it
 PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX  # Opzionale
 ```
+
+### ⚠️ IMPORTANTE: Configura Google Analytics
+
+**Questa variabile è FONDAMENTALE per il monitoraggio SEO:**
+
+```bash
+PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+```
+
+**Come ottenere il Measurement ID:**
+1. Vai su [Google Analytics](https://analytics.google.com/)
+2. Crea una nuova proprietà GA4 per sergiocontegiacomo.it
+3. Vai su **Admin** → **Data Streams** → **Web**
+4. Crea uno stream per `www.sergiocontegiacomo.it`
+5. Copia il **Measurement ID** (formato: `G-XXXXXXXXXX`)
+6. Aggiungi la variabile `PUBLIC_GA_MEASUREMENT_ID` in Vercel
+
+**Nota:** Senza Google Analytics configurato, perdi dati preziosi su:
+- Visitatori e comportamento utenti
+- Fonti di traffico (organico, social, referral)
+- Performance delle pagine
+- Conversioni (contatti, download, etc.)
 
 ### 2. Configura Supabase
 

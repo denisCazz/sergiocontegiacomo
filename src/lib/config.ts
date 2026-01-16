@@ -3,14 +3,19 @@ export const cmsConfig = {
   strapiToken: import.meta.env.STRAPI_API_TOKEN ?? '',
 };
 
+// Production URL - always use this for canonical URLs and SEO tags
+const productionUrl = 'https://www.sergiocontegiacomo.it';
+
+// Current deployment URL (may be Vercel preview)
 const resolvedPublicSiteUrl =
   import.meta.env.PUBLIC_SITE_URL ??
-  (import.meta.env.VERCEL_URL ? `https://${import.meta.env.VERCEL_URL}` : 'https://sergiocontegiacomo.it');
+  (import.meta.env.VERCEL_URL ? `https://${import.meta.env.VERCEL_URL}` : productionUrl);
 
 export const siteConfig = {
   name: 'Sergio Contegiacomo',
   role: 'Consulente Patrimoniale & Coach Finanziario',
-  siteUrl: resolvedPublicSiteUrl,
+  siteUrl: productionUrl, // Always use production URL for SEO
+  currentUrl: resolvedPublicSiteUrl, // Actual deployment URL (for non-SEO purposes)
   contactEmail: 'info@sergiocontegiacomo.it',
   phone: '0172 44191',
   address: 'Piazza Roma, 39, 12042 Bra (CN)',

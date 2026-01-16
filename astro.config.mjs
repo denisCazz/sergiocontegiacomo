@@ -4,13 +4,12 @@ import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 
-const resolvedSite =
-  process.env.PUBLIC_SITE_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://sergiocontegiacomo.it');
+// Always use production URL for SEO purposes (sitemap, canonical URLs, etc.)
+const productionSite = 'https://www.sergiocontegiacomo.it';
 
 // https://astro.build/config
 export default defineConfig({
-    site: resolvedSite,
+    site: productionSite,
     output: 'server',
     adapter: vercel(),
     integrations: [

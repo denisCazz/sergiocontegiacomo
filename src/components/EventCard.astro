@@ -26,7 +26,10 @@ const truncatedDescription = plainDescription && plainDescription.length > 160
       <img
         src={event.coverImage}
         alt={`Immagine evento ${event.title}`}
+        width="640"
+        height="360"
         loading="lazy"
+        decoding="async"
         class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
       />
     </a>

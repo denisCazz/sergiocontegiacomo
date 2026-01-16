@@ -25,7 +25,15 @@ const icons: Record<string, string> = {
 <div class="group relative rounded-3xl border border-neutral-border bg-white shadow-[0_4px_20px_-4px_rgba(30,58,138,0.15)] transition duration-300 hover:shadow-[0_8px_30px_-4px_rgba(30,58,138,0.25)] hover:-translate-y-1 dark:border-neutral-800 dark:bg-neutral-900 overflow-hidden">
   {image && (
     <div class={`absolute top-3 right-3 pointer-events-none ${imageSize}`}>
-      <img src={image} alt={imageAlt ?? title} class="w-full h-full object-contain opacity-20 dark:opacity-15 blur-[0.5px] transition-all duration-300 [filter:grayscale(100%)_blur(0.5px)] group-hover:opacity-50 group-hover:[filter:grayscale(0%)_blur(0)_sepia(100%)_saturate(300%)_hue-rotate(180deg)]" loading="lazy" />
+      <img 
+        src={image} 
+        alt={imageAlt ?? title} 
+        width="56" 
+        height="56" 
+        loading="lazy"
+        decoding="async"
+        class="w-full h-full object-contain opacity-20 dark:opacity-15 blur-[0.5px] transition-all duration-300 [filter:grayscale(100%)_blur(0.5px)] group-hover:opacity-50 group-hover:[filter:grayscale(0%)_blur(0)_sepia(100%)_saturate(300%)_hue-rotate(180deg)]" 
+      />
     </div>
   )}
   <div class="relative z-10 p-8">

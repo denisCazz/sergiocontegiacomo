@@ -94,18 +94,14 @@ const gaMeasurementId = siteConfig.analytics?.gaMeasurementId?.trim();
     <meta name="twitter:image:alt" content={title ? `${title} - ${siteConfig.name}` : siteConfig.name} />
     <meta name="twitter:site" content="@sergiocontegiacomo" />
     <meta name="twitter:creator" content="@sergiocontegiacomo" />
+    <!-- Fonts: Async loading with fallback to prevent render-blocking -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="preload"
       as="style"
       href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;600&family=Work+Sans:wght@400;500;600;700&display=swap"
-    />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;600&family=Work+Sans:wght@400;500;600;700&display=swap"
-      media="print"
-      onload="this.media='all'"
+      fetchpriority="low"
     />
     <noscript>
       <link
@@ -113,6 +109,15 @@ const gaMeasurementId = siteConfig.analytics?.gaMeasurementId?.trim();
         href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;600&family=Work+Sans:wght@400;500;600;700&display=swap"
       />
     </noscript>
+    <script is:inline>
+      // Load fonts asynchronously to avoid render-blocking
+      (function() {
+        var fontLink = document.createElement('link');
+        fontLink.rel = 'stylesheet';
+        fontLink.href = 'https://fonts.googleapis.com/css2?family=Merriweather:wght@400;600&family=Work+Sans:wght@400;500;600;700&display=swap';
+        document.head.appendChild(fontLink);
+      })();
+    </script>
     <!-- Favicons - Multi-format per massima compatibilità (Google richiede questi link) -->
     <link rel="shortcut icon" href="/logo_sergio.ico" />
     <link rel="icon" type="image/x-icon" href="/logo_sergio.ico" />
