@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://sergiocontegiacomo.it/sitemap-index.xml
+Sitemap: https://www.sergiocontegiacomo.it/sitemap-index.xml
 
 # Disallow admin/api routes
 Disallow: /admin/

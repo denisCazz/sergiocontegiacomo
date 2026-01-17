@@ -39,7 +39,8 @@ const {
 const pageTitle = title ? `${title} | ${siteConfig.name}` : `${siteConfig.name} - ${siteConfig.role}`;
 const pageDescription = description ??
   'Consulenza patrimoniale su misura, coaching finanziario e percorsi di educazione economica per imprenditori e famiglie.';
-const image = ogImage ?? '/sergio.avif';
+// NOTE: prefer JPG for social scrapers (many don’t support AVIF for OG images)
+const image = ogImage ?? '/og.jpg';
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, siteConfig.siteUrl).toString();
 const defaultKeywords = 'consulente patrimoniale Bra, coach finanziario Piemonte, wealth management Cuneo, educazione finanziaria, pianificazione patrimoniale, Sergio Contegiacomo, consulenza finanziaria, private banking, gestione patrimonio, Allianz Bank, ANASF';
 const gaMeasurementId = siteConfig.analytics?.gaMeasurementId?.trim();
@@ -73,8 +74,9 @@ const gaMeasurementId = siteConfig.analytics?.gaMeasurementId?.trim();
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
     <meta property="og:image" content={new URL(image, Astro.site ?? siteConfig.siteUrl).toString()} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="1310" />
     <meta property="og:image:alt" content={title ? `${title} - ${siteConfig.name}` : siteConfig.name} />
     <meta property="og:type" content={article ? 'article' : 'website'} />
     <meta property="og:url" content={canonicalUrl} />
@@ -147,9 +149,9 @@ gtag('config', '${gaMeasurementId}', { anonymize_ip: true });`}
         "@context": "https://schema.org",
         "@type": "FinancialService",
         "name": "Sergio Contegiacomo - Consulente Patrimoniale",
-        "image": "https://sergiocontegiacomo.it/sergio.avif",
-        "@id": "https://sergiocontegiacomo.it",
-        "url": "https://sergiocontegiacomo.it",
+        "image": "https://www.sergiocontegiacomo.it/og.jpg",
+        "@id": "https://www.sergiocontegiacomo.it",
+        "url": "https://www.sergiocontegiacomo.it",
         "telephone": "+39 0172 44191",
         "email": "info@sergiocontegiacomo.it",
         "priceRange": "€€€",
@@ -214,8 +216,8 @@ gtag('config', '${gaMeasurementId}', { anonymize_ip: true });`}
         "name": "Sergio Contegiacomo",
         "jobTitle": "Consulente Patrimoniale & Coach Finanziario",
         "description": "Consulente patrimoniale con oltre 35 anni di esperienza nel private banking. Coach finanziario ed educatore certificato.",
-        "image": "https://sergiocontegiacomo.it/sergio.avif",
-        "url": "https://sergiocontegiacomo.it",
+        "image": "https://www.sergiocontegiacomo.it/og.jpg",
+        "url": "https://www.sergiocontegiacomo.it",
         "email": "info@sergiocontegiacomo.it",
         "telephone": "+39 0172 44191",
         "sameAs": [
