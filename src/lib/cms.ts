@@ -209,6 +209,19 @@ export type EventStats = {
   not_attending_count: number;
 };
 
+export type Testimonial = {
+  id: number;
+  author_name: string;
+  author_role?: string;
+  quote: string;
+  rating?: number;
+  is_published: boolean;
+  featured: boolean;
+  display_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
 export async function getAllComments() {
   const { data, error } = await supabase
     .from('comments')
@@ -828,3 +841,94 @@ export async function deletePodcast(id: number) {
   return true;
 }
 
+// ==================== TESTIMONIALS ====================
+
+export async function getAllTestimonials(publishedOnly: boolean = false) {
+  let query = supabase
+    .from('testimonials')
+    .select('*')
+    .order('display_order', { ascending: false })
+    .order('created_at', { ascending: false });
+
+  if (publishedOnly) {
+    query = query.eq('is_published', true);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error('Error fetching testimonials:', error);
+    return [];
+  }
+  return data as Testimonial[];
+}
+
+export async function getFeaturedTestimonials() {
+  const { data, error } = await supabase
+    .from('testimonials')
+    .select('*')
+    .eq('is_published', true)
+    .eq('featured', true)
+    .order('display_order', { ascending: false })
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching featured testimonials:', error);
+    return [];
+  }
+  return data as Testimonial[];
+}
+
+export async function getTestimonialById(id: number) {
+  const { data, error } = await supabase
+    .from('testimonials')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Error fetching testimonial:', error);
+    return null;
+  }
+  return data as Testimonial;
+}
+
+export async function createTestimonial(item: Omit<Testimonial, 'id' | 'created_at' | 'updated_at'>) {
+  const { data, error } = await supabaseAdmin
+    .from('testimonials')
+    .insert([item])
+    .select();
+
+  if (error) {
+    console.error('Error creating testimonial:', error);
+    throw error;
+  }
+  return data[0] as Testimonial;
+}
+
+export async function updateTestimonial(id: number, item: Partial<Testimonial>) {
+  const { data, error } = await supabaseAdmin
+    .from('testimonials')
+    .update(item)
+    .eq('id', id)
+    .select();
+
+  if (error) {
+    console.error('Error updating testimonial:', error);
+    throw error;
+  }
+  return data[0] as Testimonial;
+}
+
+export async function deleteTestimonial(id: number) {
+  const { error } = await supabaseAdmin
+    .from('testimonials')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting testimonial:', error);
+    return false;
+  }
+  return true;
+}

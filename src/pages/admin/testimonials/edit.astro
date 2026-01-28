@@ -1,0 +1,167 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Modifica Testimonianza">
+  <div class="md:grid md:grid-cols-3 md:gap-6">
+    <div class="md:col-span-1">
+      <div class="px-4 sm:px-0">
+        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">Modifica Testimonianza</h3>
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+          Aggiorna i dettagli della testimonianza.
+        </p>
+      </div>
+    </div>
+    <div class="mt-5 md:mt-0 md:col-span-2">
+      <form id="editTestimonialForm">
+        <input type="hidden" name="id" id="testimonialId">
+        <div class="shadow sm:rounded-md sm:overflow-hidden">
+          <div class="px-4 py-5 bg-white dark:bg-gray-800 space-y-6 sm:p-6">
+            
+            <div class="grid grid-cols-6 gap-6">
+              <div class="col-span-6 sm:col-span-4">
+                <label for="author_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome Autore *</label>
+                <input type="text" name="author_name" id="author_name" required class="mt-1 focus:ring-brand-primary focus:border-brand-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+              </div>
+
+              <div class="col-span-6 sm:col-span-4">
+                <label for="author_role" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Ruolo/Descrizione</label>
+                <input type="text" name="author_role" id="author_role" placeholder="es. Cliente dal 2015" class="mt-1 focus:ring-brand-primary focus:border-brand-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+              </div>
+
+              <div class="col-span-6">
+                <label for="quote" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Testimonianza *</label>
+                <textarea id="quote" name="quote" required rows="5" class="shadow-sm focus:ring-brand-primary focus:border-brand-primary mt-1 block w-full sm:text-sm border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Scrivi qui la testimonianza..."></textarea>
+              </div>
+
+              <div class="col-span-6 sm:col-span-3">
+                <label for="rating" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Valutazione (1-5 stelle)</label>
+                <select id="rating" name="rating" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm">
+                  <option value="">Nessuna valutazione</option>
+                  <option value="5">5 ★★★★★</option>
+                  <option value="4">4 ★★★★</option>
+                  <option value="3">3 ★★★</option>
+                  <option value="2">2 ★★</option>
+                  <option value="1">1 ★</option>
+                </select>
+              </div>
+
+              <div class="col-span-6 sm:col-span-3">
+                <label for="display_order" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Ordine di visualizzazione</label>
+                <input type="number" name="display_order" id="display_order" value="0" class="mt-1 focus:ring-brand-primary focus:border-brand-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <p class="mt-1 text-xs text-gray-500">Numero più alto = mostrata prima</p>
+              </div>
+
+              <div class="col-span-6">
+                <div class="flex items-start">
+                  <div class="flex items-center h-5">
+                    <input id="is_published" name="is_published" type="checkbox" class="focus:ring-brand-primary h-4 w-4 text-brand-primary border-gray-300 rounded">
+                  </div>
+                  <div class="ml-3 text-sm">
+                    <label for="is_published" class="font-medium text-gray-700 dark:text-gray-300">Pubblica sul sito</label>
+                    <p class="text-gray-500 dark:text-gray-400">Se non selezionato, la testimonianza rimarrà in attesa di moderazione</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-span-6">
+                <div class="flex items-start">
+                  <div class="flex items-center h-5">
+                    <input id="featured" name="featured" type="checkbox" class="focus:ring-brand-primary h-4 w-4 text-brand-primary border-gray-300 rounded">
+                  </div>
+                  <div class="ml-3 text-sm">
+                    <label for="featured" class="font-medium text-gray-700 dark:text-gray-300">In evidenza</label>
+                    <p class="text-gray-500 dark:text-gray-400">Mostra in homepage nel carosello testimonianze</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 text-right sm:px-6 flex gap-3 justify-end">
+            <a href="/admin/testimonials" class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary dark:bg-gray-600 dark:text-white dark:border-gray-500">
+              Annulla
+            </a>
+            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-brand-primary hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary">
+              Aggiorna Testimonianza
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    import { supabase } from '../../../lib/supabase';
+
+    // Load Testimonial Data
+    const urlParams = new URLSearchParams(window.location.search);
+    const testimonialId = urlParams.get('id');
+
+    if (!testimonialId) {
+        alert('ID testimonianza mancante');
+        window.location.href = '/admin/testimonials';
+    }
+
+    const loadTestimonial = async () => {
+        const { data, error } = await supabase
+            .from('testimonials')
+            .select('*')
+            .eq('id', testimonialId)
+            .single();
+
+        if (error) {
+            alert('Errore caricamento testimonianza: ' + error.message);
+            return;
+        }
+
+        if (data) {
+            (document.getElementById('testimonialId') as HTMLInputElement).value = data.id;
+            (document.getElementById('author_name') as HTMLInputElement).value = data.author_name;
+            (document.getElementById('author_role') as HTMLInputElement).value = data.author_role || '';
+            (document.getElementById('quote') as HTMLTextAreaElement).value = data.quote;
+            (document.getElementById('display_order') as HTMLInputElement).value = data.display_order;
+            (document.getElementById('is_published') as HTMLInputElement).checked = data.is_published;
+            (document.getElementById('featured') as HTMLInputElement).checked = data.featured;
+            
+            if (data.rating) {
+                (document.getElementById('rating') as HTMLSelectElement).value = data.rating.toString();
+            }
+        }
+    };
+
+    loadTestimonial();
+
+    // Form Submit
+    const form = document.getElementById('editTestimonialForm');
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target as HTMLFormElement);
+      const id = formData.get('id');
+      const ratingValue = formData.get('rating');
+      
+      const payload = {
+        author_name: formData.get('author_name') as string,
+        author_role: (formData.get('author_role') as string) || null,
+        quote: formData.get('quote') as string,
+        rating: ratingValue ? parseInt(ratingValue as string) : null,
+        display_order: parseInt(formData.get('display_order') as string) || 0,
+        is_published: formData.get('is_published') === 'on',
+        featured: formData.get('featured') === 'on',
+      };
+
+      const { error } = await supabase
+        .from('testimonials')
+        .update(payload)
+        .eq('id', id);
+
+      if (error) {
+        alert('Errore: ' + error.message);
+        return;
+      }
+
+      alert('Testimonianza aggiornata con successo!');
+      window.location.href = '/admin/testimonials';
+    });
+  </script>
+</AdminLayout>

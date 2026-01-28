@@ -8,9 +8,31 @@ import EventCard from '../components/EventCard.astro';
 import TestimonialCard from '../components/TestimonialCard.astro';
 import CTASection from '../components/CTASection.astro';
 import { getArticles, getEvents, type Article, type EventItem } from '../lib/cms';
+import { supabase } from '../lib/supabase';
 import dayjs from 'dayjs';
 
 const todayIso = dayjs().startOf('day').toISOString();
+
+// Fetch testimonials directly from Supabase
+const dbTestimonials = await (async () => {
+	try {
+		const { data, error } = await supabase
+			.from('testimonials')
+			.select('*')
+			.eq('is_published', true)
+			.order('display_order', { ascending: false })
+			.order('created_at', { ascending: false });
+		
+		if (error) {
+			console.error('Error fetching testimonials:', error);
+			return [];
+		}
+		return data || [];
+	} catch (err) {
+		console.error('Exception fetching testimonials:', err);
+		return [];
+	}
+})();
 
 const [{ data: articleEntries }, { data: eventEntries }] = await Promise.all([
 	getArticles({ pagination: { page: 1, pageSize: 3 } }),
@@ -23,6 +45,7 @@ const upcomingEvents = (eventEntries ?? [])
 	.map((entry) => entry.attributes as EventItem)
 	.filter(Boolean)
 	.slice(0, 3);
+
 
 const services = [
 	{
@@ -90,7 +113,8 @@ const valoreAggiunto = [
 	},
 ];
 
-const testimonials = [
+// Fallback testimonials (se non ci sono testimonials in DB)
+const fallbackTestimonials = [
 	{
 		quote: "È un professionista che tende ad alzare sempre l'asticella dei traguardi da raggiungere.",
 		author: "Ornella Costa",
@@ -124,6 +148,18 @@ const testimonials = [
 		author: "Virginia",
 	},
 ];
+
+// Use DB testimonials if available, otherwise fallback
+const testimonials = dbTestimonials && dbTestimonials.length > 0 
+	? [
+			...dbTestimonials.map(t => ({ 
+				quote: t.quote, 
+				author: t.author_name + (t.author_role ? ` - ${t.author_role}` : ''),
+				rating: t.rating 
+			})),
+			...fallbackTestimonials
+		]
+	: fallbackTestimonials;
 ---
 
 <BaseLayout 
@@ -330,6 +366,16 @@ const testimonials = [
 							<span class={`h-2 rounded-full transition-all duration-300 ${index === 0 ? 'bg-brand-primary w-6' : 'bg-white/30 w-2 group-hover:bg-white/50'}`}></span>
 						</button>
 					))}
+				</div>
+
+				<!-- Call to Action Button -->
+				<div class="text-center mt-12">
+					<a href="/recensioni" class="inline-flex items-center gap-2 rounded-full bg-brand-primary px-8 py-4 text-sm font-bold uppercase tracking-wider text-white hover:bg-brand-dark transition-all duration-300 shadow-lg hover:shadow-xl">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+						</svg>
+						Lascia la tua testimonianza
+					</a>
 				</div>
 			</div>
 			

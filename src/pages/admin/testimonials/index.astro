@@ -1,0 +1,139 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Testimonianze">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Testimonianze</h1>
+    <a href="/admin/testimonials/new" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-brand-primary hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary">
+      Nuova Testimonianza
+    </a>
+  </div>
+
+  <div class="bg-white dark:bg-gray-800 shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl overflow-hidden">
+    <ul id="testimonialsList" class="divide-y divide-gray-200 dark:divide-gray-700">
+      <li class="p-4 text-center text-gray-500 dark:text-gray-400">Caricamento...</li>
+    </ul>
+  </div>
+
+  <script>
+    import { supabase } from '../../../lib/supabase';
+    import dayjs from 'dayjs';
+
+    const list = document.getElementById('testimonialsList');
+
+    const fetchTestimonials = async () => {
+      const { data, error } = await supabase
+        .from('testimonials')
+        .select('*')
+        .order('display_order', { ascending: false })
+        .order('created_at', { ascending: false });
+
+      console.log('Fetch testimonials:', { data, error });
+
+      if (error) {
+        console.error('Errore query:', error);
+        if (list) list.innerHTML = `<li class="p-4 text-red-500">Errore nel caricamento: ${error.message}</li>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        console.log('Nessun dato:', data);
+        if (list) list.innerHTML = '<li class="p-4 text-center text-gray-500">Nessuna testimonianza trovata.</li>';
+        return;
+      }
+
+      if (list) {
+        list.innerHTML = data.map(testimonial => `
+          <li>
+            <div class="px-4 py-4 sm:px-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out">
+              <div class="flex items-center justify-between mb-2">
+                <div class="text-sm font-medium text-brand-primary truncate">
+                  ${testimonial.author_name}${testimonial.author_role ? ` - ${testimonial.author_role}` : ''}
+                </div>
+                <div class="ml-2 flex-shrink-0 flex gap-2">
+                  ${testimonial.featured ? '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">★ In evidenza</span>' : ''}
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${testimonial.is_published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                    ${testimonial.is_published ? 'Pubblicata' : 'In attesa'}
+                  </span>
+                </div>
+              </div>
+              <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mb-2">
+                "${testimonial.quote}"
+              </p>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                  ${testimonial.rating ? `<span>${testimonial.rating} ★</span>` : ''}
+                  <span>Ordine: ${testimonial.display_order}</span>
+                  <span>${dayjs(testimonial.created_at).format('DD/MM/YYYY')}</span>
+                </div>
+                <div class="flex gap-4">
+                  <a href="/admin/testimonials/edit?id=${testimonial.id}" class="text-brand-primary hover:text-brand-dark text-sm font-medium">Modifica</a>
+                  ${testimonial.is_published ? `<button data-revoke="${testimonial.id}" class="text-yellow-600 hover:text-yellow-900 text-sm font-medium">Revoca</button>` : `<button data-publish="${testimonial.id}" class="text-green-600 hover:text-green-900 text-sm font-medium">Pubblica</button>`}
+                  <button data-delete="${testimonial.id}" class="text-red-600 hover:text-red-900 text-sm font-medium">Elimina</button>
+                </div>
+              </div>
+            </div>
+          </li>
+        `).join('');
+
+        // Add delete listeners
+        document.querySelectorAll('[data-delete]').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            if (!confirm('Sei sicuro di voler eliminare questa testimonianza?')) return;
+            const id = (e.target as HTMLElement).getAttribute('data-delete');
+            const { error } = await supabase.from('testimonials').delete().eq('id', id);
+            if (error) alert('Errore: ' + error.message);
+            else fetchTestimonials(); // Reload
+          });
+        });
+
+        // Add revoke/publish listeners
+        document.querySelectorAll('[data-revoke]').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const id = (e.target as HTMLElement).getAttribute('data-revoke');
+            const { error } = await supabase
+              .from('testimonials')
+              .update({ is_published: false })
+              .eq('id', id);
+            if (error) alert('Errore: ' + error.message);
+            else fetchTestimonials(); // Reload
+          });
+        });
+
+        document.querySelectorAll('[data-publish]').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const id = (e.target as HTMLElement).getAttribute('data-publish');
+            const { error } = await supabase
+              .from('testimonials')
+              .update({ is_published: true })
+              .eq('id', id);
+            if (error) alert('Errore: ' + error.message);
+            else fetchTestimonials(); // Reload
+          });
+        });
+      }
+    };
+
+    // Initial load
+    fetchTestimonials();
+
+    // Real-time subscription
+    const subscription = supabase
+      .channel('testimonials-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'testimonials' },
+        (payload) => {
+          console.log('Testimonianza cambiata:', payload);
+          fetchTestimonials(); // Reload lista quando c'è un cambiamento
+        }
+      )
+      .subscribe();
+
+    // Cleanup subscription on page unload
+    window.addEventListener('beforeunload', () => {
+      subscription.unsubscribe();
+    });
+  </script>
+</AdminLayout>

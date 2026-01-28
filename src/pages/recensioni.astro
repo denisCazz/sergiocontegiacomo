@@ -1,0 +1,298 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+
+export const prerender = false;
+---
+
+<BaseLayout 
+  title="Condividi la Tua Testimonianza" 
+  description="Lascia la tua testimonianza sull'esperienza con Sergio Contegiacomo, consulente patrimoniale e coach finanziario."
+>
+  <section class="bg-gradient-to-br from-white to-brand-lightest dark:from-neutral-900 dark:to-neutral-950 py-24 lg:py-32">
+    <div class="mx-auto max-w-4xl px-6">
+      <div class="text-center mb-12">
+        <SectionHeading
+          eyebrow="LA TUA OPINIONE CONTA"
+          title="Condividi la tua esperienza"
+          description="Aiuta altre persone a conoscere il mio lavoro condividendo la tua testimonianza."
+        />
+      </div>
+
+      <!-- Success Message -->
+      <div id="success-message" class="hidden mb-8 rounded-2xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-6">
+        <div class="flex">
+          <svg class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-green-800 dark:text-green-200">Testimonianza ricevuta!</h3>
+            <div class="mt-2 text-sm text-green-700 dark:text-green-300">
+              <p id="success-text">Grazie! La tua testimonianza è stata ricevuta e sarà pubblicata dopo verifica.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Card -->
+      <div class="rounded-3xl border border-neutral-border bg-white p-8 shadow-lg dark:border-neutral-800 dark:bg-neutral-900">
+        <form id="testimonial-form" class="space-y-6">
+          <!-- Honeypot -->
+          <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off">
+          
+          <div>
+            <label for="author_name" class="block text-sm font-medium text-neutral-text dark:text-neutral-200 mb-2">
+              Il tuo nome *
+            </label>
+            <input 
+              type="text" 
+              id="author_name" 
+              name="author_name" 
+              required
+              class="w-full rounded-lg border border-neutral-border bg-neutral-50 px-4 py-3 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+              placeholder="Mario Rossi"
+            >
+          </div>
+
+          <div>
+            <label for="author_role" class="block text-sm font-medium text-neutral-text dark:text-neutral-200 mb-2">
+              Ruolo o descrizione (opzionale)
+            </label>
+            <input 
+              type="text" 
+              id="author_role" 
+              name="author_role"
+              class="w-full rounded-lg border border-neutral-border bg-neutral-50 px-4 py-3 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+              placeholder="Cliente dal 2015"
+            >
+          </div>
+
+          <div>
+            <label for="email" class="block text-sm font-medium text-neutral-text dark:text-neutral-200 mb-2">
+              Email (opzionale, non sarà pubblicata)
+            </label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email"
+              class="w-full rounded-lg border border-neutral-border bg-neutral-50 px-4 py-3 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+              placeholder="mario.rossi@esempio.it"
+            >
+          </div>
+
+          <div>
+            <label for="rating" class="block text-sm font-medium text-neutral-text dark:text-neutral-200 mb-2">
+              Valutazione (opzionale)
+            </label>
+            <div class="flex gap-2" id="rating-stars">
+              <button type="button" data-rating="1" class="rating-star text-3xl text-gray-300 hover:text-yellow-400 focus:text-yellow-400 transition">★</button>
+              <button type="button" data-rating="2" class="rating-star text-3xl text-gray-300 hover:text-yellow-400 focus:text-yellow-400 transition">★</button>
+              <button type="button" data-rating="3" class="rating-star text-3xl text-gray-300 hover:text-yellow-400 focus:text-yellow-400 transition">★</button>
+              <button type="button" data-rating="4" class="rating-star text-3xl text-gray-300 hover:text-yellow-400 focus:text-yellow-400 transition">★</button>
+              <button type="button" data-rating="5" class="rating-star text-3xl text-gray-300 hover:text-yellow-400 focus:text-yellow-400 transition">★</button>
+            </div>
+            <input type="hidden" id="rating" name="rating" value="">
+          </div>
+
+          <div>
+            <label for="quote" class="block text-sm font-medium text-neutral-text dark:text-neutral-200 mb-2">
+              La tua testimonianza *
+            </label>
+            <textarea 
+              id="quote" 
+              name="quote" 
+              required
+              rows="6"
+              maxlength="1000"
+              class="w-full rounded-lg border border-neutral-border bg-neutral-50 px-4 py-3 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white resize-none"
+              placeholder="Condividi la tua esperienza..."
+            ></textarea>
+            <p class="mt-1 text-xs text-neutral-muted" id="char-count">0 / 1000 caratteri</p>
+          </div>
+
+          <div class="flex items-start">
+            <div class="flex items-center h-5 mt-1">
+              <input 
+                id="privacy" 
+                name="privacy" 
+                type="checkbox" 
+                required
+                class="h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary focus:ring-2"
+              >
+            </div>
+            <label for="privacy" class="ml-3 text-sm text-neutral-text dark:text-neutral-300">
+              Accetto che la mia testimonianza venga pubblicata sul sito. Ho letto e accetto la <a href="/privacy" class="text-brand-primary hover:text-brand-dark underline">privacy policy</a>.
+            </label>
+          </div>
+
+          <p id="form-error" class="text-red-600 dark:text-red-400 text-sm hidden"></p>
+
+          <div class="flex gap-4">
+            <button 
+              type="submit" 
+              id="submit-btn"
+              class="flex-1 rounded-lg bg-brand-primary px-6 py-3 text-base font-semibold text-white shadow-md transition hover:bg-brand-dark hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2"
+            >
+              Invia Testimonianza
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Share Link Section -->
+      <div class="mt-12 text-center">
+        <p class="text-neutral-muted dark:text-neutral-400 mb-4">Condividi questo link per invitare altri a lasciare una testimonianza:</p>
+        <div class="flex items-center justify-center gap-2">
+          <input 
+            type="text" 
+            readonly 
+            id="share-link" 
+            value={Astro.url.origin + '/recensioni'}
+            class="px-4 py-2 bg-neutral-100 dark:bg-neutral-800 border border-neutral-border dark:border-neutral-700 rounded-lg text-sm text-neutral-text dark:text-neutral-200 max-w-md"
+          >
+          <button 
+            id="copy-link-btn"
+            class="px-4 py-2 bg-brand-primary text-white rounded-lg text-sm font-medium hover:bg-brand-dark transition"
+          >
+            Copia
+          </button>
+        </div>
+        <p id="copy-success" class="mt-2 text-sm text-green-600 dark:text-green-400 hidden">Link copiato!</p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Rating stars
+    const stars = document.querySelectorAll('.rating-star');
+    const ratingInput = document.getElementById('rating') as HTMLInputElement;
+
+    stars.forEach((star, index) => {
+      star.addEventListener('click', () => {
+        const rating = parseInt((star as HTMLElement).dataset.rating || '0');
+        ratingInput.value = rating.toString();
+        
+        // Update star colors
+        stars.forEach((s, i) => {
+          if (i < rating) {
+            s.classList.remove('text-gray-300');
+            s.classList.add('text-yellow-400');
+          } else {
+            s.classList.remove('text-yellow-400');
+            s.classList.add('text-gray-300');
+          }
+        });
+      });
+    });
+
+    // Character counter
+    const quoteTextarea = document.getElementById('quote') as HTMLTextAreaElement;
+    const charCount = document.getElementById('char-count');
+
+    quoteTextarea?.addEventListener('input', () => {
+      const length = quoteTextarea.value.length;
+      if (charCount) {
+        charCount.textContent = `${length} / 1000 caratteri`;
+        if (length > 900) {
+          charCount.classList.add('text-red-600', 'dark:text-red-400');
+        } else {
+          charCount.classList.remove('text-red-600', 'dark:text-red-400');
+        }
+      }
+    });
+
+    // Form submission
+    const form = document.getElementById('testimonial-form') as HTMLFormElement;
+    const submitBtn = document.getElementById('submit-btn');
+    const formError = document.getElementById('form-error');
+    const successMessage = document.getElementById('success-message');
+    const successText = document.getElementById('success-text');
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (formError) formError.classList.add('hidden');
+      if (successMessage) successMessage.classList.add('hidden');
+      
+      if (submitBtn) {
+        submitBtn.textContent = 'Invio in corso...';
+        (submitBtn as HTMLButtonElement).disabled = true;
+      }
+
+      const formData = new FormData(form);
+      const payload = {
+        author_name: formData.get('author_name'),
+        author_role: formData.get('author_role'),
+        email: formData.get('email'),
+        rating: formData.get('rating'),
+        quote: formData.get('quote'),
+        website: formData.get('website'), // honeypot
+      };
+
+      try {
+        const response = await fetch('/api/testimonials', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          if (successMessage && successText) {
+            successText.textContent = result.message;
+            successMessage.classList.remove('hidden');
+          }
+          form.reset();
+          ratingInput.value = '';
+          stars.forEach(s => {
+            s.classList.remove('text-yellow-400');
+            s.classList.add('text-gray-300');
+          });
+          if (charCount) charCount.textContent = '0 / 1000 caratteri';
+          
+          // Scroll to success message
+          successMessage?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          if (formError) {
+            formError.textContent = result.message || 'Errore durante l\'invio';
+            formError.classList.remove('hidden');
+          }
+        }
+      } catch (error) {
+        if (formError) {
+          formError.textContent = 'Errore di connessione. Riprova più tardi.';
+          formError.classList.remove('hidden');
+        }
+      } finally {
+        if (submitBtn) {
+          submitBtn.textContent = 'Invia Testimonianza';
+          (submitBtn as HTMLButtonElement).disabled = false;
+        }
+      }
+    });
+
+    // Copy link
+    const copyBtn = document.getElementById('copy-link-btn');
+    const shareLink = document.getElementById('share-link') as HTMLInputElement;
+    const copySuccess = document.getElementById('copy-success');
+
+    copyBtn?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(shareLink.value);
+        if (copySuccess) {
+          copySuccess.classList.remove('hidden');
+          setTimeout(() => copySuccess.classList.add('hidden'), 3000);
+        }
+      } catch (err) {
+        // Fallback for older browsers
+        shareLink.select();
+        document.execCommand('copy');
+        if (copySuccess) {
+          copySuccess.classList.remove('hidden');
+          setTimeout(() => copySuccess.classList.add('hidden'), 3000);
+        }
+      }
+    });
+  </script>
+</BaseLayout>

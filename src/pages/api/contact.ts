@@ -1,6 +1,7 @@
 export const prerender = false;
 
 import { sendContactLead } from '../../lib/contactLeadsApi';
+import { sendBitoraCrmLead } from '../../lib/bitoraCrm';
 
 export async function POST({ request }: { request: Request }) {
   try {
@@ -35,7 +36,29 @@ export async function POST({ request }: { request: Request }) {
 
     const safeMessage = messaggio?.slice(0, 5000) || '';
 
-    // Salva lead su CRM/Supabase via API esterna (azione principale)
+    // Salva lead su Bitora CRM direttamente (azione principale)
+    const bitoraMessage = buildNoteText({ nome, cognome, email, telefono, messaggio: safeMessage });
+    const bitoraLead = await sendBitoraCrmLead(
+      {
+        first_name: nome,
+        last_name: cognome,
+        email,
+        phone: telefono || undefined,
+        message: bitoraMessage,
+        source: 'website-contact',
+      },
+      { request },
+    );
+
+    if (!bitoraLead.ok && !bitoraLead.skipped) {
+      console.error('[contact] errore bitora-crm (lead)', bitoraLead.status, bitoraLead.errorText);
+      return new Response(JSON.stringify({ success: false, message: 'Errore durante invio richiesta' }), {
+        status: 502,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Backup: salva anche su API alternativa se configurata
     const crmMessage = buildNoteText({ nome, cognome, email, telefono, messaggio: safeMessage });
     const crmLead = await sendContactLead({
       first_name: nome,
@@ -47,11 +70,7 @@ export async function POST({ request }: { request: Request }) {
     });
 
     if (!crmLead.ok && !crmLead.skipped) {
-      console.error('[contact] errore contact lead api', crmLead.status, crmLead.errorText);
-      return new Response(JSON.stringify({ success: false, message: 'Errore durante invio richiesta' }), {
-        status: 502,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      console.error('[contact] errore contact lead api (backup)', crmLead.status, crmLead.errorText);
     }
 
     return new Response(JSON.stringify({ success: true }), {
