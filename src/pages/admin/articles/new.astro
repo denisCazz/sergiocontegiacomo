@@ -69,6 +69,22 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
                 <input type="datetime-local" name="published_at" id="published_at" class="mt-1 focus:ring-brand-primary focus:border-brand-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                 <p class="mt-2 text-sm text-gray-500">Lascia vuoto per salvare come bozza.</p>
               </div>
+
+              <!-- Content Link Picker -->
+              <div class="col-span-6">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Inserisci Link a Contenuto</label>
+                <div class="border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 p-4">
+                  <div class="flex gap-2 mb-3">
+                    <button type="button" data-link-tab="article" class="link-tab-btn px-3 py-1.5 text-xs font-semibold rounded-full bg-brand-primary text-white">Articoli</button>
+                    <button type="button" data-link-tab="event" class="link-tab-btn px-3 py-1.5 text-xs font-semibold rounded-full bg-gray-200 text-gray-700 dark:bg-gray-600 dark:text-gray-300">Eventi</button>
+                    <button type="button" data-link-tab="press" class="link-tab-btn px-3 py-1.5 text-xs font-semibold rounded-full bg-gray-200 text-gray-700 dark:bg-gray-600 dark:text-gray-300">Rassegna Stampa</button>
+                  </div>
+                  <input type="text" id="link-search" placeholder="Cerca contenuto..." class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm mb-3 focus:border-brand-primary focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                  <div id="link-results" class="max-h-48 overflow-y-auto space-y-1">
+                    <p class="text-sm text-gray-500 text-center py-2">Caricamento contenuti...</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 text-right sm:px-6">
@@ -105,6 +121,91 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         ]
       }
     });
+
+    // ==================== Content Link Picker ====================
+    let allLinks: { articles: any[]; events: any[]; press: any[] } = { articles: [], events: [], press: [] };
+    let activeTab = 'article';
+
+    async function loadContentLinks() {
+      try {
+        const res = await fetch('/api/admin/content-links');
+        allLinks = await res.json();
+        renderLinks();
+      } catch (e) {
+        const container = document.getElementById('link-results');
+        if (container) container.innerHTML = '<p class="text-sm text-red-500 text-center">Errore caricamento</p>';
+      }
+    }
+
+    function getItemsForTab() {
+      switch (activeTab) {
+        case 'article': return allLinks.articles ?? [];
+        case 'event': return allLinks.events ?? [];
+        case 'press': return allLinks.press ?? [];
+        default: return [];
+      }
+    }
+
+    function renderLinks() {
+      const container = document.getElementById('link-results');
+      const searchInput = document.getElementById('link-search') as HTMLInputElement;
+      if (!container) return;
+      const query = (searchInput?.value ?? '').toLowerCase();
+      let items = getItemsForTab();
+      if (query) {
+        items = items.filter((i: any) => i.title.toLowerCase().includes(query) || (i.testata && i.testata.toLowerCase().includes(query)));
+      }
+      if (items.length === 0) {
+        container.innerHTML = '<p class="text-sm text-gray-500 text-center py-2">Nessun contenuto trovato</p>';
+        return;
+      }
+      container.innerHTML = items.map((item: any) => {
+        const typeLabel = item.type === 'article' ? 'Articolo' : item.type === 'event' ? 'Evento' : 'Stampa';
+        const subtitle = item.testata ? ` — ${item.testata}` : '';
+        return `<div class="flex items-center justify-between bg-white dark:bg-gray-800 rounded-md px-3 py-2 border border-gray-200 dark:border-gray-600 hover:border-brand-primary transition cursor-pointer" data-link-url="${item.url}" data-link-title="${item.title}">
+          <div class="min-w-0 flex-1">
+            <span class="text-xs font-semibold text-brand-primary uppercase">${typeLabel}${subtitle}</span>
+            <p class="text-sm text-gray-800 dark:text-white truncate">${item.title}</p>
+          </div>
+          <button type="button" class="insert-link-btn ml-2 px-2 py-1 text-xs font-semibold bg-brand-primary text-white rounded hover:bg-brand-dark flex-shrink-0">Inserisci</button>
+        </div>`;
+      }).join('');
+
+      container.querySelectorAll('.insert-link-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const row = (e.target as HTMLElement).closest('[data-link-url]');
+          if (!row) return;
+          const url = row.getAttribute('data-link-url') || '';
+          const title = row.getAttribute('data-link-title') || '';
+          const range = quill.getSelection(true);
+          if (range) {
+            if (range.length > 0) {
+              quill.formatText(range.index, range.length, 'link', url);
+            } else {
+              quill.insertText(range.index, title, 'link', url);
+            }
+          } else {
+            const length = quill.getLength();
+            quill.insertText(length - 1, title, 'link', url);
+          }
+        });
+      });
+    }
+
+    document.querySelectorAll('.link-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeTab = btn.getAttribute('data-link-tab') || 'article';
+        document.querySelectorAll('.link-tab-btn').forEach(b => {
+          b.className = b === btn
+            ? 'link-tab-btn px-3 py-1.5 text-xs font-semibold rounded-full bg-brand-primary text-white'
+            : 'link-tab-btn px-3 py-1.5 text-xs font-semibold rounded-full bg-gray-200 text-gray-700 dark:bg-gray-600 dark:text-gray-300';
+        });
+        renderLinks();
+      });
+    });
+
+    document.getElementById('link-search')?.addEventListener('input', () => renderLinks());
+    loadContentLinks();
 
     // Slug generation
     const titleInput = document.getElementById('title') as HTMLInputElement;

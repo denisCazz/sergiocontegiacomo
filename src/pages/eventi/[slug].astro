@@ -2,13 +2,11 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import CTASection from '../../components/CTASection.astro';
-import { getEventBySlug, getEvents, type EventItem } from '../../lib/cms';
+import { getEventBySlug, type EventItem } from '../../lib/cms';
 import { renderMarkdown } from '../../lib/markdown';
 import { siteConfig } from '../../lib/config';
 import dayjs from 'dayjs';
 import 'dayjs/locale/it';
-
-export const prerender = true;
 
 const { slug } = Astro.params;
 
@@ -63,14 +61,7 @@ const eventStructuredData = {
   url: canonicalUrl,
 };
 
-export async function getStaticPaths() {
-  const { data } = await getEvents();
 
-  return data
-    .map((entry) => entry?.attributes?.slug)
-    .filter((slug): slug is string => Boolean(slug))
-    .map((eventSlug) => ({ params: { slug: eventSlug } }));
-}
 ---
 
 <BaseLayout

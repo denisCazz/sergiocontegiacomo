@@ -629,6 +629,20 @@ export async function getPressItems() {
   return data as PressItem[];
 }
 
+export async function getLatestPressItems(limit: number = 3) {
+  const { data, error } = await supabase
+    .from('press')
+    .select('*')
+    .order('published_at', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error('Error fetching latest press items:', error);
+    return [];
+  }
+  return data as PressItem[];
+}
+
 export async function getPressItem(id: number) {
   const { data, error } = await supabase
     .from('press')

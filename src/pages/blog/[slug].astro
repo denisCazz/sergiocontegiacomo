@@ -2,11 +2,9 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import CTASection from '../../components/CTASection.astro';
-import { getArticleBySlug, getArticles, type Article } from '../../lib/cms';
+import { getArticleBySlug, type Article } from '../../lib/cms';
 import { renderMarkdown } from '../../lib/markdown';
 import { siteConfig } from '../../lib/config';
-
-export const prerender = true;
 
 const { slug } = Astro.params;
 
@@ -55,14 +53,7 @@ const articleStructuredData = {
   },
 };
 
-export async function getStaticPaths() {
-  const { data } = await getArticles();
 
-  return data
-    .map((entry) => entry?.attributes?.slug)
-    .filter((slug): slug is string => Boolean(slug))
-    .map((articleSlug) => ({ params: { slug: articleSlug } }));
-}
 ---
 
 <BaseLayout
