@@ -14,18 +14,18 @@ const resolvedPublicSiteUrl =
 export const siteConfig = {
   name: 'Sergio Contegiacomo',
   role: 'Consulente Patrimoniale & Coach Finanziario',
-  siteUrl: productionUrl, // Always use production URL for SEO
-  currentUrl: resolvedPublicSiteUrl, // Actual deployment URL (for non-SEO purposes)
+  siteUrl: productionUrl,
+  currentUrl: resolvedPublicSiteUrl,
   contactEmail: 'info@sergiocontegiacomo.it',
   phone: '0172 44191',
-  address: 'Piazza Roma, 39, 12042 Bra (CN)',
+  mobilePhone: '333 987 7939',
+  address: 'Piazza Roma 39 - 12042 Bra (CN)',
+  googlePlaceId: 'ChIJxd24-3Sr0hIRmTjD_4K4nEg',
   newsletterEndpoint: '/api/newsletter',
   analytics: {
     gaMeasurementId: import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? '',
   },
   social: {
     linkedin: 'https://www.linkedin.com/in/sergio-contegiacomo-b180b921',
-    youtube: 'https://www.youtube.com/',
-    instagram: 'https://www.instagram.com/',
   },
 };

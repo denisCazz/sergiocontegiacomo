@@ -9,6 +9,7 @@ import TestimonialCard from '../components/TestimonialCard.astro';
 import CTASection from '../components/CTASection.astro';
 import { getArticles, getEvents, type Article, type EventItem } from '../lib/cms';
 import { supabase } from '../lib/supabase';
+import { siteConfig } from '../lib/config';
 import dayjs from 'dayjs';
 
 const todayIso = dayjs().startOf('day').toISOString();
@@ -425,7 +426,7 @@ const testimonials: { quote: string; author: string; rating?: number }[] = dbTes
 					</a>
 					
 					<!-- CTA Google -->
-					<a href="https://search.google.com/local/writereview?placeid=ChIJxd24-3Sr0hIRmTjD_4K4nEg" target="_blank" rel="noopener noreferrer" class="group relative overflow-hidden rounded-2xl bg-white px-8 py-5 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+					<a href={`https://search.google.com/local/writereview?placeid=${siteConfig.googlePlaceId}`} target="_blank" rel="noopener noreferrer" class="group relative overflow-hidden rounded-2xl bg-white px-8 py-5 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
 						<div class="relative z-10 flex flex-col items-center gap-1">
 							<div class="flex items-center gap-3 text-neutral-800">
 								<svg class="w-5 h-5" viewBox="0 0 24 24">

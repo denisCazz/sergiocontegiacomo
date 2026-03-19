@@ -18,6 +18,17 @@ export const POST: APIRoute = async ({ request }) => {
     }
   });
 
+  const authHeader = request.headers.get('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+  }
+
+  const token = authHeader.slice(7);
+  const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+  if (authError || !user) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+  }
+
   try {
     const body = await request.json();
     const { email, password } = body;
@@ -31,7 +42,7 @@ export const POST: APIRoute = async ({ request }) => {
     const { data, error } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
-      email_confirm: true // Auto-confirm the user
+      email_confirm: true
     });
 
     if (error) {

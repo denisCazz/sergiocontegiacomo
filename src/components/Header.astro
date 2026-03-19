@@ -22,6 +22,7 @@ const navLinks: NavLink[] = [
     ]
   },
   { label: 'Eventi', href: '/eventi' },
+  { label: 'Recensioni', href: '/recensioni' },
   { label: 'Contatti', href: '/contatti' },
 ];
 
@@ -53,10 +54,13 @@ const desktopNavHover =
     <nav aria-label="Principale" class="hidden lg:flex items-center gap-6 text-sm font-medium">
       {navLinks.map((link) => (
         link.children ? (
-          <div class="relative group">
+          <div class="relative group" data-dropdown>
             <button
               type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
               class={`${desktopNavHover} gap-1 ${isActive(link.href) ? 'text-brand-primary after:scale-x-100' : 'text-neutral-muted dark:text-neutral-300 hover:text-brand-primary'}`}
+              data-dropdown-trigger
             >
               {link.label}
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -64,7 +68,7 @@ const desktopNavHover =
               </svg>
             </button>
             <!-- Dropdown -->
-            <div class="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+            <div class="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200" data-dropdown-menu role="menu">
               <div class="bg-white dark:bg-neutral-900 rounded-xl shadow-xl border border-neutral-200 dark:border-neutral-800 py-2 min-w-[200px]">
                 {link.children.map((child) => (
                   <a
@@ -214,6 +218,56 @@ const desktopNavHover =
 </div>
 
 <script is:inline>
+  const setupDropdownKeyboard = () => {
+    document.querySelectorAll('[data-dropdown]').forEach((dropdown) => {
+      const trigger = dropdown.querySelector('[data-dropdown-trigger]');
+      const menu = dropdown.querySelector('[data-dropdown-menu]');
+      if (!trigger || !menu) return;
+
+      const show = () => {
+        menu.classList.remove('opacity-0', 'invisible');
+        menu.classList.add('opacity-100', 'visible');
+        trigger.setAttribute('aria-expanded', 'true');
+      };
+      const hide = () => {
+        menu.classList.add('opacity-0', 'invisible');
+        menu.classList.remove('opacity-100', 'visible');
+        trigger.setAttribute('aria-expanded', 'false');
+      };
+
+      trigger.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          show();
+          const first = menu.querySelector('a');
+          if (first) first.focus();
+        }
+      });
+
+      menu.addEventListener('keydown', (e) => {
+        const items = Array.from(menu.querySelectorAll('a'));
+        const idx = items.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (idx < items.length - 1) items[idx + 1].focus();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (idx > 0) items[idx - 1].focus();
+          else { hide(); trigger.focus(); }
+        } else if (e.key === 'Escape') {
+          hide();
+          trigger.focus();
+        }
+      });
+
+      dropdown.addEventListener('focusout', (e) => {
+        setTimeout(() => {
+          if (!dropdown.contains(document.activeElement)) hide();
+        }, 0);
+      });
+    });
+  };
+
   const setupMobileMenu = () => {
     const menuBtn = document.querySelector('[data-mobile-menu]');
     const drawerEl = document.querySelector('[data-mobile-drawer]');
@@ -357,6 +411,7 @@ const desktopNavHover =
   };
 
   const init = () => {
+    setupDropdownKeyboard();
     setupMobileMenu();
     initThemeToggle();
   };

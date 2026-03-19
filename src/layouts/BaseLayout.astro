@@ -65,7 +65,6 @@ const gaMeasurementId = siteConfig.analytics?.gaMeasurementId?.trim();
     <meta name="geo.position" content="44.698;7.855" />
     <meta name="ICBM" content="44.698, 7.855" />
     <meta name="language" content="Italian" />
-    <meta name="revisit-after" content="7 days" />
     <meta name="rating" content="general" />
     <meta name="distribution" content="global" />
     <meta name="coverage" content="worldwide" />
@@ -123,8 +122,8 @@ const gaMeasurementId = siteConfig.analytics?.gaMeasurementId?.trim();
     <!-- Favicons - Multi-format per massima compatibilità (Google richiede questi link) -->
     <link rel="shortcut icon" href="/logo_sergio.ico" />
     <link rel="icon" type="image/x-icon" href="/logo_sergio.ico" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/logo_sergio.avif" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/logo_sergio.avif" />
+    <link rel="icon" type="image/avif" sizes="32x32" href="/logo_sergio.avif" />
+    <link rel="icon" type="image/avif" sizes="16x16" href="/logo_sergio.avif" />
     <link rel="apple-touch-icon" sizes="180x180" href="/logo_sergio.avif" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#1a1a1a" />
@@ -144,123 +143,58 @@ gtag('config', '${gaMeasurementId}', { anonymize_ip: true });`}
       </>
     )}
     <!-- Schema.org FinancialService -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "FinancialService",
-        "name": "Sergio Contegiacomo - Consulente Patrimoniale",
-        "image": "https://www.sergiocontegiacomo.it/og.jpg",
-        "@id": "https://www.sergiocontegiacomo.it",
-        "url": "https://www.sergiocontegiacomo.it",
-        "telephone": "+39 0172 44191",
-        "email": "info@sergiocontegiacomo.it",
-        "priceRange": "€€€",
-        "description": "Consulenza patrimoniale, coaching finanziario e educazione economica per imprenditori e famiglie. Oltre 35 anni di esperienza nel private banking e wealth management.",
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": "Piazza Roma, 39",
-          "addressLocality": "Bra",
-          "addressRegion": "CN",
-          "postalCode": "12042",
-          "addressCountry": "IT"
-        },
-        "geo": {
-          "@type": "GeoCoordinates",
-          "latitude": 44.698,
-          "longitude": 7.855
-        },
-        "areaServed": ["Piemonte", "Italia"],
-        "sameAs": [
-          "https://www.linkedin.com/in/sergio-contegiacomo-b180b921"
-        ],
-        "openingHoursSpecification": [
-          {
-            "@type": "OpeningHoursSpecification",
-            "dayOfWeek": ["Monday", "Wednesday"],
-            "opens": "08:30",
-            "closes": "13:00"
-          },
-          {
-            "@type": "OpeningHoursSpecification",
-            "dayOfWeek": ["Monday", "Wednesday"],
-            "opens": "18:00",
-            "closes": "20:00"
-          },
-          {
-            "@type": "OpeningHoursSpecification",
-            "dayOfWeek": ["Tuesday", "Friday"],
-            "opens": "08:30",
-            "closes": "13:00"
-          },
-          {
-            "@type": "OpeningHoursSpecification",
-            "dayOfWeek": "Thursday",
-            "opens": "08:30",
-            "closes": "12:00"
-          },
-          {
-            "@type": "OpeningHoursSpecification",
-            "dayOfWeek": "Thursday",
-            "opens": "14:00",
-            "closes": "18:00"
-          }
-        ]
-      }
-    </script>
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FinancialService",
+      "name": `${siteConfig.name} - Consulente Patrimoniale`,
+      "image": `${siteConfig.siteUrl}/og.jpg`,
+      "@id": siteConfig.siteUrl,
+      "url": siteConfig.siteUrl,
+      "telephone": `+39 ${siteConfig.phone}`,
+      "email": siteConfig.contactEmail,
+      "priceRange": "€€€",
+      "description": "Consulenza patrimoniale, coaching finanziario e educazione economica per imprenditori e famiglie. Oltre 35 anni di esperienza nel private banking e wealth management.",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Piazza Roma, 39",
+        "addressLocality": "Bra",
+        "addressRegion": "CN",
+        "postalCode": "12042",
+        "addressCountry": "IT"
+      },
+      "geo": { "@type": "GeoCoordinates", "latitude": 44.698, "longitude": 7.855 },
+      "areaServed": ["Piemonte", "Italia"],
+      "sameAs": [siteConfig.social.linkedin],
+      "openingHoursSpecification": [
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Wednesday"], "opens": "08:30", "closes": "13:00" },
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Wednesday"], "opens": "18:00", "closes": "20:00" },
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Tuesday", "Friday"], "opens": "08:30", "closes": "13:00" },
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": "Thursday", "opens": "08:30", "closes": "12:00" },
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": "Thursday", "opens": "14:00", "closes": "18:00" }
+      ]
+    })} />
     
     <!-- Schema.org Person -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Sergio Contegiacomo",
-        "jobTitle": "Consulente Patrimoniale & Coach Finanziario",
-        "description": "Consulente patrimoniale con oltre 35 anni di esperienza nel private banking. Coach finanziario ed educatore certificato.",
-        "image": "https://www.sergiocontegiacomo.it/og.jpg",
-        "url": "https://www.sergiocontegiacomo.it",
-        "email": "info@sergiocontegiacomo.it",
-        "telephone": "+39 0172 44191",
-        "sameAs": [
-          "https://www.linkedin.com/in/sergio-contegiacomo-b180b921"
-        ],
-        "worksFor": {
-          "@type": "Organization",
-          "name": "Allianz Bank Financial Advisors",
-          "url": "https://www.allianzbank.it"
-        },
-        "alumniOf": [
-          {
-            "@type": "EducationalOrganization",
-            "name": "SDA Bocconi School of Management"
-          }
-        ],
-        "hasCredential": [
-          {
-            "@type": "EducationalOccupationalCredential",
-            "name": "Wealth Planner",
-            "credentialCategory": "Professional Certification"
-          },
-          {
-            "@type": "EducationalOccupationalCredential",
-            "name": "Iscrizione ANASF",
-            "credentialCategory": "Professional License"
-          }
-        ],
-        "knowsAbout": [
-          "Wealth Management",
-          "Financial Planning",
-          "Private Banking",
-          "Financial Coaching",
-          "Patrimony Governance"
-        ],
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Bra",
-          "addressRegion": "Piemonte",
-          "addressCountry": "Italia"
-        }
-      }
-    </script>
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": siteConfig.name,
+      "jobTitle": siteConfig.role,
+      "description": "Consulente patrimoniale con oltre 35 anni di esperienza nel private banking. Coach finanziario ed educatore certificato.",
+      "image": `${siteConfig.siteUrl}/og.jpg`,
+      "url": siteConfig.siteUrl,
+      "email": siteConfig.contactEmail,
+      "telephone": `+39 ${siteConfig.phone}`,
+      "sameAs": [siteConfig.social.linkedin],
+      "worksFor": { "@type": "Organization", "name": "Allianz Bank Financial Advisors", "url": "https://www.allianzbank.it" },
+      "alumniOf": [{ "@type": "EducationalOrganization", "name": "SDA Bocconi School of Management" }],
+      "hasCredential": [
+        { "@type": "EducationalOccupationalCredential", "name": "Wealth Planner", "credentialCategory": "Professional Certification" },
+        { "@type": "EducationalOccupationalCredential", "name": "Iscrizione ANASF", "credentialCategory": "Professional License" }
+      ],
+      "knowsAbout": ["Wealth Management", "Financial Planning", "Private Banking", "Financial Coaching", "Patrimony Governance"],
+      "address": { "@type": "PostalAddress", "addressLocality": "Bra", "addressRegion": "Piemonte", "addressCountry": "Italia" }
+    })} />
 
     {structuredData && (
       <script
@@ -351,9 +285,10 @@ gtag('config', '${gaMeasurementId}', { anonymize_ip: true });`}
     </script>
   </head>
   <body class="min-h-screen flex flex-col bg-white text-neutral-text dark:bg-neutral-950 dark:text-neutral-100">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-lg focus:bg-brand-primary focus:px-4 focus:py-2 focus:text-white focus:shadow-lg">Vai al contenuto principale</a>
     {showLoader && <PageLoader />}
     <Header activePath={activePath ?? Astro.url.pathname} />
-    <main class="flex-1">
+    <main id="main-content" class="flex-1">
       <slot />
     </main>
     <SpeedInsights />

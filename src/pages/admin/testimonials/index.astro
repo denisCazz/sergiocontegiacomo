@@ -29,16 +29,12 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         .order('display_order', { ascending: false })
         .order('created_at', { ascending: false });
 
-      console.log('Fetch testimonials:', { data, error });
-
       if (error) {
-        console.error('Errore query:', error);
         if (list) list.innerHTML = `<li class="p-4 text-red-500">Errore nel caricamento: ${error.message}</li>`;
         return;
       }
 
       if (!data || data.length === 0) {
-        console.log('Nessun dato:', data);
         if (list) list.innerHTML = '<li class="p-4 text-center text-gray-500">Nessuna testimonianza trovata.</li>';
         return;
       }
@@ -125,8 +121,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         'postgres_changes',
         { event: '*', schema: 'public', table: 'testimonials' },
         (payload) => {
-          console.log('Testimonianza cambiata:', payload);
-          fetchTestimonials(); // Reload lista quando c'è un cambiamento
+          fetchTestimonials();
         }
       )
       .subscribe();

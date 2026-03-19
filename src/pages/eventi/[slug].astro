@@ -83,6 +83,10 @@ const eventStructuredData = {
         <img
           src={event.coverImage}
           alt={`Immagine evento ${event.title}`}
+          width="1200"
+          height="630"
+          loading="lazy"
+          decoding="async"
           class="w-full rounded-3xl border border-neutral-border object-cover dark:border-neutral-800"
         />
       )}
@@ -179,7 +183,10 @@ const eventStructuredData = {
 
   const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error('Supabase env vars missing');
+  }
+  const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
 
   const article = document.getElementById('event-article');
   const slug = article?.dataset.slug;

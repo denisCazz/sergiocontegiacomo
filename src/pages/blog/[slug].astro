@@ -91,6 +91,10 @@ const articleStructuredData = {
             <img
               src={article.coverImage}
               alt={`Copertina articolo ${article.title}`}
+              width="1200"
+              height="630"
+              loading="lazy"
+              decoding="async"
               class="w-full rounded-3xl border border-neutral-border object-cover dark:border-neutral-800"
             />
           )}
@@ -192,10 +196,12 @@ const articleStructuredData = {
 <script>
   import { createClient } from '@supabase/supabase-js';
 
-  // Initialize Supabase client
   const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error('Supabase env vars missing');
+  }
+  const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
 
   const commentsSection = document.getElementById('comments-section');
   const slug = commentsSection?.dataset.slug;
@@ -214,6 +220,12 @@ const articleStructuredData = {
   const openModalBtn = document.getElementById('open-review-modal-btn');
   const closeModalBtn = document.getElementById('close-modal-btn');
   const modalBackdrop = document.getElementById('modal-backdrop');
+
+  function escapeHtml(str: string): string {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  }
 
   if (!slug) {
     console.error('Slug not found');
@@ -290,14 +302,14 @@ const articleStructuredData = {
         commentsList.innerHTML = comments.map((comment: any) => `
           <div class="border-b border-neutral-100 dark:border-neutral-800 last:border-0 pb-4 last:pb-0">
             <div class="flex justify-between items-start mb-1">
-              <span class="font-semibold text-sm text-neutral-900 dark:text-white">${comment.user_name}</span>
+              <span class="font-semibold text-sm text-neutral-900 dark:text-white">${escapeHtml(comment.user_name)}</span>
               <div class="flex text-yellow-400 text-xs">
                 ${Array(5).fill(0).map((_, i) => 
                   `<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ${i < comment.rating ? 'fill-current' : 'text-neutral-300'}" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`
                 ).join('')}
               </div>
             </div>
-            <p class="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">${comment.content}</p>
+            <p class="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">${escapeHtml(comment.content)}</p>
           </div>
         `).join('');
       }

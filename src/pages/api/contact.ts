@@ -6,6 +6,14 @@ import { sendBitoraCrmLead } from '../../lib/bitoraCrm';
 export async function POST({ request }: { request: Request }) {
   try {
     const payload = await request.json();
+
+    if (payload?.website) {
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const nome = payload?.nome?.toString().trim();
     const cognome = payload?.cognome?.toString().trim();
     const email = payload?.email?.toString().trim();
