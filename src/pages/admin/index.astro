@@ -23,236 +23,60 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     </div>
   </div>
 
-  <!-- Statistiche rapide -->
-  <div class="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-    <a href="/admin/articles" class="group rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 p-4 text-white shadow-md transition hover:shadow-lg hover:scale-105 cursor-pointer">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-xs font-medium text-blue-100 uppercase tracking-wide">Articoli</p>
-          <p class="text-2xl font-bold mt-1" id="stat-articles">-</p>
-        </div>
-        <div class="rounded-lg bg-white/20 p-2 group-hover:bg-white/30 transition">
-          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-          </svg>
-        </div>
-      </div>
-    </a>
-    <a href="/admin/audio" class="group rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 p-4 text-white shadow-md transition hover:shadow-lg hover:scale-105 cursor-pointer">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-xs font-medium text-purple-100 uppercase tracking-wide">Audio</p>
-          <p class="text-2xl font-bold mt-1" id="stat-audio">-</p>
-        </div>
-        <div class="rounded-lg bg-white/20 p-2 group-hover:bg-white/30 transition">
-          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-          </svg>
-        </div>
-      </div>
-    </a>
-    <a href="/admin/podcast" class="group rounded-lg bg-gradient-to-br from-brand-accent to-brand-accent/80 p-4 text-white shadow-md transition hover:shadow-lg hover:scale-105 cursor-pointer">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-xs font-medium text-white/90 uppercase tracking-wide">Podcast</p>
-          <p class="text-2xl font-bold mt-1" id="stat-podcasts">-</p>
-        </div>
-        <div class="rounded-lg bg-white/20 p-2 group-hover:bg-white/30 transition">
-          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-          </svg>
-        </div>
-      </div>
-    </a>
-    <a href="/admin/events" class="group rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 p-4 text-white shadow-md transition hover:shadow-lg hover:scale-105 cursor-pointer">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-xs font-medium text-amber-100 uppercase tracking-wide">Eventi</p>
-          <p class="text-2xl font-bold mt-1" id="stat-events">-</p>
-        </div>
-        <div class="rounded-lg bg-white/20 p-2 group-hover:bg-white/30 transition">
-          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-        </div>
-      </div>
-    </a>
-    <a href="/admin/press" class="group rounded-lg bg-gradient-to-br from-rose-500 to-pink-500 p-4 text-white shadow-md transition hover:shadow-lg hover:scale-105 cursor-pointer">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-xs font-medium text-rose-100 uppercase tracking-wide">Stampa</p>
-          <p class="text-2xl font-bold mt-1" id="stat-press">-</p>
-        </div>
-        <div class="rounded-lg bg-white/20 p-2 group-hover:bg-white/30 transition">
-          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-          </svg>
-        </div>
-      </div>
-    </a>
-  </div>
-
-  <!-- Azioni rapide -->
-  <div class="mb-8">
-    <h2 class="mb-3 text-base font-semibold text-gray-900 dark:text-white">Azioni Rapide</h2>
-    <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
-      <a href="/admin/articles/new" class="group flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3 transition hover:border-blue-300 hover:bg-blue-50 hover:shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-600 dark:hover:bg-blue-900/20">
-        <div class="flex-shrink-0 rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
-          <svg class="h-4 w-4 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-        </div>
-        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Articolo</span>
+  <!-- Statistiche con azioni rapide integrate -->
+  <div class="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+    <div class="group relative rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 p-4 text-white shadow-md transition hover:shadow-lg">
+      <a href="/admin/articles" class="block">
+        <p class="text-[11px] font-medium text-blue-100 uppercase tracking-wide">Articoli</p>
+        <p class="text-2xl font-bold mt-1" id="stat-articles">-</p>
       </a>
-      <a href="/admin/audio/new" class="group flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3 transition hover:border-purple-300 hover:bg-purple-50 hover:shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:hover:border-purple-600 dark:hover:bg-purple-900/20">
-        <div class="flex-shrink-0 rounded-lg bg-purple-100 p-2 dark:bg-purple-900/30">
-          <svg class="h-4 w-4 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-        </div>
-        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">AudioPillola</span>
-      </a>
-      <a href="/admin/podcast/new" class="group flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3 transition hover:border-brand-accent hover:bg-brand-accent/5 hover:shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:hover:border-brand-accent">
-        <div class="flex-shrink-0 rounded-lg bg-brand-accent/20 p-2 dark:bg-brand-accent/10">
-          <svg class="h-4 w-4 text-brand-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-        </div>
-        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Podcast</span>
-      </a>
-      <a href="/admin/events/new" class="group flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3 transition hover:border-amber-300 hover:bg-amber-50 hover:shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:hover:border-amber-600 dark:hover:bg-amber-900/20">
-        <div class="flex-shrink-0 rounded-lg bg-amber-100 p-2 dark:bg-amber-900/30">
-          <svg class="h-4 w-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-        </div>
-        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Evento</span>
-      </a>
-      <a href="/admin/press/new" class="group flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3 transition hover:border-rose-300 hover:bg-rose-50 hover:shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:hover:border-rose-600 dark:hover:bg-rose-900/20">
-        <div class="flex-shrink-0 rounded-lg bg-rose-100 p-2 dark:bg-rose-900/30">
-          <svg class="h-4 w-4 text-rose-600 dark:text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-        </div>
-        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Rassegna</span>
+      <a href="/admin/articles/new" class="absolute top-3 right-3 flex h-7 w-7 items-center justify-center rounded-lg bg-white/20 text-white hover:bg-white/40 transition" title="Nuovo Articolo">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
       </a>
     </div>
-  </div>
-
-  <!-- Gestione contenuti -->
-  <div class="mb-8">
-    <h2 class="mb-3 text-base font-semibold text-gray-900 dark:text-white">Gestione Contenuti</h2>
-    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      <!-- Blog -->
-      <a href="/admin/articles" class="group flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition hover:border-blue-300 hover:bg-blue-50 hover:shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-600 dark:hover:bg-blue-900/20">
-        <div class="flex-shrink-0 rounded-lg bg-blue-100 p-2.5 dark:bg-blue-900/30">
-          <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-          </svg>
-        </div>
-        <div class="flex-1 min-w-0">
-          <h3 class="font-semibold text-gray-900 dark:text-white">Articoli Blog</h3>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Gestisci i post del blog</p>
-        </div>
-        <svg class="h-4 w-4 flex-shrink-0 text-gray-400 transition group-hover:translate-x-0.5 group-hover:text-blue-600 dark:group-hover:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
+    <div class="group relative rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 p-4 text-white shadow-md transition hover:shadow-lg">
+      <a href="/admin/audio" class="block">
+        <p class="text-[11px] font-medium text-purple-100 uppercase tracking-wide">Audio</p>
+        <p class="text-2xl font-bold mt-1" id="stat-audio">-</p>
       </a>
-
-      <!-- AudioPillole -->
-      <a href="/admin/audio" class="group flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition hover:border-purple-300 hover:bg-purple-50 hover:shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:hover:border-purple-600 dark:hover:bg-purple-900/20">
-        <div class="flex-shrink-0 rounded-lg bg-purple-100 p-2.5 dark:bg-purple-900/30">
-          <svg class="h-5 w-5 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-          </svg>
-        </div>
-        <div class="flex-1 min-w-0">
-          <h3 class="font-semibold text-gray-900 dark:text-white">AudioPillole</h3>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Contenuti audio brevi</p>
-        </div>
-        <svg class="h-4 w-4 flex-shrink-0 text-gray-400 transition group-hover:translate-x-0.5 group-hover:text-purple-600 dark:group-hover:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
+      <a href="/admin/audio/new" class="absolute top-3 right-3 flex h-7 w-7 items-center justify-center rounded-lg bg-white/20 text-white hover:bg-white/40 transition" title="Nuova AudioPillola">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
       </a>
-
-      <!-- Podcast -->
-      <a href="/admin/podcast" class="group flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition hover:border-brand-accent hover:bg-brand-accent/5 hover:shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:hover:border-brand-accent">
-        <div class="flex-shrink-0 rounded-lg bg-brand-accent/20 p-2.5 dark:bg-brand-accent/10">
-          <svg class="h-5 w-5 text-brand-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-          </svg>
-        </div>
-        <div class="flex-1 min-w-0">
-          <h3 class="font-semibold text-gray-900 dark:text-white">Podcast</h3>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Episodi podcast</p>
-        </div>
-        <svg class="h-4 w-4 flex-shrink-0 text-gray-400 transition group-hover:translate-x-0.5 group-hover:text-brand-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
+    </div>
+    <div class="group relative rounded-xl bg-gradient-to-br from-brand-accent to-brand-accent/80 p-4 text-white shadow-md transition hover:shadow-lg">
+      <a href="/admin/podcast" class="block">
+        <p class="text-[11px] font-medium text-white/90 uppercase tracking-wide">Podcast</p>
+        <p class="text-2xl font-bold mt-1" id="stat-podcasts">-</p>
       </a>
-
-      <!-- Eventi -->
-      <a href="/admin/events" class="group flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition hover:border-amber-300 hover:bg-amber-50 hover:shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:hover:border-amber-600 dark:hover:bg-amber-900/20">
-        <div class="flex-shrink-0 rounded-lg bg-amber-100 p-2.5 dark:bg-amber-900/30">
-          <svg class="h-5 w-5 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-        </div>
-        <div class="flex-1 min-w-0">
-          <h3 class="font-semibold text-gray-900 dark:text-white">Eventi</h3>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Calendario appuntamenti</p>
-        </div>
-        <svg class="h-4 w-4 flex-shrink-0 text-gray-400 transition group-hover:translate-x-0.5 group-hover:text-amber-600 dark:group-hover:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
+      <a href="/admin/podcast/new" class="absolute top-3 right-3 flex h-7 w-7 items-center justify-center rounded-lg bg-white/20 text-white hover:bg-white/40 transition" title="Nuovo Podcast">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
       </a>
-
-      <!-- Rassegna Stampa -->
-      <a href="/admin/press" class="group flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition hover:border-rose-300 hover:bg-rose-50 hover:shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:hover:border-rose-600 dark:hover:bg-rose-900/20">
-        <div class="flex-shrink-0 rounded-lg bg-rose-100 p-2.5 dark:bg-rose-900/30">
-          <svg class="h-5 w-5 text-rose-600 dark:text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-          </svg>
-        </div>
-        <div class="flex-1 min-w-0">
-          <h3 class="font-semibold text-gray-900 dark:text-white">Rassegna Stampa</h3>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Articoli e PDF stampa</p>
-        </div>
-        <svg class="h-4 w-4 flex-shrink-0 text-gray-400 transition group-hover:translate-x-0.5 group-hover:text-rose-600 dark:group-hover:text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
+    </div>
+    <div class="group relative rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 p-4 text-white shadow-md transition hover:shadow-lg">
+      <a href="/admin/events" class="block">
+        <p class="text-[11px] font-medium text-amber-100 uppercase tracking-wide">Eventi</p>
+        <p class="text-2xl font-bold mt-1" id="stat-events">-</p>
       </a>
-
-      <!-- Recensioni -->
-      <a href="/admin/testimonials" class="group flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition hover:border-yellow-300 hover:bg-yellow-50 hover:shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:hover:border-yellow-600 dark:hover:bg-yellow-900/20">
-        <div class="flex-shrink-0 rounded-lg bg-yellow-100 p-2.5 dark:bg-yellow-900/30">
-          <svg class="h-5 w-5 text-yellow-600 dark:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-          </svg>
-        </div>
-        <div class="flex-1 min-w-0">
-          <h3 class="font-semibold text-gray-900 dark:text-white">Testimonianze</h3>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Recensioni dei clienti</p>
-        </div>
-        <svg class="h-4 w-4 flex-shrink-0 text-gray-400 transition group-hover:translate-x-0.5 group-hover:text-yellow-600 dark:group-hover:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
+      <a href="/admin/events/new" class="absolute top-3 right-3 flex h-7 w-7 items-center justify-center rounded-lg bg-white/20 text-white hover:bg-white/40 transition" title="Nuovo Evento">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
       </a>
-
-      <!-- Utenti -->
-      <a href="/admin/users" class="group flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 transition hover:border-green-300 hover:bg-green-50 hover:shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:hover:border-green-600 dark:hover:bg-green-900/20">
-        <div class="flex-shrink-0 rounded-lg bg-green-100 p-2.5 dark:bg-green-900/30">
-          <svg class="h-5 w-5 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-          </svg>
-        </div>
-        <div class="flex-1 min-w-0">
-          <h3 class="font-semibold text-gray-900 dark:text-white">Utenti</h3>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Gestione accessi</p>
-        </div>
-        <svg class="h-4 w-4 flex-shrink-0 text-gray-400 transition group-hover:translate-x-0.5 group-hover:text-green-600 dark:group-hover:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
+    </div>
+    <div class="group relative rounded-xl bg-gradient-to-br from-rose-500 to-pink-500 p-4 text-white shadow-md transition hover:shadow-lg">
+      <a href="/admin/press" class="block">
+        <p class="text-[11px] font-medium text-rose-100 uppercase tracking-wide">Stampa</p>
+        <p class="text-2xl font-bold mt-1" id="stat-press">-</p>
+      </a>
+      <a href="/admin/press/new" class="absolute top-3 right-3 flex h-7 w-7 items-center justify-center rounded-lg bg-white/20 text-white hover:bg-white/40 transition" title="Nuova Rassegna">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+      </a>
+    </div>
+    <div class="group relative rounded-xl bg-gradient-to-br from-yellow-500 to-yellow-600 p-4 text-white shadow-md transition hover:shadow-lg">
+      <a href="/admin/testimonials" class="block">
+        <p class="text-[11px] font-medium text-yellow-100 uppercase tracking-wide">Recensioni</p>
+        <p class="text-2xl font-bold mt-1" id="stat-testimonials">-</p>
+      </a>
+      <a href="/admin/testimonials/new" class="absolute top-3 right-3 flex h-7 w-7 items-center justify-center rounded-lg bg-white/20 text-white hover:bg-white/40 transition" title="Nuova Recensione">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
       </a>
     </div>
   </div>
@@ -294,14 +118,14 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     const dateEl = document.getElementById('currentDate');
     if (dateEl) dateEl.textContent = dayjs().format('dddd D MMMM YYYY');
 
-    // Carica statistiche
     const loadStats = async () => {
-      const [articles, audio, events, press, podcasts] = await Promise.all([
+      const [articles, audio, events, press, podcasts, testimonials] = await Promise.all([
         supabase.from('articles').select('id', { count: 'exact', head: true }),
         supabase.from('audio_pillole').select('id', { count: 'exact', head: true }),
         supabase.from('events').select('id', { count: 'exact', head: true }),
         supabase.from('press').select('id', { count: 'exact', head: true }),
         supabase.from('podcasts').select('id', { count: 'exact', head: true }),
+        supabase.from('testimonials').select('id', { count: 'exact', head: true }),
       ]);
 
       document.getElementById('stat-articles')!.textContent = String(articles.count || 0);
@@ -309,6 +133,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       document.getElementById('stat-podcasts')!.textContent = String(podcasts.count || 0);
       document.getElementById('stat-events')!.textContent = String(events.count || 0);
       document.getElementById('stat-press')!.textContent = String(press.count || 0);
+      document.getElementById('stat-testimonials')!.textContent = String(testimonials.count || 0);
     };
 
     // Carica attività recenti
@@ -321,36 +146,43 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         supabase.from('podcasts').select('id, title, created_at').order('created_at', { ascending: false }).limit(3),
       ]);
 
-      type ActivityItem = { id: string; title: string; created_at: string; type: string; icon: string; color: string; link: string };
+      type ActivityItem = { id: string; title: string; created_at: string; type: string; color: string; link: string };
       const allItems: ActivityItem[] = [
-        ...(articles.data || []).map((a: any) => ({ ...a, type: 'Articolo', icon: '📝', color: 'blue', link: `/admin/articles/edit?id=${a.id}` })),
-        ...(audio.data || []).map((a: any) => ({ ...a, type: 'AudioPillola', icon: '🎙️', color: 'purple', link: `/admin/audio/edit?id=${a.id}` })),
-        ...(events.data || []).map((e: any) => ({ ...e, type: 'Evento', icon: '📅', color: 'amber', link: `/admin/events` })),
-        ...(press.data || []).map((p: any) => ({ ...p, type: 'Stampa', icon: '📰', color: 'rose', link: `/admin/press/edit?id=${p.id}` })),
-        ...(podcasts.data || []).map((p: any) => ({ ...p, type: 'Podcast', icon: '🎧', color: 'brand-accent', link: `/admin/podcast/edit?id=${p.id}` })),
+        ...(articles.data || []).map((a: any) => ({ ...a, type: 'Articolo', color: 'blue', link: `/admin/articles/edit?id=${a.id}` })),
+        ...(audio.data || []).map((a: any) => ({ ...a, type: 'Audio', color: 'purple', link: `/admin/audio/edit?id=${a.id}` })),
+        ...(events.data || []).map((e: any) => ({ ...e, type: 'Evento', color: 'amber', link: `/admin/events` })),
+        ...(press.data || []).map((p: any) => ({ ...p, type: 'Stampa', color: 'rose', link: `/admin/press/edit?id=${p.id}` })),
+        ...(podcasts.data || []).map((p: any) => ({ ...p, type: 'Podcast', color: 'teal', link: `/admin/podcast/edit?id=${p.id}` })),
       ];
 
-      // Ordina per data e prendi i primi 5
       allItems.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-      const recent = allItems.slice(0, 5);
+      const recent = allItems.slice(0, 8);
 
       const list = document.getElementById('recentActivity');
       if (!list) return;
 
       if (recent.length === 0) {
-        list.innerHTML = '<li class="p-4 text-center text-gray-500 dark:text-gray-400">Nessuna attività recente</li>';
+        list.innerHTML = '<li class="p-4 text-center text-gray-500 dark:text-gray-400">Nessuna attivita\' recente</li>';
         return;
       }
 
+      const badgeColors: Record<string, string> = {
+        blue: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+        purple: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+        amber: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+        rose: 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
+        teal: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
+      };
+
       list.innerHTML = recent.map(item => `
         <li>
-          <a href="${item.link}" class="flex items-center gap-4 p-4 transition hover:bg-gray-50 dark:hover:bg-gray-700">
-            <span class="text-2xl">${item.icon}</span>
+          <a href="${item.link}" class="flex items-center gap-4 px-4 py-3 transition hover:bg-gray-50 dark:hover:bg-gray-700/50">
+            <span class="inline-flex items-center rounded-md px-2 py-1 text-[11px] font-bold uppercase tracking-wider ${badgeColors[item.color] || badgeColors.blue}">${item.type}</span>
             <div class="flex-1 min-w-0">
-              <p class="truncate font-medium text-gray-900 dark:text-white">${item.title}</p>
-              <p class="text-sm text-gray-500 dark:text-gray-400">${item.type} • ${dayjs(item.created_at).format('D MMM YYYY, HH:mm')}</p>
+              <p class="truncate text-sm font-medium text-gray-900 dark:text-white">${item.title}</p>
             </div>
-            <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <span class="flex-shrink-0 text-xs text-gray-400 dark:text-gray-500">${dayjs(item.created_at).format('D MMM YYYY')}</span>
+            <svg class="h-4 w-4 flex-shrink-0 text-gray-300 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
           </a>

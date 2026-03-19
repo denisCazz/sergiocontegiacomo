@@ -722,6 +722,20 @@ export async function getAudioPillole() {
   return data as AudioPillola[];
 }
 
+export async function getLatestAudioPillole(limit: number = 3) {
+  const { data, error } = await supabase
+    .from('audio_pillole')
+    .select('*')
+    .order('published_at', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error('Error fetching latest audio pillole:', error);
+    return [];
+  }
+  return data as AudioPillola[];
+}
+
 export async function getAudioPillola(id: number) {
   const { data, error } = await supabase
     .from('audio_pillole')

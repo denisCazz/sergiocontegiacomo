@@ -7,17 +7,51 @@ interface Props {
 
 const { title } = Astro.props;
 
-const navItems = [
-  { href: '/admin', label: 'Dashboard', icon: 'home', color: 'gray' },
-  { href: '/admin/articles', label: 'Articoli', icon: 'article', color: 'blue' },
-  { href: '/admin/audio', label: 'AudioPillole', icon: 'microphone', color: 'purple' },
-  { href: '/admin/podcast', label: 'Podcast', icon: 'podcast', color: 'brand-accent' },
-  { href: '/admin/events', label: 'Eventi', icon: 'calendar', color: 'amber' },
-  { href: '/admin/press', label: 'Rassegna Stampa', icon: 'document', color: 'rose' },
-  { href: '/admin/reviews', label: 'Recensioni', icon: 'star', color: 'yellow' },
-  { href: '/admin/users', label: 'Utenti', icon: 'users', color: 'green' },
-  { href: '/admin/migrate-r2', label: 'Migrazione R2', icon: 'migrate', color: 'indigo' },
+interface NavItem {
+  href: string;
+  label: string;
+  icon: string;
+  color: string;
+}
+
+interface NavSection {
+  heading: string;
+  items: NavItem[];
+}
+
+const navSections: NavSection[] = [
+  {
+    heading: 'Principale',
+    items: [
+      { href: '/admin', label: 'Dashboard', icon: 'home', color: 'gray' },
+    ],
+  },
+  {
+    heading: 'Contenuti',
+    items: [
+      { href: '/admin/articles', label: 'Articoli', icon: 'article', color: 'blue' },
+      { href: '/admin/audio', label: 'AudioPillole', icon: 'microphone', color: 'purple' },
+      { href: '/admin/podcast', label: 'Podcast', icon: 'podcast', color: 'brand-accent' },
+      { href: '/admin/press', label: 'Rassegna Stampa', icon: 'document', color: 'rose' },
+    ],
+  },
+  {
+    heading: 'Interazioni',
+    items: [
+      { href: '/admin/events', label: 'Eventi', icon: 'calendar', color: 'amber' },
+      { href: '/admin/testimonials', label: 'Recensioni', icon: 'star', color: 'yellow' },
+    ],
+  },
+  {
+    heading: 'Sistema',
+    items: [
+      { href: '/admin/users', label: 'Utenti', icon: 'users', color: 'green' },
+      { href: '/admin/migrate-r2', label: 'Migrazione R2', icon: 'migrate', color: 'indigo' },
+    ],
+  },
 ];
+
+const allNavItems = navSections.flatMap(s => s.items);
 ---
 
 <html lang="it" class="h-full bg-white dark:bg-gray-900">
@@ -48,71 +82,40 @@ const navItems = [
           </div>
 
           <!-- Navigation -->
-          <nav class="flex-1 overflow-y-auto px-4 py-6 space-y-1">
-            <p class="px-3 mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">Menu</p>
-            
-            {navItems.map((item) => (
-              <a 
-                href={item.href} 
-                data-nav-link
-                class="nav-link group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-300 transition-all duration-200 hover:bg-white/10 hover:text-white"
-              >
-                <span class={`flex h-9 w-9 items-center justify-center rounded-lg bg-${item.color}-500/20 text-${item.color}-400 transition-colors group-hover:bg-${item.color}-500/30`}>
-                  {item.icon === 'home' && (
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                    </svg>
-                  )}
-                  {item.icon === 'article' && (
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                    </svg>
-                  )}
-                  {item.icon === 'microphone' && (
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                    </svg>
-                  )}
-                  {item.icon === 'calendar' && (
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                  )}
-                  {item.icon === 'document' && (
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                  )}
-                  {item.icon === 'star' && (
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                    </svg>
-                  )}
-                  {item.icon === 'users' && (
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                  )}
-                  {item.icon === 'podcast' && (
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                    </svg>
-                  )}
-                  {item.icon === 'migrate' && (
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                  )}
-                </span>
-                <span>{item.label}</span>
-              </a>
+          <nav class="flex-1 overflow-y-auto px-4 py-4 space-y-5">
+            {navSections.map((section) => (
+              <div>
+                <p class="px-3 mb-2 text-[11px] font-bold uppercase tracking-widest text-gray-500">{section.heading}</p>
+                <div class="space-y-0.5">
+                  {section.items.map((item) => (
+                    <a
+                      href={item.href}
+                      data-nav-link
+                      class="nav-link group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-gray-300 transition-all duration-200 hover:bg-white/10 hover:text-white"
+                    >
+                      <span class={`flex h-8 w-8 items-center justify-center rounded-lg bg-${item.color}-500/20 text-${item.color}-400 transition-colors group-hover:bg-${item.color}-500/30`}>
+                        {item.icon === 'home' && <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>}
+                        {item.icon === 'article' && <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>}
+                        {item.icon === 'microphone' && <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>}
+                        {item.icon === 'podcast' && <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" /></svg>}
+                        {item.icon === 'document' && <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>}
+                        {item.icon === 'calendar' && <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
+                        {item.icon === 'star' && <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>}
+                        {item.icon === 'users' && <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>}
+                        {item.icon === 'migrate' && <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>}
+                      </span>
+                      <span>{item.label}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
             ))}
 
-            <div class="!mt-8 border-t border-gray-700/50 pt-6">
-              <p class="px-3 mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">Link Rapidi</p>
-              <a href="/" target="_blank" rel="noopener noreferrer" class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-300 transition-all duration-200 hover:bg-white/10 hover:text-white">
-                <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-500/20 text-gray-400 transition-colors group-hover:bg-gray-500/30">
-                  <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="border-t border-gray-700/50 pt-4">
+              <p class="px-3 mb-2 text-[11px] font-bold uppercase tracking-widest text-gray-500">Link Rapidi</p>
+              <a href="/" target="_blank" rel="noopener noreferrer" class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-gray-300 transition-all duration-200 hover:bg-white/10 hover:text-white">
+                <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-500/20 text-gray-400 transition-colors group-hover:bg-gray-500/30">
+                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                   </svg>
                 </span>
@@ -183,62 +186,33 @@ const navItems = [
           </div>
 
           <!-- Mobile navigation -->
-          <nav class="flex-1 overflow-y-auto px-4 py-6 space-y-1">
-            {navItems.map((item) => (
-              <a 
-                href={item.href} 
-                data-nav-link
-                class="nav-link group flex items-center gap-3 rounded-xl px-3 py-3 text-base font-medium text-gray-300 transition-all duration-200 hover:bg-white/10 hover:text-white"
-              >
-                <span class={`flex h-10 w-10 items-center justify-center rounded-lg bg-${item.color}-500/20 text-${item.color}-400`}>
-                  {item.icon === 'home' && (
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                    </svg>
-                  )}
-                  {item.icon === 'article' && (
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                    </svg>
-                  )}
-                  {item.icon === 'microphone' && (
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                    </svg>
-                  )}
-                  {item.icon === 'calendar' && (
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                  )}
-                  {item.icon === 'document' && (
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                  )}
-                  {item.icon === 'star' && (
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                    </svg>
-                  )}
-                  {item.icon === 'users' && (
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                  )}
-                  {item.icon === 'podcast' && (
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                    </svg>
-                  )}
-                  {item.icon === 'migrate' && (
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                  )}
-                </span>
-                <span>{item.label}</span>
-              </a>
+          <nav class="flex-1 overflow-y-auto px-4 py-4 space-y-5">
+            {navSections.map((section) => (
+              <div>
+                <p class="px-3 mb-2 text-[11px] font-bold uppercase tracking-widest text-gray-500">{section.heading}</p>
+                <div class="space-y-0.5">
+                  {section.items.map((item) => (
+                    <a
+                      href={item.href}
+                      data-nav-link
+                      class="nav-link group flex items-center gap-3 rounded-xl px-3 py-2.5 text-base font-medium text-gray-300 transition-all duration-200 hover:bg-white/10 hover:text-white"
+                    >
+                      <span class={`flex h-9 w-9 items-center justify-center rounded-lg bg-${item.color}-500/20 text-${item.color}-400`}>
+                        {item.icon === 'home' && <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>}
+                        {item.icon === 'article' && <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>}
+                        {item.icon === 'microphone' && <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>}
+                        {item.icon === 'podcast' && <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" /></svg>}
+                        {item.icon === 'document' && <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>}
+                        {item.icon === 'calendar' && <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
+                        {item.icon === 'star' && <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>}
+                        {item.icon === 'users' && <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>}
+                        {item.icon === 'migrate' && <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>}
+                      </span>
+                      <span>{item.label}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
             ))}
           </nav>
 

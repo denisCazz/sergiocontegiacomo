@@ -2,296 +2,351 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getAudioPillole } from '../../lib/cms';
 
-// Leggi le AudioPillole dal database
 const audioItems = await getAudioPillole();
+
+const formatDate = (dateStr: string) => {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
+};
 ---
 
-<BaseLayout title="AudioPillole" description="Brevi pillole audio di educazione finanziaria e patrimoniale a cura di Sergio Contegiacomo." keywords="audiopillole finanziarie, educazione finanziaria audio, pillole patrimonio" activePath="/blog">
-	<section class="relative min-h-screen py-24 lg:py-32 bg-gradient-to-br from-neutral-900 via-neutral-950 to-neutral-900 overflow-hidden">
-		<!-- Background decorativo -->
-		<div class="absolute inset-0 overflow-hidden pointer-events-none">
-			<div class="absolute top-1/4 -left-32 w-96 h-96 bg-brand-primary/20 rounded-full blur-3xl animate-pulse"></div>
-			<div class="absolute bottom-1/4 -right-32 w-80 h-80 bg-brand-accent/15 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
-			<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-primary/5 rounded-full blur-3xl"></div>
-			
-			<!-- Pattern di onde sonore decorative -->
-			<svg class="absolute bottom-0 left-0 w-full h-32 text-brand-primary/10" viewBox="0 0 1440 120" preserveAspectRatio="none">
-				<path d="M0,64 C360,128 720,0 1080,64 C1260,96 1350,32 1440,64 L1440,120 L0,120 Z" fill="currentColor"/>
-			</svg>
-		</div>
+<BaseLayout
+  title="AudioPillole"
+  description="Brevi pillole audio di educazione finanziaria e patrimoniale a cura di Sergio Contegiacomo."
+  keywords="audiopillole finanziarie, educazione finanziaria audio, pillole patrimonio"
+  activePath="/blog"
+>
+  <section class="relative min-h-screen bg-neutral-base dark:bg-neutral-950 overflow-hidden">
+    <!-- Hero -->
+    <div class="relative bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 py-20 lg:py-28 overflow-hidden">
+      <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute top-1/4 -left-20 w-72 h-72 bg-brand-primary/15 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 right-0 w-60 h-60 bg-brand-accent/10 rounded-full blur-3xl"></div>
+        <svg class="absolute bottom-0 left-0 w-full h-20 text-neutral-base dark:text-neutral-950" viewBox="0 0 1440 80" preserveAspectRatio="none">
+          <path d="M0,40 C480,80 960,0 1440,40 L1440,80 L0,80 Z" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="mx-auto max-w-4xl px-6 relative z-10 text-center">
+        <div class="inline-flex items-center gap-2 rounded-full bg-brand-primary/20 backdrop-blur-sm px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-brand-light mb-5 border border-brand-primary/30">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
+          AudioPillole
+        </div>
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-serif font-medium text-white mb-4">
+          Ascolta, impara, <span class="text-brand-primary">cresci</span>
+        </h1>
+        <p class="text-lg text-neutral-400 max-w-xl mx-auto mb-8">
+          Brevi contenuti audio su finanza personale, mindset e crescita patrimoniale.
+        </p>
+        {audioItems.length > 0 && (
+          <div class="flex items-center justify-center gap-6 text-sm text-neutral-400">
+            <span class="flex items-center gap-2">
+              <svg class="h-4 w-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
+              {audioItems.length} {audioItems.length === 1 ? 'episodio' : 'episodi'}
+            </span>
+          </div>
+        )}
+      </div>
+    </div>
 
-		<div class="mx-auto max-w-4xl px-6 relative z-10">
-			<!-- Header -->
-			<div class="text-center mb-16">
-				<div class="inline-flex items-center gap-3 rounded-full bg-brand-primary/20 backdrop-blur-sm px-5 py-2 text-sm font-semibold uppercase tracking-wider text-brand-light mb-6 border border-brand-primary/30">
-					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-					</svg>
-					AudioPillole
-				</div>
-				<h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-medium text-white mb-6">
-					Ascolta, impara, <span class="text-brand-primary">cresci</span>
-				</h1>
-				<p class="text-xl text-neutral-400 leading-relaxed max-w-2xl mx-auto">
-					Brevi contenuti audio per approfondire temi di finanza personale, mindset e crescita patrimoniale. Ascoltali dove e quando vuoi.
-				</p>
-			</div>
+    <!-- Content -->
+    <div class="mx-auto max-w-4xl px-6 py-12 lg:py-16 relative z-10">
+      {/* Search */}
+      {audioItems.length > 3 && (
+        <div class="mb-8">
+          <div class="relative">
+            <input
+              type="text"
+              id="audio-search"
+              placeholder="Cerca tra le AudioPillole..."
+              class="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 pl-11 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white dark:placeholder-neutral-500"
+            />
+            <svg class="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+          </div>
+        </div>
+      )}
 
-			<!-- Audio Player Cards -->
-			{audioItems.length > 0 ? (
-				<div class="space-y-6">
-					{audioItems.map((audio, index) => (
-						<div class="audio-card group relative rounded-3xl bg-white/5 backdrop-blur-lg border border-white/10 p-6 transition-all duration-500 hover:bg-white/10 hover:border-brand-primary/30 hover:shadow-2xl hover:shadow-brand-primary/10">
-							<div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-								<!-- Numero e icona -->
-								<div class="flex items-center gap-4">
-									<div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-primary to-brand-accent flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-brand-primary/30">
-										{String(index + 1).padStart(2, '0')}
-									</div>
-								</div>
+      {/* Now Playing bar (hidden by default) */}
+      <div id="now-playing" class="hidden sticky top-20 z-30 mb-6 rounded-2xl bg-neutral-900 dark:bg-neutral-800 border border-neutral-700/50 p-4 shadow-2xl shadow-brand-primary/10 backdrop-blur-lg">
+        <div class="flex items-center gap-4">
+          <button id="np-play-btn" class="flex-shrink-0 w-11 h-11 rounded-full bg-brand-primary text-white flex items-center justify-center hover:bg-brand-light transition-all shadow-lg shadow-brand-primary/30">
+            <svg id="np-play-icon" class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <svg id="np-pause-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>
+          </button>
+          <div class="flex-1 min-w-0">
+            <p id="np-title" class="text-sm font-medium text-white truncate"></p>
+            <div class="flex items-center gap-3 mt-1.5">
+              <span id="np-current" class="text-[11px] font-mono text-neutral-400 w-8">0:00</span>
+              <div id="np-progress-wrap" class="flex-1 h-1.5 bg-white/10 rounded-full cursor-pointer overflow-hidden">
+                <div id="np-progress" class="h-full bg-gradient-to-r from-brand-primary to-brand-accent rounded-full transition-all duration-100" style="width:0%"></div>
+              </div>
+              <span id="np-duration" class="text-[11px] font-mono text-neutral-400 w-8 text-right">0:00</span>
+            </div>
+          </div>
+          <button id="np-close" class="flex-shrink-0 text-neutral-500 hover:text-white transition-colors p-1">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+      </div>
 
-								<!-- Info e player -->
-								<div class="flex-1 w-full space-y-4">
-									<div class="text-center sm:text-left">
-										<h3 class="text-lg font-semibold text-white group-hover:text-brand-light transition-colors">
-											{audio.title}
-										</h3>
-										{audio.description && (
-											<p class="text-sm text-neutral-400 mt-1">{audio.description}</p>
-										)}
-									</div>
-									
-									<!-- Custom Audio Player -->
-									<div class="audio-player-container">
-										<audio class="audio-element" preload="metadata">
-											<source src={audio.file_url} type="audio/mpeg" />
-											Il tuo browser non supporta l'elemento audio.
-										</audio>
-										
-										<div class="flex items-center gap-4">
-											<!-- Play/Pause Button -->
-											<button class="play-btn flex-shrink-0 w-12 h-12 rounded-full bg-brand-primary text-white flex items-center justify-center hover:bg-brand-light hover:scale-110 transition-all duration-300 shadow-lg shadow-brand-primary/30">
-												<svg class="play-icon w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-													<path d="M8 5v14l11-7z"/>
-												</svg>
-												<svg class="pause-icon w-5 h-5 hidden" fill="currentColor" viewBox="0 0 24 24">
-													<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-												</svg>
-											</button>
-											
-											<!-- Progress Bar -->
-											<div class="flex-1 space-y-1">
-												<div class="progress-container h-2 bg-white/10 rounded-full cursor-pointer overflow-hidden group/progress">
-													<div class="progress-bar h-full bg-gradient-to-r from-brand-primary to-brand-accent rounded-full transition-all duration-150" style="width: 0%"></div>
-												</div>
-												<div class="flex justify-between text-xs text-neutral-500 font-mono">
-													<span class="current-time">0:00</span>
-													<span class="duration">0:00</span>
-												</div>
-											</div>
-											
-											<!-- Volume -->
-											<div class="hidden sm:flex items-center gap-2">
-												<button class="volume-btn text-neutral-400 hover:text-white transition-colors">
-													<svg class="volume-icon w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M11 5L6 9H2v6h4l5 4V5z" />
-													</svg>
-													<svg class="volume-mute-icon w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
-													</svg>
-												</button>
-												<input type="range" class="volume-slider w-20 h-1 accent-brand-primary" min="0" max="1" step="0.1" value="1" />
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							
-							<!-- Decorative gradient line -->
-							<div class="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-brand-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-						</div>
-					))}
-				</div>
-			) : (
-				<!-- Empty state -->
-				<div class="text-center py-20 rounded-3xl border-2 border-dashed border-white/10 bg-white/5 backdrop-blur-sm">
-					<div class="inline-flex h-20 w-20 items-center justify-center rounded-full bg-brand-primary/20 text-brand-primary mb-6">
-						<svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-						</svg>
-					</div>
-					<h3 class="text-2xl font-semibold text-white mb-3">Nessuna AudioPillola disponibile</h3>
-					<p class="text-neutral-400 max-w-md mx-auto mb-6">
-						I contenuti audio sono in preparazione. Torna presto per ascoltare nuove pillole di saggezza finanziaria!
-					</p>
-					<a href="/blog" class="inline-flex items-center gap-2 text-brand-primary hover:text-brand-light transition-colors font-medium">
-						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-						</svg>
-						Torna al Blog
-					</a>
-				</div>
-			)}
+      {audioItems.length > 0 ? (
+        <div class="space-y-4" id="audio-list">
+          {audioItems.map((audio, index) => (
+            <div
+              class="audio-item group rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-5 transition-all duration-300 hover:shadow-lg hover:border-brand-primary/20 dark:hover:border-brand-primary/30"
+              data-title={audio.title.toLowerCase()}
+              data-desc={(audio.description ?? '').toLowerCase()}
+            >
+              <div class="flex items-start gap-5">
+                {/* Number + Play */}
+                <div class="flex-shrink-0 relative">
+                  <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-primary/10 to-brand-accent/10 dark:from-brand-primary/20 dark:to-brand-accent/20 flex items-center justify-center text-brand-primary font-bold text-sm group-hover:opacity-0 transition-opacity">
+                    {String(index + 1).padStart(2, '0')}
+                  </div>
+                  <button
+                    class="item-play-btn absolute inset-0 w-12 h-12 rounded-xl bg-brand-primary text-white flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-brand-light transition-all shadow-lg shadow-brand-primary/20 hover:scale-105"
+                    data-audio-src={audio.file_url}
+                    data-audio-title={audio.title}
+                  >
+                    <svg class="item-play-icon w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    <svg class="item-eq-icon w-5 h-5 hidden" viewBox="0 0 24 24" fill="currentColor">
+                      <rect class="eq-bar" x="4" y="10" width="3" height="10" rx="1.5"><animate attributeName="height" values="10;4;10" dur="0.6s" repeatCount="indefinite"/><animate attributeName="y" values="10;16;10" dur="0.6s" repeatCount="indefinite"/></rect>
+                      <rect class="eq-bar" x="10.5" y="6" width="3" height="14" rx="1.5"><animate attributeName="height" values="14;6;14" dur="0.8s" repeatCount="indefinite"/><animate attributeName="y" values="6;14;6" dur="0.8s" repeatCount="indefinite"/></rect>
+                      <rect class="eq-bar" x="17" y="8" width="3" height="12" rx="1.5"><animate attributeName="height" values="12;4;12" dur="0.7s" repeatCount="indefinite"/><animate attributeName="y" values="8;16;8" dur="0.7s" repeatCount="indefinite"/></rect>
+                    </svg>
+                  </button>
+                </div>
 
-			<!-- Back to blog link -->
-			{audioItems.length > 0 && (
-				<div class="text-center mt-16">
-					<a href="/blog" class="inline-flex items-center gap-3 text-neutral-400 hover:text-white transition-colors group">
-						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-						</svg>
-						Torna al Blog
-					</a>
-				</div>
-			)}
-		</div>
-	</section>
+                {/* Info */}
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-base font-semibold text-neutral-text dark:text-white group-hover:text-brand-primary transition-colors">
+                    {audio.title}
+                  </h3>
+                  {audio.description && (
+                    <p class="text-sm text-neutral-muted dark:text-neutral-400 mt-1 line-clamp-2 leading-relaxed">{audio.description}</p>
+                  )}
+                  <div class="flex items-center gap-4 mt-2 text-xs text-neutral-400 dark:text-neutral-500">
+                    {audio.published_at && (
+                      <span class="flex items-center gap-1">
+                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        {formatDate(audio.published_at)}
+                      </span>
+                    )}
+                    {audio.duration && (
+                      <span class="flex items-center gap-1">
+                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        {audio.duration}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Play button (mobile-visible) */}
+                <button
+                  class="item-play-btn flex-shrink-0 w-10 h-10 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all sm:hidden"
+                  data-audio-src={audio.file_url}
+                  data-audio-title={audio.title}
+                >
+                  <svg class="item-play-icon w-4 h-4 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  <svg class="item-eq-icon w-4 h-4 hidden" viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="4" y="10" width="3" height="10" rx="1.5"><animate attributeName="height" values="10;4;10" dur="0.6s" repeatCount="indefinite"/><animate attributeName="y" values="10;16;10" dur="0.6s" repeatCount="indefinite"/></rect>
+                    <rect x="10.5" y="6" width="3" height="14" rx="1.5"><animate attributeName="height" values="14;6;14" dur="0.8s" repeatCount="indefinite"/><animate attributeName="y" values="6;14;6" dur="0.8s" repeatCount="indefinite"/></rect>
+                    <rect x="17" y="8" width="3" height="12" rx="1.5"><animate attributeName="height" values="12;4;12" dur="0.7s" repeatCount="indefinite"/><animate attributeName="y" values="8;16;8" dur="0.7s" repeatCount="indefinite"/></rect>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-24 rounded-3xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900">
+          <div class="inline-flex h-20 w-20 items-center justify-center rounded-full bg-brand-primary/10 text-brand-primary mb-6">
+            <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-neutral-text dark:text-white mb-3">Nessuna AudioPillola disponibile</h3>
+          <p class="text-neutral-muted dark:text-neutral-400 max-w-md mx-auto mb-6">
+            I contenuti audio sono in preparazione. Torna presto!
+          </p>
+          <a href="/blog" class="inline-flex items-center gap-2 text-brand-primary hover:text-brand-light transition font-medium text-sm">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            Torna al Blog
+          </a>
+        </div>
+      )}
+
+      {/* No results message for search */}
+      <div id="no-results" class="hidden text-center py-12">
+        <p class="text-neutral-muted dark:text-neutral-400">Nessun risultato trovato.</p>
+      </div>
+
+      {/* Back to blog */}
+      {audioItems.length > 0 && (
+        <div class="text-center mt-14">
+          <a href="/blog" class="inline-flex items-center gap-2 text-sm text-neutral-muted dark:text-neutral-400 hover:text-brand-primary transition group">
+            <svg class="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            Torna al Blog
+          </a>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <audio id="global-audio" preload="metadata" class="hidden"></audio>
 </BaseLayout>
 
-<script>
-	document.addEventListener('DOMContentLoaded', () => {
-		const audioCards = document.querySelectorAll('.audio-card');
-		let currentlyPlaying: HTMLAudioElement | null = null;
+<script is:inline>
+(() => {
+  const audioEl = document.getElementById('global-audio');
+  const np = document.getElementById('now-playing');
+  const npTitle = document.getElementById('np-title');
+  const npPlayBtn = document.getElementById('np-play-btn');
+  const npPlayIcon = document.getElementById('np-play-icon');
+  const npPauseIcon = document.getElementById('np-pause-icon');
+  const npCurrent = document.getElementById('np-current');
+  const npDuration = document.getElementById('np-duration');
+  const npProgress = document.getElementById('np-progress');
+  const npProgressWrap = document.getElementById('np-progress-wrap');
+  const npClose = document.getElementById('np-close');
+  if (!audioEl || !np) return;
 
-		audioCards.forEach((card) => {
-			const audio = card.querySelector('.audio-element') as HTMLAudioElement;
-			const playBtn = card.querySelector('.play-btn') as HTMLButtonElement;
-			const playIcon = card.querySelector('.play-icon') as SVGElement;
-			const pauseIcon = card.querySelector('.pause-icon') as SVGElement;
-			const progressContainer = card.querySelector('.progress-container') as HTMLDivElement;
-			const progressBar = card.querySelector('.progress-bar') as HTMLDivElement;
-			const currentTimeEl = card.querySelector('.current-time') as HTMLSpanElement;
-			const durationEl = card.querySelector('.duration') as HTMLSpanElement;
-			const volumeSlider = card.querySelector('.volume-slider') as HTMLInputElement;
-			const volumeBtn = card.querySelector('.volume-btn') as HTMLButtonElement;
-			const volumeIcon = card.querySelector('.volume-icon') as SVGElement;
-			const volumeMuteIcon = card.querySelector('.volume-mute-icon') as SVGElement;
+  let activeItem = null;
+  let activeSrc = null;
 
-			// Format time helper
-			const formatTime = (seconds: number): string => {
-				const mins = Math.floor(seconds / 60);
-				const secs = Math.floor(seconds % 60);
-				return `${mins}:${secs.toString().padStart(2, '0')}`;
-			};
+  const fmt = (s) => {
+    if (!s || !isFinite(s)) return '0:00';
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return m + ':' + String(sec).padStart(2, '0');
+  };
 
-			// Update duration when metadata loads
-			audio.addEventListener('loadedmetadata', () => {
-				durationEl.textContent = formatTime(audio.duration);
-			});
+  const setItemState = (item, playing) => {
+    if (!item) return;
+    const btns = item.querySelectorAll('.item-play-btn');
+    btns.forEach((btn) => {
+      const playI = btn.querySelector('.item-play-icon');
+      const eqI = btn.querySelector('.item-eq-icon');
+      if (playing) {
+        playI?.classList.add('hidden');
+        eqI?.classList.remove('hidden');
+      } else {
+        playI?.classList.remove('hidden');
+        eqI?.classList.add('hidden');
+      }
+    });
+    if (playing) {
+      item.classList.add('ring-2', 'ring-brand-primary/30', 'border-brand-primary/30');
+    } else {
+      item.classList.remove('ring-2', 'ring-brand-primary/30', 'border-brand-primary/30');
+    }
+  };
 
-			// Play/Pause
-			playBtn.addEventListener('click', () => {
-				if (currentlyPlaying && currentlyPlaying !== audio) {
-					currentlyPlaying.pause();
-					const otherCard = currentlyPlaying.closest('.audio-card');
-					if (otherCard) {
-						otherCard.querySelector('.play-icon')?.classList.remove('hidden');
-						otherCard.querySelector('.pause-icon')?.classList.add('hidden');
-					}
-				}
+  const showNP = () => np.classList.remove('hidden');
+  const hideNP = () => np.classList.add('hidden');
 
-				if (audio.paused) {
-					audio.play();
-					currentlyPlaying = audio;
-					playIcon.classList.add('hidden');
-					pauseIcon.classList.remove('hidden');
-				} else {
-					audio.pause();
-					currentlyPlaying = null;
-					playIcon.classList.remove('hidden');
-					pauseIcon.classList.add('hidden');
-				}
-			});
+  const play = (src, title, item) => {
+    if (activeItem && activeItem !== item) setItemState(activeItem, false);
 
-			// Update progress bar
-			audio.addEventListener('timeupdate', () => {
-				const progress = (audio.currentTime / audio.duration) * 100;
-				progressBar.style.width = `${progress}%`;
-				currentTimeEl.textContent = formatTime(audio.currentTime);
-			});
+    if (activeSrc === src && !audioEl.paused) {
+      audioEl.pause();
+      setItemState(item, false);
+      npPlayIcon.classList.remove('hidden');
+      npPauseIcon.classList.add('hidden');
+      return;
+    }
 
-			// Click on progress bar to seek
-			progressContainer.addEventListener('click', (e) => {
-				const rect = progressContainer.getBoundingClientRect();
-				const percent = (e.clientX - rect.left) / rect.width;
-				audio.currentTime = percent * audio.duration;
-			});
+    if (activeSrc !== src) {
+      audioEl.src = src;
+      audioEl.load();
+      activeSrc = src;
+    }
 
-			// Volume control
-			if (volumeSlider) {
-				volumeSlider.addEventListener('input', () => {
-					audio.volume = parseFloat(volumeSlider.value);
-					updateVolumeIcon();
-				});
-			}
+    audioEl.play();
+    activeItem = item;
+    npTitle.textContent = title;
+    setItemState(item, true);
+    npPlayIcon.classList.add('hidden');
+    npPauseIcon.classList.remove('hidden');
+    showNP();
+  };
 
-			if (volumeBtn) {
-				volumeBtn.addEventListener('click', () => {
-					audio.muted = !audio.muted;
-					updateVolumeIcon();
-				});
-			}
+  document.querySelectorAll('.item-play-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const src = btn.getAttribute('data-audio-src');
+      const title = btn.getAttribute('data-audio-title');
+      const item = btn.closest('.audio-item');
+      if (src && title && item) play(src, title, item);
+    });
+  });
 
-			const updateVolumeIcon = () => {
-				if (audio.muted || audio.volume === 0) {
-					volumeIcon?.classList.add('hidden');
-					volumeMuteIcon?.classList.remove('hidden');
-				} else {
-					volumeIcon?.classList.remove('hidden');
-					volumeMuteIcon?.classList.add('hidden');
-				}
-			};
+  npPlayBtn.addEventListener('click', () => {
+    if (!activeSrc) return;
+    if (audioEl.paused) {
+      audioEl.play();
+      npPlayIcon.classList.add('hidden');
+      npPauseIcon.classList.remove('hidden');
+      if (activeItem) setItemState(activeItem, true);
+    } else {
+      audioEl.pause();
+      npPlayIcon.classList.remove('hidden');
+      npPauseIcon.classList.add('hidden');
+      if (activeItem) setItemState(activeItem, false);
+    }
+  });
 
-			// Reset when audio ends
-			audio.addEventListener('ended', () => {
-				playIcon.classList.remove('hidden');
-				pauseIcon.classList.add('hidden');
-				progressBar.style.width = '0%';
-				currentlyPlaying = null;
-			});
-		});
-	});
+  npClose.addEventListener('click', () => {
+    audioEl.pause();
+    audioEl.removeAttribute('src');
+    activeSrc = null;
+    if (activeItem) setItemState(activeItem, false);
+    activeItem = null;
+    hideNP();
+  });
+
+  audioEl.addEventListener('timeupdate', () => {
+    if (!audioEl.duration) return;
+    npProgress.style.width = (audioEl.currentTime / audioEl.duration * 100) + '%';
+    npCurrent.textContent = fmt(audioEl.currentTime);
+  });
+
+  audioEl.addEventListener('loadedmetadata', () => {
+    npDuration.textContent = fmt(audioEl.duration);
+  });
+
+  audioEl.addEventListener('ended', () => {
+    npPlayIcon.classList.remove('hidden');
+    npPauseIcon.classList.add('hidden');
+    npProgress.style.width = '0%';
+    if (activeItem) setItemState(activeItem, false);
+  });
+
+  npProgressWrap.addEventListener('click', (e) => {
+    if (!audioEl.duration) return;
+    const rect = npProgressWrap.getBoundingClientRect();
+    audioEl.currentTime = ((e.clientX - rect.left) / rect.width) * audioEl.duration;
+  });
+
+  // Search
+  const searchInput = document.getElementById('audio-search');
+  const list = document.getElementById('audio-list');
+  const noResults = document.getElementById('no-results');
+  if (searchInput && list) {
+    searchInput.addEventListener('input', () => {
+      const q = searchInput.value.toLowerCase().trim();
+      let visible = 0;
+      list.querySelectorAll('.audio-item').forEach((item) => {
+        const title = item.getAttribute('data-title') || '';
+        const desc = item.getAttribute('data-desc') || '';
+        const match = !q || title.includes(q) || desc.includes(q);
+        item.style.display = match ? '' : 'none';
+        if (match) visible++;
+      });
+      if (noResults) {
+        noResults.classList.toggle('hidden', visible > 0);
+      }
+    });
+  }
+})();
 </script>
-
-<style>
-	.volume-slider {
-		-webkit-appearance: none;
-		appearance: none;
-		background: rgba(255, 255, 255, 0.1);
-		border-radius: 999px;
-		cursor: pointer;
-	}
-
-	.volume-slider::-webkit-slider-thumb {
-		-webkit-appearance: none;
-		appearance: none;
-		width: 12px;
-		height: 12px;
-		border-radius: 50%;
-		background: var(--brand-primary, #2563eb);
-		cursor: pointer;
-	}
-
-	.volume-slider::-moz-range-thumb {
-		width: 12px;
-		height: 12px;
-		border-radius: 50%;
-		background: var(--brand-primary, #2563eb);
-		cursor: pointer;
-		border: none;
-	}
-
-	@keyframes pulse {
-		0%, 100% {
-			opacity: 0.2;
-		}
-		50% {
-			opacity: 0.4;
-		}
-	}
-
-	.animate-pulse {
-		animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-	}
-</style>

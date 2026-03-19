@@ -1,28 +1,49 @@
 ---
 import { siteConfig } from '../lib/config';
 
+interface NavChild {
+  label: string;
+  href: string;
+  icon: string;
+  desc?: string;
+}
+
+interface NavGroup {
+  heading: string;
+  items: NavChild[];
+}
+
 interface NavLink {
   label: string;
   href: string;
-  children?: { label: string; href: string; icon?: string }[];
+  mega?: NavGroup[];
 }
+
+const contenutiGroups: NavGroup[] = [
+  {
+    heading: 'Blog',
+    items: [
+      { label: 'Tutti gli articoli', href: '/blog', icon: 'articles', desc: 'Approfondimenti e analisi' },
+      { label: 'AudioPillole', href: '/blog/audiopillole', icon: 'audio', desc: 'Contenuti audio brevi' },
+      { label: 'Podcast', href: '/blog/podcast', icon: 'podcast', desc: 'Episodi e interviste' },
+      { label: 'Rassegna Stampa', href: '/blog/rassegna-stampa', icon: 'press', desc: 'Articoli e pubblicazioni' },
+    ],
+  },
+  {
+    heading: 'Altro',
+    items: [
+      { label: 'Eventi', href: '/eventi', icon: 'events', desc: 'Calendario appuntamenti' },
+      { label: 'Recensioni', href: '/recensioni', icon: 'reviews', desc: 'Cosa dicono i clienti' },
+      { label: 'Gallery', href: '/gallery', icon: 'gallery', desc: 'Foto e momenti' },
+    ],
+  },
+];
 
 const navLinks: NavLink[] = [
   { label: 'Home', href: '/' },
   { label: 'Chi Sono', href: '/chi-sono' },
   { label: 'Servizi', href: '/cosa-faccio' },
-  { 
-    label: 'Blog', 
-    href: '/blog',
-    children: [
-      { label: 'Tutti gli articoli', href: '/blog', icon: 'articles' },
-      { label: 'AudioPillole', href: '/blog/audiopillole', icon: 'audio' },
-      { label: 'Podcast', href: '/blog/podcast', icon: 'podcast' },
-      { label: 'Rassegna Stampa', href: '/blog/rassegna-stampa', icon: 'press' },
-    ]
-  },
-  { label: 'Eventi', href: '/eventi' },
-  { label: 'Recensioni', href: '/recensioni' },
+  { label: 'Contenuti', href: '/blog', mega: contenutiGroups },
   { label: 'Contatti', href: '/contatti' },
 ];
 
@@ -36,6 +57,11 @@ const isActive = (href: string) => {
   if (!activePath) return false;
   if (href === '/') return activePath === '/';
   return activePath.startsWith(href);
+};
+
+const isContenutiActive = () => {
+  if (!activePath) return false;
+  return contenutiGroups.some(g => g.items.some(i => isActive(i.href)));
 };
 
 const desktopNavHover =
@@ -53,13 +79,13 @@ const desktopNavHover =
     </a>
     <nav aria-label="Principale" class="hidden lg:flex items-center gap-6 text-sm font-medium">
       {navLinks.map((link) => (
-        link.children ? (
+        link.mega ? (
           <div class="relative group" data-dropdown>
             <button
               type="button"
               aria-haspopup="true"
               aria-expanded="false"
-              class={`${desktopNavHover} gap-1 ${isActive(link.href) ? 'text-brand-primary after:scale-x-100' : 'text-neutral-muted dark:text-neutral-300 hover:text-brand-primary'}`}
+              class={`${desktopNavHover} gap-1 ${isContenutiActive() ? 'text-brand-primary after:scale-x-100' : 'text-neutral-muted dark:text-neutral-300 hover:text-brand-primary'}`}
               data-dropdown-trigger
             >
               {link.label}
@@ -67,39 +93,55 @@ const desktopNavHover =
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
-            <!-- Dropdown -->
             <div class="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200" data-dropdown-menu role="menu">
-              <div class="bg-white dark:bg-neutral-900 rounded-xl shadow-xl border border-neutral-200 dark:border-neutral-800 py-2 min-w-[200px]">
-                {link.children.map((child) => (
-                  <a
-                    href={child.href}
-                    class={`flex items-center gap-3 px-4 py-2.5 text-sm transition hover:bg-brand-primary/10 hover:text-brand-primary ${
-                      activePath === child.href ? 'text-brand-primary bg-brand-primary/10' : 'text-neutral-muted dark:text-neutral-300'
-                    }`}
-                  >
-                    {child.icon === 'articles' && (
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                      </svg>
-                    )}
-                    {child.icon === 'audio' && (
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                      </svg>
-                    )}
-                    {child.icon === 'podcast' && (
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                      </svg>
-                    )}
-                    {child.icon === 'press' && (
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                      </svg>
-                    )}
-                    {child.label}
-                  </a>
-                ))}
+              <div class="bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl border border-neutral-200 dark:border-neutral-800 p-5 w-[480px]">
+                <div class="grid grid-cols-2 gap-6">
+                  {link.mega.map((group) => (
+                    <div>
+                      <p class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-3 px-2">{group.heading}</p>
+                      <div class="space-y-0.5">
+                        {group.items.map((item) => (
+                          <a
+                            href={item.href}
+                            class={`flex items-start gap-3 rounded-lg px-2 py-2 transition hover:bg-brand-primary/5 ${
+                              isActive(item.href) ? 'bg-brand-primary/5' : ''
+                            }`}
+                          >
+                            <span class={`flex-shrink-0 mt-0.5 flex h-8 w-8 items-center justify-center rounded-lg ${
+                              isActive(item.href) ? 'bg-brand-primary/15 text-brand-primary' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'
+                            }`}>
+                              {item.icon === 'articles' && (
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
+                              )}
+                              {item.icon === 'audio' && (
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
+                              )}
+                              {item.icon === 'podcast' && (
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" /></svg>
+                              )}
+                              {item.icon === 'press' && (
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                              )}
+                              {item.icon === 'events' && (
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                              )}
+                              {item.icon === 'reviews' && (
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
+                              )}
+                              {item.icon === 'gallery' && (
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                              )}
+                            </span>
+                            <div class="min-w-0">
+                              <p class={`text-sm font-medium ${isActive(item.href) ? 'text-brand-primary' : 'text-neutral-text dark:text-white'}`}>{item.label}</p>
+                              {item.desc && <p class="text-xs text-neutral-muted dark:text-neutral-500 mt-0.5">{item.desc}</p>}
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -151,55 +193,44 @@ const desktopNavHover =
         </svg>
       </button>
     </div>
-    <nav class="flex flex-col gap-2 text-base">
+    <nav class="flex flex-col gap-1 text-base overflow-y-auto">
       {navLinks.map((link) => (
-        link.children ? (
-          <div class="border-b border-neutral-border">
-            <a
-              href={link.href}
-              class={`block py-3 min-h-[44px] flex items-center transition hover:text-brand-primary underline decoration-transparent hover:decoration-brand-primary ${
-                isActive(link.href) ? 'text-brand-primary font-semibold' : 'text-neutral-muted dark:text-neutral-300'
-              }`}
-            >
-              {link.label}
-            </a>
-            <div class="pl-4 pb-2 space-y-1">
-              {link.children.map((child) => (
-                <a
-                  href={child.href}
-                  class={`flex items-center gap-2 py-1.5 text-sm transition hover:text-brand-primary ${
-                    activePath === child.href ? 'text-brand-primary' : 'text-neutral-muted/80 dark:text-neutral-400'
-                  }`}
-                >
-                  {child.icon === 'articles' && (
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                    </svg>
-                  )}
-                  {child.icon === 'audio' && (
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                    </svg>
-                  )}
-                  {child.icon === 'podcast' && (
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                    </svg>
-                  )}
-                  {child.icon === 'press' && (
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                  )}
-                  {child.label}
-                </a>
-              ))}
-            </div>
+        link.mega ? (
+          <div class="py-1">
+            <p class={`px-1 py-2 text-sm font-semibold ${isContenutiActive() ? 'text-brand-primary' : 'text-neutral-text dark:text-white'}`}>{link.label}</p>
+            {link.mega.map((group) => (
+              <div class="mb-2">
+                <p class="px-1 py-1 text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">{group.heading}</p>
+                <div class="space-y-0.5">
+                  {group.items.map((item) => (
+                    <a
+                      href={item.href}
+                      class={`flex items-center gap-3 rounded-lg px-2 py-2 text-sm transition hover:bg-brand-primary/5 hover:text-brand-primary ${
+                        isActive(item.href) ? 'text-brand-primary bg-brand-primary/5 font-medium' : 'text-neutral-muted dark:text-neutral-300'
+                      }`}
+                    >
+                      <span class={`flex-shrink-0 flex h-7 w-7 items-center justify-center rounded-md ${
+                        isActive(item.href) ? 'bg-brand-primary/15 text-brand-primary' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'
+                      }`}>
+                        {item.icon === 'articles' && <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>}
+                        {item.icon === 'audio' && <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>}
+                        {item.icon === 'podcast' && <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" /></svg>}
+                        {item.icon === 'press' && <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>}
+                        {item.icon === 'events' && <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
+                        {item.icon === 'reviews' && <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>}
+                        {item.icon === 'gallery' && <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
+                      </span>
+                      {item.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         ) : (
           <a
             href={link.href}
-            class={`py-2 transition border-b border-neutral-border hover:text-brand-primary ${
+            class={`py-2.5 px-1 transition border-b border-neutral-border/50 hover:text-brand-primary ${
               isActive(link.href) ? 'text-brand-primary font-semibold' : 'text-neutral-muted dark:text-neutral-300'
             }`}
           >

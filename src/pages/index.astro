@@ -7,7 +7,7 @@ import BlogCard from '../components/BlogCard.astro';
 import EventCard from '../components/EventCard.astro';
 import TestimonialCard from '../components/TestimonialCard.astro';
 import CTASection from '../components/CTASection.astro';
-import { getArticles, getEvents, type Article, type EventItem } from '../lib/cms';
+import { getArticles, getEvents, getLatestPressItems, type Article, type EventItem } from '../lib/cms';
 import { supabase } from '../lib/supabase';
 import { siteConfig } from '../lib/config';
 import dayjs from 'dayjs';
@@ -35,9 +35,10 @@ const dbTestimonials = await (async () => {
 	}
 })();
 
-const [{ data: articleEntries }, { data: eventEntries }] = await Promise.all([
+const [{ data: articleEntries }, { data: eventEntries }, latestPress] = await Promise.all([
 	getArticles({ pagination: { page: 1, pageSize: 3 } }),
 	getEvents({ pagination: { page: 1, pageSize: 6 }, filters: { date: { $gte: todayIso } } }),
+	getLatestPressItems(3),
 ]);
 const latestArticles = (articleEntries ?? [])
 	.map((entry) => entry.attributes as Article)
@@ -46,6 +47,13 @@ const upcomingEvents = (eventEntries ?? [])
 	.map((entry) => entry.attributes as EventItem)
 	.filter(Boolean)
 	.slice(0, 3);
+
+const formatPressDate = (dateStr: string) => {
+	if (!dateStr) return '';
+	const d = new Date(dateStr);
+	const months = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+	return `${months[d.getMonth()]} ${d.getFullYear()}`;
+};
 
 
 const services = [
@@ -600,13 +608,19 @@ const testimonials: { quote: string; author: string; rating?: number }[] = dbTes
 
 	<section class="py-24 lg:py-32 bg-white dark:bg-neutral-950">
 		<div class="mx-auto max-w-6xl px-6 space-y-16">
-			<div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-				<SectionHeading
-					eyebrow="BLOG"
-					title="Approfondimenti per gestire in modo efficace ed efficiente il proprio patrimonio"
-					description="Analisi di scenario, strumenti pratici e riflessioni per prendere decisioni lucide."
-				/>
-				<a href="/blog" class="text-sm font-semibold text-brand-primary hover:text-brand-light transition">Vedi tutti</a>
+			<div>
+				<div class="flex items-center justify-between mb-8">
+					<div class="flex items-center gap-3">
+						<span class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
+							<svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-2-2h-2" /></svg>
+						</span>
+						<h3 class="text-xl font-serif font-medium text-neutral-text dark:text-white">Articoli</h3>
+					</div>
+					<a href="/blog" class="text-sm font-semibold text-brand-primary hover:text-brand-light transition flex items-center gap-1">
+						Vedi tutti
+						<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+					</a>
+				</div>
 			</div>
 			<div class="grid gap-8 md:grid-cols-3">
 				{latestArticles.length > 0 ? (
@@ -615,8 +629,115 @@ const testimonials: { quote: string; author: string; rating?: number }[] = dbTes
 					<p class="text-neutral-muted dark:text-neutral-300">Gli articoli saranno disponibili a breve.</p>
 				)}
 			</div>
+
+			{latestPress.length > 0 && (
+				<div class="pt-8 border-t border-neutral-200 dark:border-neutral-800">
+					<div class="flex items-center justify-between mb-8">
+						<div class="flex items-center gap-3">
+							<span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-500/10 text-rose-500">
+								<svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
+							</span>
+							<h3 class="text-xl font-serif font-medium text-neutral-text dark:text-white">Rassegna Stampa</h3>
+						</div>
+						<a href="/blog/rassegna-stampa" class="text-sm font-semibold text-brand-primary hover:text-brand-light transition flex items-center gap-1">
+							Vedi tutte
+							<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+						</a>
+					</div>
+					<div class="grid gap-6 md:grid-cols-3">
+						{latestPress.map((item) => (
+							<a
+								href={item.file_url}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="group flex flex-col rounded-2xl border border-neutral-200 bg-white overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-brand-primary/30 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-brand-primary/50"
+							>
+								<div class="relative bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
+									<div class="aspect-[4/3] w-full relative flex items-center justify-center" data-pdf-thumb={item.file_url}>
+										<div class="pdf-placeholder absolute inset-0 flex items-center justify-center p-6">
+											<div class="w-full max-w-[120px] bg-white dark:bg-neutral-700 rounded-lg shadow-md border border-neutral-200 dark:border-neutral-600 p-3 space-y-2">
+												<div class="flex items-center gap-1.5 mb-2">
+													<svg class="h-4 w-4 text-red-500 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 2l5 5h-5V4zM9 13h6v1.5H9V13zm0 3h6v1.5H9V16zm0 3h4v1.5H9V19z"/></svg>
+													<span class="text-[8px] font-bold uppercase text-red-500 tracking-wider">PDF</span>
+												</div>
+												<div class="space-y-1.5">
+													<div class="h-1.5 bg-neutral-200 dark:bg-neutral-600 rounded-full w-full"></div>
+													<div class="h-1.5 bg-neutral-200 dark:bg-neutral-600 rounded-full w-3/4"></div>
+													<div class="h-1.5 bg-neutral-200 dark:bg-neutral-600 rounded-full w-full"></div>
+													<div class="h-1.5 bg-neutral-200 dark:bg-neutral-600 rounded-full w-2/3"></div>
+												</div>
+												{item.testata && (
+													<p class="text-[7px] text-neutral-400 dark:text-neutral-500 text-center pt-1 border-t border-neutral-100 dark:border-neutral-600 uppercase tracking-wider">{item.testata}</p>
+												)}
+											</div>
+										</div>
+										<canvas class="absolute inset-0 w-full h-full object-cover hidden" aria-label={`Anteprima: ${item.title}`}></canvas>
+										<div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+									</div>
+								</div>
+								<div class="flex-1 p-5 flex flex-col">
+									<div class="flex flex-wrap items-center gap-2 mb-2">
+										{item.testata && (
+											<span class="inline-flex items-center rounded-full bg-brand-primary/10 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-brand-primary dark:bg-brand-primary/20 dark:text-brand-light">
+												{item.testata}
+											</span>
+										)}
+										{item.published_at && (
+											<span class="text-xs text-neutral-muted dark:text-neutral-500">{formatPressDate(item.published_at)}</span>
+										)}
+									</div>
+									<h4 class="text-sm font-semibold text-neutral-text dark:text-white group-hover:text-brand-primary transition-colors line-clamp-2 mb-2">
+										{item.title}
+									</h4>
+									{item.description && (
+										<p class="text-xs text-neutral-muted dark:text-neutral-400 leading-relaxed line-clamp-2 flex-grow">{item.description}</p>
+									)}
+									<div class="flex items-center gap-1.5 text-brand-primary text-xs font-medium mt-auto pt-2">
+										<span>Leggi</span>
+										<svg class="h-3 w-3 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+										</svg>
+									</div>
+								</div>
+							</a>
+						))}
+					</div>
+				</div>
+			)}
 		</div>
 	</section>
+
+	<script is:inline type="module">
+		const pdfjsLib = await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.min.mjs');
+		pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.mjs';
+		async function renderThumb(container) {
+			const url = container.getAttribute('data-pdf-thumb');
+			const canvas = container.querySelector('canvas');
+			const placeholder = container.querySelector('.pdf-placeholder');
+			if (!url || !canvas) return;
+			try {
+				const doc = await pdfjsLib.getDocument({ url, disableAutoFetch: true, disableStream: true }).promise;
+				const page = await doc.getPage(1);
+				const cW = container.offsetWidth, cH = container.offsetHeight;
+				const vp = page.getViewport({ scale: 1 });
+				const dpr = window.devicePixelRatio || 1;
+				const scale = Math.max(cW / vp.width, cH / vp.height);
+				const viewport = page.getViewport({ scale: scale * dpr });
+				canvas.width = viewport.width;
+				canvas.height = viewport.height;
+				canvas.style.width = cW + 'px';
+				canvas.style.height = cH + 'px';
+				await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+				canvas.classList.remove('hidden');
+				if (placeholder) placeholder.classList.add('hidden');
+				doc.destroy();
+			} catch { /* fallback */ }
+		}
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach((e) => { if (e.isIntersecting) { renderThumb(e.target); observer.unobserve(e.target); } });
+		}, { rootMargin: '200px' });
+		document.querySelectorAll('[data-pdf-thumb]').forEach((el) => observer.observe(el));
+	</script>
 
 	<section class="bg-neutral-base py-24 lg:py-32 dark:bg-neutral-950">
 		<div class="mx-auto max-w-6xl px-6 space-y-16">
