@@ -65,7 +65,7 @@ const services = [
 	{
 		icon: "educatore",
 		title: "Educatore Finanziario",
-		description: "Comprendere sé stessi è più importante che conoscere i mercati finanziari. I rendimenti dei propri \"possedimenti\" li fanno i propri comportamenti e non solo gli investimenti.",
+		description: "Comprendere sé stessi è più importante che conoscere i mercati finanziari. I rendimenti dei propri \"possedimenti\" li fanno i comportamenti, non solo gli investimenti.",
 	},
 	{
 		icon: "consulente",
@@ -85,7 +85,7 @@ const valoreAggiunto = [
 		image: "/icons/piuma.webp",
 		imageAlt: "Riduzione costi bancari",
 		imageSize: "w-14 h-14",
-		description: "Ottimizzazione di tutti i tuoi oneri bancari e finanziari per dare valore al tuo patrimonio.",
+		description: "Ottimizzazione di tutti i tuoi oneri bancari e finanziari per dare valore aggiunto al tuo patrimonio.",
 		items: ["Analisi/riduzione dei tuoi oneri bancari e finanziari", "Revisione dei tuoi prodotti assicurativi", "Verifica economicità premi e adeguatezza garanzie"],
 	},
 	{
@@ -110,14 +110,14 @@ const valoreAggiunto = [
 		imageAlt: "Ottimizzazione fiscale",
 		imageSize: "w-14 h-14",
 		description: "Verificare se è possibile alleggerire il prelievo fiscale che grava su tutti i tuoi redditi e patrimoni.",
-		items: ["Ottimizzazione fiscale", "Pianificazione successoria", "Strategie di efficienza tributaria"],
+		items: ["Ottimizzazione fiscale", "Pianificazione successoria", "Strategie di efficientamento tributario"],
 	},
 	{
 		title: "Protezione del Patrimonio",
 		image: "/icons/cassaforte.avif",
 		imageAlt: "Protezione patrimonio",
 		imageSize: "w-10 h-10",
-		description: "Individuare la strada giuridica percorribile per blindare il tuo patrimonio di famiglia dagli imprevisti della vita.",
+		description: "Individuare la soluzione giuridica giusta per te per segregare il tuo patrimonio di famiglia dagli imprevisti della vita.",
 		items: ["Blindatura patrimonio familiare", "Tutela da imprevisti", "Strumenti di protezione legale"],
 	},
 ];
@@ -229,7 +229,7 @@ const testimonials: { quote: string; author: string; rating?: number }[] = dbTes
 						<p class="text-sm text-neutral-muted dark:text-neutral-400 leading-relaxed">{service.description}</p>
 						{service.icon === 'educatore' && (
 							<div class="mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-700">
-								<p class="text-sm font-semibold text-brand-primary italic">"Il più grande lascito che possiamo fare ai nostri figli è una buona educazione finanziaria"</p>
+								<p class="text-sm font-semibold text-brand-primary italic">"Il più grande lascito che possiamo fare alle future generazioni è una buona educazione finanziaria"</p>
 								<p class="text-xs text-neutral-muted dark:text-neutral-400 mt-1">- Sergio Contegiacomo</p>
 							</div>
 						)}
