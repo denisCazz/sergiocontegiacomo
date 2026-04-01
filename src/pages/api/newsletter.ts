@@ -9,6 +9,13 @@ function getString(value: unknown): string | undefined {
   return trimmed ? trimmed : undefined;
 }
 
+function normalizeHttpsUrl(value: unknown): string | undefined {
+  const trimmed = getString(value);
+  if (!trimmed) return undefined;
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed;
+  return `https://${trimmed}`;
+}
+
 export async function POST({ request }: { request: Request }) {
   try {
     const payload = await request.json().catch(() => ({}));
@@ -56,8 +63,9 @@ export async function POST({ request }: { request: Request }) {
     const doiTemplateId = doiTemplateRaw ? Number(doiTemplateRaw) : undefined;
     const doiRedirectUrl =
       import.meta.env.BREVO_NEWSLETTER_DOI_REDIRECT_URL?.toString().trim() ||
-      import.meta.env.PUBLIC_SITE_URL?.toString().trim() ||
-      (import.meta.env.VERCEL_URL ? `https://${import.meta.env.VERCEL_URL}` : '');
+      normalizeHttpsUrl(import.meta.env.PUBLIC_SITE_URL) ||
+      normalizeHttpsUrl(import.meta.env.COOLIFY_FQDN) ||
+      '';
 
     const attributes: Record<string, unknown> = {};
     if (nome) attributes.FIRSTNAME = nome;

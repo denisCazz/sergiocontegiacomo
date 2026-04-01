@@ -1,0 +1,17 @@
+node_modules
+.dist
+/dist
+.astro
+.next
+.git
+.github
+.gitignore
+README.md
+Dockerfile
+.dockerignore
+*.test.*
+*.spec.*
+tests/
+__tests__/
+.env*.local
+.vercel

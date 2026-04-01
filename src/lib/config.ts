@@ -6,10 +6,19 @@ export const cmsConfig = {
 // Production URL - always use this for canonical URLs and SEO tags
 const productionUrl = 'https://www.sergiocontegiacomo.it';
 
-// Current deployment URL (may be Vercel preview)
+function normalizeHttpsUrl(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed;
+  return `https://${trimmed}`;
+}
+
+// Current deployment URL (Coolify/prod)
 const resolvedPublicSiteUrl =
-  import.meta.env.PUBLIC_SITE_URL ??
-  (import.meta.env.VERCEL_URL ? `https://${import.meta.env.VERCEL_URL}` : productionUrl);
+  normalizeHttpsUrl(import.meta.env.PUBLIC_SITE_URL) ??
+  normalizeHttpsUrl(import.meta.env.COOLIFY_FQDN) ??
+  productionUrl;
 
 export const siteConfig = {
   name: 'Sergio Contegiacomo',

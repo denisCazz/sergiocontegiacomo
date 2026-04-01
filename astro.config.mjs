@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
-import vercel from '@astrojs/vercel';
+import node from '@astrojs/node';
 
 // Always use production URL for SEO purposes (sitemap, canonical URLs, etc.)
 const productionSite = 'https://www.sergiocontegiacomo.it';
@@ -11,7 +11,7 @@ const productionSite = 'https://www.sergiocontegiacomo.it';
 export default defineConfig({
     site: productionSite,
     output: 'server',
-    adapter: vercel(),
+    adapter: node({ mode: 'standalone' }),
     integrations: [
       tailwind({ configFile: './tailwind.config.cjs' }),
       sitemap(),
