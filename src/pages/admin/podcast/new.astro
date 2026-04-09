@@ -325,10 +325,13 @@ if (Astro.request.method === 'POST') {
 
       clearInterval(progressInterval);
 
-      const result = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      const isJson = contentType.includes('application/json');
+      const result = isJson ? await response.json() : null;
 
       if (!response.ok) {
-        throw new Error(result.error || 'Errore durante l\'upload');
+        const fallbackText = isJson ? '' : await response.text().catch(() => '');
+        throw new Error(result?.error || fallbackText || `Errore server (${response.status})`);
       }
 
       // Success
@@ -340,8 +343,8 @@ if (Astro.request.method === 'POST') {
         if (uploadSuccess) uploadSuccess.classList.remove('hidden');
       }, 500);
 
-      uploadedFileUrl = result.url;
-      if (fileUrlInput) fileUrlInput.value = result.url;
+      uploadedFileUrl = result?.url || '';
+      if (fileUrlInput) fileUrlInput.value = result?.url || '';
       if (submitBtn) submitBtn.disabled = false;
 
     } catch (err: any) {

@@ -327,10 +327,13 @@ const currentFileName = currentFileUrl?.split('/').pop() || 'File audio';
 
       clearInterval(progressInterval);
 
-      const result = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      const isJson = contentType.includes('application/json');
+      const result = isJson ? await response.json() : null;
 
       if (!response.ok) {
-        throw new Error(result.error || 'Errore durante l\'upload');
+        const fallbackText = isJson ? '' : await response.text().catch(() => '');
+        throw new Error(result?.error || fallbackText || `Errore server (${response.status})`);
       }
 
       // Success
@@ -343,7 +346,7 @@ const currentFileName = currentFileUrl?.split('/').pop() || 'File audio';
         if (fileSize) fileSize.textContent = formatFileSize(file.size);
       }, 500);
 
-      if (fileUrlInput) fileUrlInput.value = result.url;
+      if (fileUrlInput) fileUrlInput.value = result?.url || '';
 
     } catch (err: any) {
       console.error('Upload error:', err);

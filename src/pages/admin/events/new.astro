@@ -1,4 +1,4 @@
----
+﻿---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
@@ -167,8 +167,23 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           headers: { 'Authorization': `Bearer ${session.access_token}` },
           body: formData
         });
-        const result = await response.json();
-        if (!response.ok) throw new Error(result.error || 'Errore caricamento');
+        const contentType = response.headers.get('content-type') || '';
+        const isJson = contentType.includes('application/json');
+        const result = isJson ? await response.json() : null;
+
+        if (!response.ok) {
+          const fallbackText = isJson ? '' : await response.text().catch(() => '');
+          throw new Error(
+            (result && (result.error || result.message)) ||
+              fallbackText.replace(/\s+/g, ' ').trim().slice(0, 280) ||
+              `Errore durante l'upload (${response.status})`
+          );
+        }
+
+        if (!result || !result.url) {
+          throw new Error('Risposta server non valida (URL mancante)');
+        }
+
         if (urlInput) urlInput.value = result.url;
         if (preview && previewImg) {
           previewImg.src = result.url;
