@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import CTASection from '../../components/CTASection.astro';
+import PdfViewerModal from '../../components/PdfViewerModal.astro';
 import { getEventBySlug, type EventItem } from '../../lib/cms';
 import { renderMarkdown } from '../../lib/markdown';
 import { siteConfig } from '../../lib/config';
@@ -28,6 +29,8 @@ const plainDescription = htmlDescription
   ? htmlDescription.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 160)
   : undefined;
 const isOnline = event.tags?.some((tag) => tag.toLowerCase() === 'online');
+const hasPdf = Boolean(event.pdfUrl);
+const pdfModalId = `event-pdf-modal-${event.slug}`;
 
 const canonicalUrl = new URL(`/eventi/${event.slug}`, siteConfig.siteUrl).toString();
 const ogImage = event.coverImage ?? '/sergio.avif';
@@ -80,15 +83,47 @@ const eventStructuredData = {
         align="center"
       />
       {event.coverImage && (
-        <img
-          src={event.coverImage}
-          alt={`Immagine evento ${event.title}`}
-          width="1200"
-          height="630"
-          loading="lazy"
-          decoding="async"
-          class="w-full rounded-3xl border border-neutral-border object-cover dark:border-neutral-800"
-        />
+        hasPdf ? (
+          <div class="group relative overflow-hidden rounded-3xl border border-neutral-border dark:border-neutral-800">
+            <button
+              type="button"
+              data-pdf-modal-trigger={pdfModalId}
+              class="relative block w-full overflow-hidden text-left"
+              aria-label={`Apri PDF dell'evento ${event.title}`}
+            >
+              <img
+                src={event.coverImage}
+                alt={`Immagine evento ${event.title}`}
+                width="1200"
+                height="630"
+                loading="lazy"
+                decoding="async"
+                class="w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-80 transition duration-300 group-hover:opacity-95"></div>
+              <div class="absolute inset-x-0 bottom-0 px-6 pb-6 pt-20 text-white">
+                <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                  <div class="max-w-xl">
+                    <p class="text-2xl font-semibold leading-tight sm:text-3xl">Visualizza PDF</p>
+                  </div>
+                  <div class="inline-flex items-center gap-2 self-start rounded-full border border-white/30 bg-white/18 px-5 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white shadow-xl backdrop-blur-sm transition duration-300 group-hover:scale-105 group-hover:border-white/70 group-hover:bg-brand-primary md:self-auto">
+                    <span>Visualizza PDF</span>
+                  </div>
+                </div>
+              </div>
+            </button>
+          </div>
+        ) : (
+          <img
+            src={event.coverImage}
+            alt={`Immagine evento ${event.title}`}
+            width="1200"
+            height="630"
+            loading="lazy"
+            decoding="async"
+            class="w-full rounded-3xl border border-neutral-border object-cover dark:border-neutral-800"
+          />
+        )
       )}
       <div class="grid gap-6 md:grid-cols-[2fr,1fr]">
         <div class="rounded-3xl border border-neutral-border bg-white p-8 space-y-4 dark:border-neutral-800 dark:bg-neutral-900">
@@ -119,6 +154,20 @@ const eventStructuredData = {
               <div>
                 <dt class="text-neutral-muted uppercase tracking-[0.2em] text-xs dark:text-neutral-300">Partecipazione</dt>
                 <dd>{event.price}</dd>
+              </div>
+            )}
+            {hasPdf && (
+              <div>
+                <dt class="text-neutral-muted uppercase tracking-[0.2em] text-xs dark:text-neutral-300">Allegato</dt>
+                <dd>
+                  <button
+                    type="button"
+                    data-pdf-modal-trigger={pdfModalId}
+                    class="inline-flex items-center gap-2 font-semibold text-brand-primary hover:text-brand-light"
+                  >
+                    Apri PDF completo
+                  </button>
+                </dd>
               </div>
             )}
           </dl>
@@ -167,6 +216,39 @@ const eventStructuredData = {
           </a>
         </aside>
       </div>
+      {hasPdf && (
+        <section class="rounded-3xl border border-neutral-border bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+          <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 class="text-lg font-semibold text-neutral-text dark:text-white">PDF dell'evento</h2>
+              <p class="text-sm text-neutral-muted dark:text-neutral-300">
+                Aprilo nel popup per leggerlo meglio senza lasciare la pagina, oppure usa la nuova scheda se preferisci.
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <button
+                type="button"
+                data-pdf-modal-trigger={pdfModalId}
+                class="inline-flex items-center justify-center rounded-full bg-brand-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-light"
+              >
+                Visualizza PDF
+              </button>
+              <a
+                href={event.pdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center justify-center rounded-full border border-neutral-border px-4 py-2.5 text-sm font-semibold text-neutral-text transition hover:border-brand-primary hover:text-brand-primary dark:border-neutral-700 dark:text-white"
+              >
+                Apri in nuova scheda
+              </a>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2 text-xs text-neutral-muted dark:text-neutral-300">
+            <span class="rounded-full bg-neutral-100 px-3 py-1.5 dark:bg-neutral-800">Il popup usa un visualizzatore PDF completo</span>
+            <span class="rounded-full bg-neutral-100 px-3 py-1.5 dark:bg-neutral-800">Su mobile puoi sempre passare alla nuova scheda</span>
+          </div>
+        </section>
+      )}
     </div>
   </article>
 
@@ -176,6 +258,7 @@ const eventStructuredData = {
     primaryCta={{ label: 'Prenota una call', href: '/contatti' }}
     secondaryCta={{ label: 'Iscriviti alla newsletter', href: '#newsletter' }}
   />
+  {hasPdf && <PdfViewerModal modalId={pdfModalId} title={event.title} pdfUrl={event.pdfUrl!} />}
 </BaseLayout>
 
 <script>

@@ -25,6 +25,7 @@ create table public.events (
   time text,
   location text,
   cover_image text,
+  pdf_url text,
   description text,
   price text,
   status text check (status in ('upcoming', 'past')),

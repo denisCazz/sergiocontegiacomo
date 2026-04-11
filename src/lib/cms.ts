@@ -174,6 +174,7 @@ export type EventItem = {
   time?: string;
   location: string;
   coverImage?: string;
+  pdfUrl?: string;
   description?: string;
   price?: string;
   status?: 'upcoming' | 'past';
@@ -529,6 +530,7 @@ export async function getEvents(options: FetchOptions = {}) {
       time: item.time,
       location: item.location,
       coverImage: item.cover_image,
+      pdfUrl: item.pdf_url,
       description: item.description,
       price: item.price,
       status: item.status,
@@ -593,6 +595,7 @@ export async function getEventBySlug(slug: string) {
     time: data.time,
     location: data.location,
     coverImage: data.cover_image,
+    pdfUrl: data.pdf_url,
     description: data.description,
     price: data.price,
     status: data.status,

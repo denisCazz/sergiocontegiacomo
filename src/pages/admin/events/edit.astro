@@ -80,6 +80,18 @@ if (!id) {
                 </div>
               </div>
 
+              <div class="col-span-6">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">PDF evento</label>
+                <div class="mt-1 flex items-center space-x-4">
+                  <input type="file" id="eventPdf" accept=".pdf,application/pdf" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-primary file:text-white hover:file:bg-brand-dark"/>
+                  <input type="hidden" id="eventPdfUrl" name="pdf_url">
+                </div>
+                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Se presente, la cover dell'evento aprira' il PDF completo e nella pagina dettaglio verra' mostrato anche un lettore integrato.</p>
+                <div id="pdfPreview" class="mt-2 hidden rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:border-emerald-800/60 dark:bg-emerald-900/20 dark:text-emerald-300">
+                  <a id="pdfPreviewLink" href="#" target="_blank" rel="noopener noreferrer" class="font-semibold underline underline-offset-2">Apri PDF caricato</a>
+                </div>
+              </div>
+
               <div class="col-span-6 sm:col-span-4">
                 <label for="tags" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tags (separati da virgola)</label>
                 <input type="text" name="tags" id="tags" class="mt-1 focus:ring-brand-primary focus:border-brand-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
@@ -171,6 +183,9 @@ if (!id) {
       const coverImageUrlInput = document.getElementById('coverImageUrl') as HTMLInputElement;
       const preview = document.getElementById('imagePreview');
       const previewImg = preview?.querySelector('img');
+      const pdfUrlInput = document.getElementById('eventPdfUrl') as HTMLInputElement;
+      const pdfPreview = document.getElementById('pdfPreview');
+      const pdfPreviewLink = document.getElementById('pdfPreviewLink') as HTMLAnchorElement;
 
       if (titleInput) titleInput.value = data.title || '';
       if (slugInput) slugInput.value = data.slug || '';
@@ -184,10 +199,16 @@ if (!id) {
       if (tagsInput) tagsInput.value = (data.tags || []).join(', ');
       if (statusInput) statusInput.value = data.status || 'upcoming';
       if (coverImageUrlInput) coverImageUrlInput.value = data.cover_image || '';
+      if (pdfUrlInput) pdfUrlInput.value = data.pdf_url || '';
       
       if (data.cover_image && preview && previewImg) {
         previewImg.src = data.cover_image;
         preview.classList.remove('hidden');
+      }
+      if (data.pdf_url && pdfPreview && pdfPreviewLink) {
+        pdfPreviewLink.href = data.pdf_url;
+        pdfPreviewLink.textContent = 'Apri PDF attuale';
+        pdfPreview.classList.remove('hidden');
       }
     };
 
@@ -212,6 +233,10 @@ if (!id) {
     const urlInput = document.getElementById('coverImageUrl') as HTMLInputElement;
     const preview = document.getElementById('imagePreview');
     const previewImg = preview?.querySelector('img');
+    const pdfInput = document.getElementById('eventPdf') as HTMLInputElement;
+    const pdfUrlInput = document.getElementById('eventPdfUrl') as HTMLInputElement;
+    const pdfPreview = document.getElementById('pdfPreview');
+    const pdfPreviewLink = document.getElementById('pdfPreviewLink') as HTMLAnchorElement;
 
     fileInput?.addEventListener('change', async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
@@ -265,6 +290,47 @@ if (!id) {
       }
     });
 
+    pdfInput?.addEventListener('change', async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        alert('Sessione scaduta, effettua il login');
+        window.location.href = '/admin/login';
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('category', 'press');
+
+      try {
+        const response = await fetch('/api/upload-supabase', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          },
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Errore caricamento');
+        }
+
+        if (pdfUrlInput) pdfUrlInput.value = result.url;
+        if (pdfPreview && pdfPreviewLink) {
+          pdfPreviewLink.href = result.url;
+          pdfPreviewLink.textContent = `Apri PDF caricato: ${file.name}`;
+          pdfPreview.classList.remove('hidden');
+        }
+      } catch (error: any) {
+        alert('Errore caricamento PDF: ' + error.message);
+      }
+    });
+
     // Form Submit
     const form = document.getElementById('eventForm');
     form?.addEventListener('submit', async (e) => {
@@ -288,6 +354,7 @@ if (!id) {
         description: formData.get('description'),
         price: formData.get('price'),
         cover_image: formData.get('cover_image'),
+        pdf_url: formData.get('pdf_url'),
         tags: (formData.get('tags') as string).split(',').map(t => t.trim()).filter(Boolean),
         status: formData.get('status'),
       };

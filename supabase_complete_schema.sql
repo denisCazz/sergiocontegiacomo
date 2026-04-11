@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS public.events (
   time TEXT,
   location TEXT,
   cover_image TEXT,
+  pdf_url TEXT,
   description TEXT,
   price TEXT,
   status TEXT CHECK (status IN ('upcoming', 'past')),
