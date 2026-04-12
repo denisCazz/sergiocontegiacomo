@@ -44,7 +44,7 @@ const pdfModalId = `event-pdf-modal-${event.slug}`;
           <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-70 transition duration-300 group-hover:opacity-90"></div>
           <div class="absolute inset-x-0 bottom-0 px-5 pb-5 pt-14 text-white">
             <div class="max-w-[17rem]">
-              <div class="inline-flex items-center rounded-full border border-white/25 bg-white/18 px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-white shadow-lg backdrop-blur-sm transition duration-300 group-hover:scale-105 group-hover:border-white/60 group-hover:bg-brand-primary group-hover:shadow-2xl">
+              <div class="pdf-glow-badge inline-flex items-center rounded-full border border-white/25 bg-white/18 px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-white shadow-lg backdrop-blur-sm transition duration-300 group-hover:scale-105 group-hover:border-white/60 group-hover:bg-brand-primary group-hover:shadow-2xl group-hover:[animation:none]">
                 Visualizza PDF
               </div>
             </div>
@@ -89,7 +89,7 @@ const pdfModalId = `event-pdf-modal-${event.slug}`;
           <button
             type="button"
             data-pdf-modal-trigger={pdfModalId}
-            class="inline-flex items-center gap-2 rounded-full border border-neutral-border px-4 py-1.5 text-xs font-semibold text-neutral-text transition hover:border-brand-primary hover:text-brand-primary dark:border-neutral-700 dark:text-neutral-100"
+            class="pdf-glow-btn inline-flex items-center gap-2 rounded-full border border-neutral-border px-4 py-1.5 text-xs font-semibold text-neutral-text transition hover:border-brand-primary hover:text-brand-primary hover:[animation:none] dark:border-neutral-700 dark:text-neutral-100"
           >
             PDF completo
           </button>
@@ -109,3 +109,20 @@ const pdfModalId = `event-pdf-modal-${event.slug}`;
   </div>
 </article>
 {event.pdfUrl && <PdfViewerModal modalId={pdfModalId} title={event.title} pdfUrl={event.pdfUrl} />}
+
+<style>
+  @keyframes pdf-glow-white {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.0); }
+    50%       { box-shadow: 0 0 0 5px rgba(255,255,255,0.30); }
+  }
+  @keyframes pdf-glow-brand {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(var(--color-brand-primary, 99,102,241), 0.0); }
+    50%       { box-shadow: 0 0 0 4px rgba(var(--color-brand-primary, 99,102,241), 0.30); }
+  }
+  .pdf-glow-badge {
+    animation: pdf-glow-white 2.4s ease-in-out infinite;
+  }
+  .pdf-glow-btn {
+    animation: pdf-glow-brand 2.4s ease-in-out infinite;
+  }
+</style>
