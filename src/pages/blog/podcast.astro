@@ -141,7 +141,8 @@ const podcastItems: Array<{
 					audio.pause();
 				} else {
 					// Pause all other audios
-					document.querySelectorAll('.audio-element').forEach((a: HTMLAudioElement) => {
+					document.querySelectorAll('.audio-element').forEach((el) => {
+						const a = el as HTMLAudioElement;
 						if (a !== audio) {
 							a.pause();
 							const otherCard = a.closest('.audio-card');
@@ -186,7 +187,7 @@ const podcastItems: Array<{
 			if (progressContainer) {
 				progressContainer.addEventListener('click', (e) => {
 					const rect = progressContainer.getBoundingClientRect();
-					const x = e.clientX - rect.left;
+					const x = (e as MouseEvent).clientX - rect.left;
 					const percentage = x / rect.width;
 					if (audio.duration) {
 						audio.currentTime = percentage * audio.duration;

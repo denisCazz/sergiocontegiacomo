@@ -1,5 +1,8 @@
-const BITORA_CRM_API_BASE = 'https://www.bitora-crm.it';
-const DEFAULT_LEADS_ENDPOINT = `${BITORA_CRM_API_BASE}/api/leads`;
+/**
+ * Invio lead al CRM Sergio Contegiacomo (API /api/leads con X-API-Key).
+ */
+const DEFAULT_CRM_ORIGIN = 'https://sergiocontegiacomo.bitora.it';
+const DEFAULT_LEADS_ENDPOINT = `${DEFAULT_CRM_ORIGIN}/api/leads`;
 
 export type BitoraCrmLeadInput = {
   first_name?: string;
@@ -19,7 +22,8 @@ function getBitoraCrmConfig(): BitoraCrmConfig | null {
   const apiKey = import.meta.env.BITORA_CRM_API_KEY?.toString().trim();
   if (!apiKey) return null;
 
-  const endpoint = import.meta.env.BITORA_CRM_LEADS_ENDPOINT?.toString().trim() || DEFAULT_LEADS_ENDPOINT;
+  const endpoint =
+    import.meta.env.BITORA_CRM_LEADS_ENDPOINT?.toString().trim() || DEFAULT_LEADS_ENDPOINT;
   return { apiKey, endpoint };
 }
 
@@ -46,7 +50,6 @@ function buildMessageWithContext(message: string | undefined, request?: Request)
   const parts = [base, '', `Referrer: ${referer}`].filter(Boolean);
   const combined = parts.join('\n').trim();
 
-  // Evita payload troppo grossi
   return combined.length > 5000 ? `${combined.slice(0, 4997)}...` : combined;
 }
 
@@ -62,7 +65,7 @@ export async function sendBitoraCrmLead(
     request?: Request;
     timeoutMs?: number;
   },
-): Promise<{ status: number; ok: boolean; skipped: boolean; errorText?: string }>{
+): Promise<{ status: number; ok: boolean; skipped: boolean; errorText?: string }> {
   const config = getBitoraCrmConfig();
   if (!config) {
     return { status: 0, ok: true, skipped: true };
