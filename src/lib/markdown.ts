@@ -1,6 +1,7 @@
 import { marked } from 'marked';
 
-marked.use({ mangle: false, headerIds: true, breaks: true });
+// Opzioni supportate dalla versione corrente di `marked` (mangle/headerIds legacy rimossi dall’API tipizzata)
+marked.use({ breaks: true, gfm: true });
 
 export function renderMarkdown(source?: string | null) {
   if (!source) {

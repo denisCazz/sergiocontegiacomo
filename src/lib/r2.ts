@@ -8,7 +8,7 @@
  * Usa AWS SDK S3 per compatibilità con R2
  */
 
-import type { S3Client } from '@aws-sdk/client-s3';
+import { S3Client } from '@aws-sdk/client-s3';
 
 // Configurazione R2 dalle variabili d'ambiente
 const R2_ACCOUNT_ID = import.meta.env.R2_ACCOUNT_ID;

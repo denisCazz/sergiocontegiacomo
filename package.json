@@ -23,7 +23,8 @@
     "@supabase/supabase-js": "^2.86.0",
     "astro": "^5.15.3",
     "dayjs": "^1.11.13",
-    "marked": "^12.0.2"
+    "marked": "^12.0.2",
+    "resend": "^4.8.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
