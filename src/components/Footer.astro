@@ -89,6 +89,13 @@ import { siteConfig } from '../lib/config';
         <a href="/cookie" class="hover:text-brand-primary transition">Cookie</a>
         <button
           type="button"
+          class="hover:text-brand-primary transition"
+          data-cookie-settings
+        >
+          Preferenze cookie
+        </button>
+        <button
+          type="button"
           class="inline-flex items-center gap-2 rounded-full border border-neutral-border bg-white px-3 py-1.5 text-xs font-semibold text-neutral-muted transition hover:border-brand-primary hover:text-brand-primary dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300"
           data-theme-toggle
           aria-label="Cambia tema"
@@ -129,6 +136,12 @@ import { siteConfig } from '../lib/config';
     const newsletterForm = document.querySelector('[data-newsletter]');
     const feedback = document.querySelector('[data-feedback]');
     const endpoint = newsletterForm?.getAttribute?.('data-endpoint') || '/api/newsletter';
+
+    document.querySelectorAll('[data-cookie-settings]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent('open-cookie-settings'));
+      });
+    });
 
     newsletterForm?.addEventListener('submit', async (event) => {
       event.preventDefault();

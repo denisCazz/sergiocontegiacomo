@@ -34,6 +34,7 @@ const contactChannels = [
   description="Contatta Sergio Contegiacomo per una consulenza patrimoniale. Studio a Bra (Cuneo), Piazza Roma 39. Prenota una call o richiedi informazioni."
   keywords="contatti Sergio Contegiacomo, consulente patrimoniale Bra, appuntamento consulenza finanziaria, telefono, email"
   activePath="/contatti"
+  showLoader={false}
 >
   <!-- Hero compatto -->
   <section class="relative py-16 lg:py-20 bg-gradient-to-b from-brand-primary/5 to-neutral-base dark:from-brand-primary/10 dark:to-neutral-950 overflow-hidden">
@@ -57,8 +58,13 @@ const contactChannels = [
         </div>
         
         <!-- Quick actions -->
-        <div class="flex flex-wrap gap-3"> 
-          <a href={`tel:${siteConfig.phone.replace(/\s+/g, '')}`} class="inline-flex items-center gap-2 rounded-full bg-brand-primary px-6 py-3 text-white font-semibold shadow-lg shadow-brand-primary/30 hover:bg-brand-light hover:scale-105 transition duration-300">
+        <div class="flex flex-wrap gap-3">
+          <a
+            href={`tel:${siteConfig.phone.replace(/\s+/g, '')}`}
+            data-track-event="phone_click"
+            data-track-location="contatti_hero"
+            class="inline-flex items-center gap-2 rounded-full bg-brand-primary px-6 py-3 text-white font-semibold shadow-lg shadow-brand-primary/30 hover:bg-brand-light hover:scale-105 transition duration-300"
+          >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
             </svg>
@@ -185,7 +191,7 @@ const contactChannels = [
         <div class="order-1 lg:order-2 space-y-6">
           <!-- Contatti rapidi -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <a href={`mailto:${siteConfig.contactEmail}`} class="group flex items-center gap-4 rounded-2xl border border-neutral-200 bg-white p-4 hover:border-brand-primary/50 hover:shadow-lg transition-all dark:border-neutral-800 dark:bg-neutral-900">
+            <a href={`mailto:${siteConfig.contactEmail}`} data-track-event="email_click" data-track-location="contatti_cards" class="group flex items-center gap-4 rounded-2xl border border-neutral-200 bg-white p-4 hover:border-brand-primary/50 hover:shadow-lg transition-all dark:border-neutral-800 dark:bg-neutral-900">
               <div class="h-12 w-12 rounded-xl bg-brand-primary/10 flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -197,7 +203,7 @@ const contactChannels = [
               </div>
             </a>
             
-            <a href={`tel:${siteConfig.phone.replace(/\s+/g, '')}`} class="group flex items-center gap-4 rounded-2xl border border-neutral-200 bg-white p-4 hover:border-brand-primary/50 hover:shadow-lg transition-all dark:border-neutral-800 dark:bg-neutral-900">
+            <a href={`tel:${siteConfig.phone.replace(/\s+/g, '')}`} data-track-event="phone_click" data-track-location="contatti_cards" class="group flex items-center gap-4 rounded-2xl border border-neutral-200 bg-white p-4 hover:border-brand-primary/50 hover:shadow-lg transition-all dark:border-neutral-800 dark:bg-neutral-900">
               <div class="h-12 w-12 rounded-xl bg-brand-primary/10 flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -209,7 +215,7 @@ const contactChannels = [
               </div>
             </a>
             
-            <a href={`tel:${siteConfig.mobilePhone.replace(/\s+/g, '')}`} class="group flex items-center gap-4 rounded-2xl border border-neutral-200 bg-white p-4 hover:border-brand-primary/50 hover:shadow-lg transition-all dark:border-neutral-800 dark:bg-neutral-900">
+            <a href={`tel:${siteConfig.mobilePhone.replace(/\s+/g, '')}`} data-track-event="phone_click" data-track-location="contatti_cards" class="group flex items-center gap-4 rounded-2xl border border-neutral-200 bg-white p-4 hover:border-brand-primary/50 hover:shadow-lg transition-all dark:border-neutral-800 dark:bg-neutral-900">
               <div class="h-12 w-12 rounded-xl bg-brand-primary/10 flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -293,7 +299,7 @@ const contactChannels = [
           </div>
           
           <!-- Download brochure -->
-          <a href="/brochure.pdf" download class="group flex items-center gap-4 rounded-2xl bg-gradient-to-r from-brand-primary to-brand-primary/80 p-5 text-white hover:shadow-xl hover:shadow-brand-primary/20 transition-all">
+          <a href="/brochure.pdf" download data-track-event="brochure_download" data-track-location="contatti" class="group flex items-center gap-4 rounded-2xl bg-gradient-to-r from-brand-primary to-brand-primary/80 p-5 text-white hover:shadow-xl hover:shadow-brand-primary/20 transition-all">
             <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -347,6 +353,9 @@ const contactChannels = [
         if (successMsg instanceof HTMLElement) successMsg.hidden = false;
         if (errorMsg instanceof HTMLElement) errorMsg.hidden = true;
         contactForm.reset();
+        if (typeof window.siteTrack === 'function') {
+          window.siteTrack('contact_form_submit', { location: 'contatti' });
+        }
       } catch (error) {
         if (errorMsg instanceof HTMLElement) {
           errorMsg.hidden = false;

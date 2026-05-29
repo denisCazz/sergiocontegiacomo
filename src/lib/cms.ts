@@ -9,6 +9,9 @@ type CacheEntry<T> = {
 
 const runtimeCache = new Map<string, CacheEntry<unknown>>();
 
+/** TTL for list/home CMS queries (reduces Supabase round-trips on SSR pages) */
+const LIST_CACHE_TTL_MS = 5 * 60 * 1000;
+
 function getCached<T>(key: string): T | undefined {
   const entry = runtimeCache.get(key);
   if (!entry) return undefined;
@@ -386,6 +389,10 @@ export async function getEventStats(slug: string) {
 
 
 export async function getArticles(options: FetchOptions = {}) {
+  const cacheKey = `articles:list:v1:${JSON.stringify(options)}`;
+  const cached = getCached<StrapiResponse<Article>>(cacheKey);
+  if (cached) return cached;
+
   let query = supabase.from('articles').select('*', { count: 'exact' });
 
   // Filter out drafts
@@ -443,7 +450,7 @@ export async function getArticles(options: FetchOptions = {}) {
     } as Article,
   }));
 
-  return {
+  const result = {
     data: articles,
     meta: {
       pagination: {
@@ -454,6 +461,9 @@ export async function getArticles(options: FetchOptions = {}) {
       },
     },
   } satisfies StrapiResponse<Article>;
+
+  setCached(cacheKey, result, LIST_CACHE_TTL_MS);
+  return result;
 }
 
 export async function getArticleBySlug(slug: string) {
@@ -481,6 +491,10 @@ export async function getArticleBySlug(slug: string) {
 }
 
 export async function getEvents(options: FetchOptions = {}) {
+  const cacheKey = `events:list:v1:${JSON.stringify(options)}`;
+  const cached = getCached<StrapiResponse<EventItem>>(cacheKey);
+  if (cached) return cached;
+
   let query = supabase.from('events').select('*', { count: 'exact' });
 
   // Filters
@@ -538,7 +552,7 @@ export async function getEvents(options: FetchOptions = {}) {
     } as EventItem,
   }));
 
-  return {
+  const result = {
     data: events,
     meta: {
       pagination: {
@@ -549,6 +563,9 @@ export async function getEvents(options: FetchOptions = {}) {
       },
     },
   } satisfies StrapiResponse<EventItem>;
+
+  setCached(cacheKey, result, LIST_CACHE_TTL_MS);
+  return result;
 }
 
 export async function getUniqueEventTags() {
@@ -633,6 +650,10 @@ export async function getPressItems() {
 }
 
 export async function getLatestPressItems(limit: number = 3) {
+  const cacheKey = `press:latest:v1:${limit}`;
+  const cached = getCached<PressItem[]>(cacheKey);
+  if (cached) return cached;
+
   const { data, error } = await supabase
     .from('press')
     .select('*')
@@ -643,7 +664,9 @@ export async function getLatestPressItems(limit: number = 3) {
     console.error('Error fetching latest press items:', error);
     return [];
   }
-  return data as PressItem[];
+  const items = data as PressItem[];
+  setCached(cacheKey, items, LIST_CACHE_TTL_MS);
+  return items;
 }
 
 export async function getPressItem(id: number) {
@@ -726,6 +749,10 @@ export async function getAudioPillole() {
 }
 
 export async function getLatestAudioPillole(limit: number = 3) {
+  const cacheKey = `audio:latest:v1:${limit}`;
+  const cached = getCached<AudioPillola[]>(cacheKey);
+  if (cached) return cached;
+
   const { data, error } = await supabase
     .from('audio_pillole')
     .select('*')
@@ -736,7 +763,40 @@ export async function getLatestAudioPillole(limit: number = 3) {
     console.error('Error fetching latest audio pillole:', error);
     return [];
   }
-  return data as AudioPillola[];
+  const items = data as AudioPillola[];
+  setCached(cacheKey, items, LIST_CACHE_TTL_MS);
+  return items;
+}
+
+export type TestimonialRow = {
+  id: number;
+  author_name: string;
+  content: string;
+  rating?: number;
+  is_published: boolean;
+  display_order?: number;
+  created_at?: string;
+};
+
+export async function getPublishedTestimonials() {
+  const cacheKey = 'testimonials:published:v1';
+  const cached = getCached<TestimonialRow[]>(cacheKey);
+  if (cached) return cached;
+
+  const { data, error } = await supabase
+    .from('testimonials')
+    .select('*')
+    .eq('is_published', true)
+    .order('display_order', { ascending: false })
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching testimonials:', error);
+    return [];
+  }
+  const rows = (data ?? []) as TestimonialRow[];
+  setCached(cacheKey, rows, LIST_CACHE_TTL_MS);
+  return rows;
 }
 
 export async function getAudioPillola(id: number) {

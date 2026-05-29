@@ -23,6 +23,8 @@ const { title, description, primaryCta, secondaryCta } = Astro.props;
       <div class="flex flex-col sm:flex-row justify-center gap-4">
         <a
           href={primaryCta.href}
+          data-track-event="contact_click"
+          data-track-location="cta_section"
           class="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-primary hover:bg-white/90 transition"
         >
           {primaryCta.label}

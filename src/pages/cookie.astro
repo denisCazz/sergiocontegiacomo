@@ -5,7 +5,7 @@ import { siteConfig } from '../lib/config';
 export const prerender = true;
 ---
 
-<BaseLayout title="Cookie Policy" description="Cookie policy del sito di Sergio Contegiacomo. Informazioni sui cookie utilizzati, finalità e modalità di gestione." activePath="/cookie" noindex={true}>
+<BaseLayout title="Cookie Policy" description="Cookie policy del sito di Sergio Contegiacomo. Informazioni sui cookie utilizzati, finalità e modalità di gestione." activePath="/cookie" noindex={true} showLoader={false}>
   <section class="bg-neutral-base py-20 dark:bg-neutral-950">
     <div class="mx-auto max-w-4xl px-6">
       <div class="prose prose-neutral max-w-none dark:prose-invert prose-headings:font-serif">
@@ -40,14 +40,22 @@ export const prerender = true;
           (es. chiavi del tipo <code>rsvp_&lt;slug&gt;</code>). Anche in questo caso non si tratta di cookie.
         </p>
 
-        <h3>4) Cookie analitici (Google Analytics, se configurato)</h3>
+        <h3>4) Cookie analitici (solo con consenso)</h3>
         <p>
-          Il Sito può integrare Google Analytics per raccogliere statistiche aggregate sull’uso del Sito (pagine visitate, tempi di permanenza, ecc.).
-          L’integrazione è prevista con anonimizzazione dell’IP a livello di configurazione tecnica.
+          Con il tuo consenso, il Sito può attivare strumenti statistici per misurare in forma aggregata l’uso delle pagine:
         </p>
+        <ul>
+          <li>
+            <strong>Google Analytics</strong> (se configurato): statistiche di navigazione con anonimizzazione dell’IP.
+          </li>
+          <li>
+            <strong>Umami</strong> (analytics privacy-oriented): statistiche aggregate senza profilazione pubblicitaria.
+          </li>
+        </ul>
         <p>
-          In base alla normativa applicabile ai cookie (e alle linee guida del Garante Privacy), l’uso di cookie analitici e/o di terze parti può richiedere
-          il consenso dell’utente. Se il servizio non è configurato o non viene attivato, questa sezione non si applica.
+          Fino all’accettazione tramite il banner cookie, questi strumenti <strong>non vengono caricati</strong>.
+          Puoi revocare o modificare il consenso in qualsiasi momento dal link
+          <strong>“Preferenze cookie”</strong> nel footer.
         </p>
 
         <h3>5) Contenuti e servizi di terze parti</h3>
@@ -66,7 +74,11 @@ export const prerender = true;
             <strong>Tema</strong>: puoi modificare il tema dal pulsante “Tema” nel footer (Chiaro/Scuro/Automatico).
           </li>
           <li>
-            <strong>Google Analytics</strong> (se attivo): puoi usare strumenti di opt-out disponibili da Google o impostazioni del browser per limitare la raccolta.
+            <strong>Banner cookie</strong>: al primo accesso puoi scegliere “Accetta tutti”, “Solo necessari” o “Personalizza”.
+            La scelta viene salvata in <code>localStorage</code> (chiave: <code>cookie-consent-v1</code>).
+          </li>
+          <li>
+            <strong>Preferenze cookie</strong>: link nel footer per riaprire le impostazioni.
           </li>
         </ul>
 
@@ -77,12 +89,7 @@ export const prerender = true;
 
         <h2>Aggiornamenti</h2>
         <p>
-          Questa Cookie Policy può essere aggiornata nel tempo. Ultimo aggiornamento: <strong>18/12/2025</strong>.
-        </p>
-
-        <p>
-          <em>Nota</em>: questa policy è un testo informativo basato sulle funzionalità presenti nel Sito; se vengono introdotti cookie di profilazione o un sistema CMP/banner,
-          la policy potrebbe richiedere ulteriori dettagli (elenco cookie, durata, terze parti, ecc.).
+          Questa Cookie Policy può essere aggiornata nel tempo. Ultimo aggiornamento: <strong>29/05/2026</strong>.
         </p>
       </div>
     </div>

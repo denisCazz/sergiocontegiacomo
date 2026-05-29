@@ -7,12 +7,6 @@ export const prerender = true;
 
 const imageModules = import.meta.glob('../assets/gallery/*.{jpg,jpeg,png,webp,avif}', { eager: true });
 const images = Object.values(imageModules).map((mod: any) => mod.default);
-const imagesData = images.map((img: any, i: number) => ({
-  src: img.src,
-  alt: `Immagine gallery ${i + 1}`,
-  width: img.width,
-  height: img.height,
-}));
 ---
 
 <BaseLayout
@@ -20,6 +14,7 @@ const imagesData = images.map((img: any, i: number) => ({
   description="Una selezione di immagini e momenti del mio percorso professionale."
   keywords="gallery Sergio Contegiacomo, foto consulente patrimoniale, eventi finanziari Bra"
   activePath="/gallery"
+  showLoader={false}
 >
   <section class="py-16 lg:py-24 bg-white dark:bg-neutral-950">
     <div class="mx-auto max-w-6xl px-6">
@@ -49,13 +44,18 @@ const imagesData = images.map((img: any, i: number) => ({
                 class="block w-full text-left"
                 data-gallery-item
                 data-index={i}
+                data-full-src=""
+                data-alt={`Immagine gallery ${i + 1}`}
                 aria-label={`Apri immagine ${i + 1} in carousel`}
               >
                 <Image
                   src={img}
                   alt={`Immagine gallery ${i + 1}`}
+                  widths={[400, 800, 1200]}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   loading="lazy"
                   class="w-full h-auto transition-transform duration-500 group-hover:scale-[1.03]"
+                  data-gallery-thumb
                 />
               </button>
             </figure>
@@ -67,7 +67,6 @@ const imagesData = images.map((img: any, i: number) => ({
         id="gallery-lightbox"
         class="fixed inset-0 z-[80] hidden"
         aria-hidden="true"
-        data-images={JSON.stringify(imagesData)}
       >
         <div class="absolute inset-0 bg-neutral-text/70 dark:bg-neutral-950/80 z-0" data-overlay></div>
 
@@ -97,6 +96,8 @@ const imagesData = images.map((img: any, i: number) => ({
                   src=""
                   alt=""
                   class="block w-full h-auto max-h-[80vh] object-contain bg-white dark:bg-neutral-900"
+                  loading="lazy"
+                  decoding="async"
                 />
 
                 <button
@@ -130,91 +131,97 @@ const imagesData = images.map((img: any, i: number) => ({
 </BaseLayout>
 
 <script is:inline>
-  const lightbox = document.getElementById('gallery-lightbox');
-  const galleryImages = /** @type {{src:string, alt:string, width?:number, height?:number}[]} */ (
-    (() => {
-      try {
-        const raw = lightbox?.getAttribute('data-images') || '[]';
-        return JSON.parse(raw);
-      } catch {
-        return [];
-      }
-    })()
-  );
+  (() => {
+    const lightbox = document.getElementById('gallery-lightbox');
+    const items = Array.from(document.querySelectorAll('[data-gallery-item]'));
+    const lightboxImg = lightbox?.querySelector('[data-lightbox-image]');
+    const dialogEl = lightbox?.querySelector('[data-dialog]');
+    const overlay = lightbox?.querySelector('[data-overlay]');
+    const btnClose = lightbox?.querySelector('[data-close]');
+    const btnPrev = lightbox?.querySelector('[data-prev]');
+    const btnNext = lightbox?.querySelector('[data-next]');
 
-  const lightboxImg = lightbox?.querySelector('[data-lightbox-image]');
-  const dialogEl = lightbox?.querySelector('[data-dialog]');
-  const overlay = lightbox?.querySelector('[data-overlay]');
-  const btnClose = lightbox?.querySelector('[data-close]');
-  const btnPrev = lightbox?.querySelector('[data-prev]');
-  const btnNext = lightbox?.querySelector('[data-next]');
-
-  let currentIndex = 0;
-  let lastFocused = null;
-
-  const setIndex = (nextIndex) => {
-    if (!galleryImages.length || !lightboxImg) return;
-    const len = galleryImages.length;
-    currentIndex = ((nextIndex % len) + len) % len;
-    const item = galleryImages[currentIndex];
-    lightboxImg.src = item.src;
-    lightboxImg.alt = item.alt;
-  };
-
-  const openLightbox = (index) => {
-    if (!lightbox) return;
-    lastFocused = document.activeElement;
-    lightbox.classList.remove('hidden');
-    lightbox.setAttribute('aria-hidden', 'false');
-    document.documentElement.style.overflow = 'hidden';
-    setIndex(index);
-    // focus close for accessibility
-    btnClose?.focus();
-  };
-
-  const closeLightbox = () => {
-    if (!lightbox) return;
-    lightbox.classList.add('hidden');
-    lightbox.setAttribute('aria-hidden', 'true');
-    document.documentElement.style.overflow = '';
-    if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
-  };
-
-  document.querySelectorAll('[data-gallery-item]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const index = Number(btn.getAttribute('data-index') || '0');
-      openLightbox(index);
+    items.forEach((btn) => {
+      const thumb = btn.querySelector('[data-gallery-thumb]');
+      const fullSrc =
+        thumb?.getAttribute('src') ||
+        thumb?.currentSrc ||
+        thumb?.getAttribute('data-full-src') ||
+        '';
+      if (fullSrc) btn.setAttribute('data-full-src', fullSrc);
     });
-  });
 
-  btnClose?.addEventListener('click', closeLightbox);
-  overlay?.addEventListener('click', closeLightbox);
-  lightbox?.addEventListener('click', (e) => {
-    if (!dialogEl) return;
-    const target = e.target;
-    if (!(target instanceof Node)) return;
-    // Chiudi solo se il click è fuori dal box del carousel
-    if (!dialogEl.contains(target)) closeLightbox();
-  });
-  btnPrev?.addEventListener('click', () => setIndex(currentIndex - 1));
-  btnNext?.addEventListener('click', () => setIndex(currentIndex + 1));
+    let currentIndex = 0;
+    let lastFocused = null;
 
-  document.addEventListener('keydown', (e) => {
-    if (!lightbox || lightbox.classList.contains('hidden')) return;
-    if (e.key === 'Escape') {
-      e.preventDefault();
-      closeLightbox();
-      return;
-    }
-    if (e.key === 'ArrowLeft') {
-      e.preventDefault();
-      setIndex(currentIndex - 1);
-      return;
-    }
-    if (e.key === 'ArrowRight') {
-      e.preventDefault();
-      setIndex(currentIndex + 1);
-      return;
-    }
-  });
+    const setIndex = (nextIndex) => {
+      if (!items.length || !lightboxImg) return;
+      const len = items.length;
+      currentIndex = ((nextIndex % len) + len) % len;
+      const btn = items[currentIndex];
+      const src = btn.getAttribute('data-full-src') || '';
+      const alt = btn.getAttribute('data-alt') || '';
+      if (!src) return;
+      lightboxImg.src = src;
+      lightboxImg.alt = alt;
+    };
+
+    const openLightbox = (index) => {
+      if (!lightbox) return;
+      lastFocused = document.activeElement;
+      lightbox.classList.remove('hidden');
+      lightbox.setAttribute('aria-hidden', 'false');
+      document.documentElement.style.overflow = 'hidden';
+      setIndex(index);
+      btnClose?.focus();
+    };
+
+    const closeLightbox = () => {
+      if (!lightbox) return;
+      lightbox.classList.add('hidden');
+      lightbox.setAttribute('aria-hidden', 'true');
+      document.documentElement.style.overflow = '';
+      if (lightboxImg) {
+        lightboxImg.removeAttribute('src');
+        lightboxImg.alt = '';
+      }
+      if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+    };
+
+    items.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const index = Number(btn.getAttribute('data-index') || '0');
+        openLightbox(index);
+      });
+    });
+
+    btnClose?.addEventListener('click', closeLightbox);
+    overlay?.addEventListener('click', closeLightbox);
+    lightbox?.addEventListener('click', (e) => {
+      if (!dialogEl) return;
+      const target = e.target;
+      if (!(target instanceof Node)) return;
+      if (!dialogEl.contains(target)) closeLightbox();
+    });
+    btnPrev?.addEventListener('click', () => setIndex(currentIndex - 1));
+    btnNext?.addEventListener('click', () => setIndex(currentIndex + 1));
+
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox || lightbox.classList.contains('hidden')) return;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeLightbox();
+        return;
+      }
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        setIndex(currentIndex - 1);
+        return;
+      }
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        setIndex(currentIndex + 1);
+      }
+    });
+  })();
 </script>

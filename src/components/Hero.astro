@@ -43,6 +43,8 @@ const { eyebrow, title, description, primaryCta, secondaryCta, stats } = Astro.p
         <div class="flex flex-col sm:flex-row gap-4 pt-4">
           <a
             href={primaryCta.href}
+            data-track-event="contact_click"
+            data-track-location="hero"
             class="inline-flex items-center justify-center rounded-full bg-brand-primary px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-brand-primary/20 hover:bg-brand-light hover:-translate-y-0.5 transition duration-300"
           >
             {primaryCta.label}

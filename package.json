@@ -12,7 +12,8 @@
     "astro": "astro",
     "assets:report": "node scripts/assets-report.mjs",
     "assets:optimize": "node scripts/optimize-images.mjs",
-    "pdf:optimize": "powershell -ExecutionPolicy Bypass -File scripts/optimize-pdfs.ps1 -Preset ebook"
+    "pdf:optimize": "node scripts/optimize-pdfs.mjs",
+    "pdf:optimize:win": "powershell -ExecutionPolicy Bypass -File scripts/optimize-pdfs.ps1 -Preset ebook"
   },
   "dependencies": {
     "@astrojs/node": "^9.0.0",
@@ -27,6 +28,8 @@
     "resend": "^4.8.0"
   },
   "devDependencies": {
+    "@fontsource/merriweather": "^5.2.11",
+    "@fontsource/work-sans": "^5.2.8",
     "sharp": "^0.34.4",
     "@astrojs/check": "^0.9.8",
     "@tailwindcss/forms": "^0.5.7",

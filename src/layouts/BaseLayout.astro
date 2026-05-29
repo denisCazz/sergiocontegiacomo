@@ -3,6 +3,8 @@ import '../styles/base.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PageLoader from '../components/PageLoader.astro';
+import StickyMobileCta from '../components/StickyMobileCta.astro';
+import CookieConsent from '../components/CookieConsent.astro';
 import { siteConfig } from '../lib/config';
 
 export interface Props {
@@ -41,7 +43,6 @@ const pageDescription = description ??
 const image = ogImage ?? '/og.jpg';
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, siteConfig.siteUrl).toString();
 const defaultKeywords = 'consulente patrimoniale Bra, coach finanziario Piemonte, wealth management Cuneo, educazione finanziaria, pianificazione patrimoniale, Sergio Contegiacomo, consulenza finanziaria, private banking, gestione patrimonio, Allianz Bank, ANASF';
-const gaMeasurementId = siteConfig.analytics?.gaMeasurementId?.trim();
 ---
 
 <html lang="it">
@@ -93,30 +94,6 @@ const gaMeasurementId = siteConfig.analytics?.gaMeasurementId?.trim();
     <meta name="twitter:image:alt" content={title ? `${title} - ${siteConfig.name}` : siteConfig.name} />
     <meta name="twitter:site" content="@sergiocontegiacomo" />
     <meta name="twitter:creator" content="@sergiocontegiacomo" />
-    <!-- Fonts: Async loading with fallback to prevent render-blocking -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;600&family=Work+Sans:wght@400;500;600;700&display=swap"
-      fetchpriority="low"
-    />
-    <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;600&family=Work+Sans:wght@400;500;600;700&display=swap"
-      />
-    </noscript>
-    <script is:inline>
-      // Load fonts asynchronously to avoid render-blocking
-      (function() {
-        var fontLink = document.createElement('link');
-        fontLink.rel = 'stylesheet';
-        fontLink.href = 'https://fonts.googleapis.com/css2?family=Merriweather:wght@400;600&family=Work+Sans:wght@400;500;600;700&display=swap';
-        document.head.appendChild(fontLink);
-      })();
-    </script>
     <!-- Favicons - Multi-format per massima compatibilità (Google richiede questi link) -->
     <link rel="shortcut icon" href="/logo_sergio.ico" />
     <link rel="icon" type="image/x-icon" href="/logo_sergio.ico" />
@@ -129,24 +106,7 @@ const gaMeasurementId = siteConfig.analytics?.gaMeasurementId?.trim();
     <meta name="msapplication-TileImage" content="/logo_sergio.avif" />
     <meta name="application-name" content={siteConfig.name} />
 
-    {gaMeasurementId && (
-      <>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}></script>
-        <script is:inline>
-          {`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', '${gaMeasurementId}', { anonymize_ip: true });`}
-        </script>
-      </>
-    )}
-
-    <!-- Umami Analytics -->
-    <script
-      defer
-      src="https://umami.bitora.it/script.js"
-      data-website-id="3c0958d9-8d27-46ba-b14e-cc28bb7dd035"
-    ></script>
+    <!-- Analytics loaded only after cookie consent (see CookieConsent.astro) -->
     <!-- Schema.org FinancialService -->
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
@@ -297,5 +257,36 @@ gtag('config', '${gaMeasurementId}', { anonymize_ip: true });`}
       <slot />
     </main>
     <Footer />
+    <StickyMobileCta />
+    <CookieConsent />
+    <script is:inline>
+      (() => {
+        function trackEvent(name, params) {
+          if (!window.__cookieAnalyticsAllowed) return;
+          if (typeof window.gtag === 'function') {
+            window.gtag('event', name, params || {});
+          }
+          if (window.umami && typeof window.umami.track === 'function') {
+            var umamiData = {};
+            if (params) {
+              Object.keys(params).forEach(function (k) {
+                umamiData[k] = String(params[k]);
+              });
+            }
+            window.umami.track(name, umamiData);
+          }
+        }
+        window.siteTrack = trackEvent;
+
+        document.addEventListener('click', function (e) {
+          var el = e.target && e.target.closest ? e.target.closest('[data-track-event]') : null;
+          if (!el) return;
+          trackEvent(el.getAttribute('data-track-event'), {
+            location: el.getAttribute('data-track-location') || 'page',
+            href: el.getAttribute('href') || '',
+          });
+        });
+      })();
+    </script>
   </body>
 </html>

@@ -7,33 +7,15 @@ import BlogCard from '../components/BlogCard.astro';
 import EventCard from '../components/EventCard.astro';
 import TestimonialCard from '../components/TestimonialCard.astro';
 import CTASection from '../components/CTASection.astro';
-import { getArticles, getEvents, getLatestPressItems, type Article, type EventItem } from '../lib/cms';
-import { supabase } from '../lib/supabase';
+import { getArticles, getEvents, getLatestPressItems, getPublishedTestimonials, type Article, type EventItem } from '../lib/cms';
 import { siteConfig } from '../lib/config';
 import dayjs from 'dayjs';
 
+export const prerender = true;
+
 const todayIso = dayjs().startOf('day').toISOString();
 
-// Fetch testimonials directly from Supabase
-const dbTestimonials = await (async () => {
-	try {
-		const { data, error } = await supabase
-			.from('testimonials')
-			.select('*')
-			.eq('is_published', true)
-			.order('display_order', { ascending: false })
-			.order('created_at', { ascending: false });
-		
-		if (error) {
-			console.error('Error fetching testimonials:', error);
-			return [];
-		}
-		return data || [];
-	} catch (err) {
-		console.error('Exception fetching testimonials:', err);
-		return [];
-	}
-})();
+const dbTestimonials = await getPublishedTestimonials();
 
 const [{ data: articleEntries }, { data: eventEntries }, latestPress] = await Promise.all([
 	getArticles({ pagination: { page: 1, pageSize: 3 } }),
@@ -176,6 +158,7 @@ const testimonials: { quote: string; author: string; rating?: number }[] = dbTes
 	description="Sergio Contegiacomo: consulenza patrimoniale e coaching finanziario per proteggere e far crescere il tuo patrimonio. Oltre 35 anni di esperienza al servizio delle famiglie a Bra (CN)."
   keywords="patrimonio, consulente patrimoniale, Sergio Contegiacomo, coach finanziario, gestione patrimonio, consulenza patrimoniale Bra, wealth management Cuneo, educazione finanziaria, pianificazione patrimonio familiare"
   activePath="/"
+  showLoader={false}
 >
 	<Hero
 		eyebrow="CONSULENZA PATRIMONIALE"
