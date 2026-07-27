@@ -1,4 +1,4 @@
----
+﻿---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import { siteConfig } from '../lib/config';
@@ -249,7 +249,7 @@ const contactChannels = [
                 <p class="text-sm text-neutral-500 dark:text-neutral-400">Ricevo su appuntamento</p>
               </div>
               <a 
-                href="https://www.google.com/maps/dir//Piazza+Roma,+39,+12042+Bra+CN" 
+                href={siteConfig.mapsDirectionsUrl} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 class="flex-shrink-0 inline-flex items-center gap-2 rounded-xl bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-brand-primary hover:text-white transition dark:bg-neutral-800 dark:text-neutral-300"

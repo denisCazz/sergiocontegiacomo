@@ -1,0 +1,470 @@
+﻿---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import CTASection from '../components/CTASection.astro';
+import { siteConfig } from '../lib/config';
+import ritratto from '../assets/gallery/sergio-contegiacomo-ritratto-esterno.jpg';
+import studio from '../assets/gallery/ufficio-allianz-bank-sala-attesa.jpg';
+
+export const prerender = true;
+
+const pagePath = '/consulente-finanziario-bra';
+const pageUrl = `${siteConfig.siteUrl}${pagePath}`;
+const pageTitle = 'Consulente finanziario a Bra';
+const pageDescription =
+  'Sergio Contegiacomo, consulente finanziario e patrimoniale a Bra con oltre 35 anni di esperienza. Consulenza per famiglie e imprenditori.';
+const ogImagePath = '/consulente-finanziario-bra-og.jpg';
+const personImage = `${siteConfig.siteUrl}${ogImagePath}`;
+
+const ambiti = [
+  {
+    title: 'Protezione del patrimonio',
+    description:
+      'Analisi delle esigenze personali e familiari, dei rischi da gestire e delle priorità necessarie per tutelare ciò che è stato costruito nel tempo.',
+  },
+  {
+    title: 'Pianificazione finanziaria',
+    description:
+      'Definizione degli obiettivi, dell’orizzonte temporale e di un percorso sostenibile, coerente con la situazione e la propensione al rischio del cliente.',
+  },
+  {
+    title: 'Investimenti',
+    description:
+      'Costruzione e monitoraggio di soluzioni finanziarie coerenti con gli obiettivi concordati, evitando decisioni improvvisate o guidate soltanto dalle oscillazioni del momento.',
+  },
+  {
+    title: 'Pianificazione assicurativa',
+    description:
+      'Valutazione delle esigenze di protezione della persona, della famiglia e dell’attività professionale, all’interno di una strategia patrimoniale più ampia.',
+  },
+  {
+    title: 'Passaggio generazionale',
+    description:
+      'Analisi delle esigenze legate alla continuità e alla trasmissione del patrimonio, coordinando quando necessario il percorso con i professionisti competenti.',
+  },
+  {
+    title: 'Educazione e coaching finanziario',
+    description:
+      'Un percorso per comprendere meglio le proprie decisioni economiche, affrontare con maggiore lucidità le scelte e sviluppare un rapporto più consapevole con il denaro.',
+  },
+];
+
+const metodo = [
+  {
+    title: 'Primo confronto',
+    description:
+      'Un incontro iniziale per conoscere la situazione, gli obiettivi e le esigenze principali, senza partire da soluzioni preconfezionate.',
+  },
+  {
+    title: 'Analisi',
+    description:
+      'Una lettura complessiva della situazione patrimoniale, finanziaria, familiare e professionale, basata sui dati disponibili e sulle priorità emerse.',
+  },
+  {
+    title: 'Pianificazione',
+    description:
+      'Definizione di una strategia comprensibile, coerente con gli obiettivi e sostenibile nel tempo.',
+  },
+  {
+    title: 'Monitoraggio',
+    description:
+      'Il patrimonio e la vita delle persone cambiano. Per questo il percorso continua con verifiche periodiche e gli eventuali adeguamenti necessari.',
+  },
+];
+
+const faqs = [
+  {
+    question: 'Di cosa si occupa un consulente finanziario?',
+    answer:
+      'Il consulente finanziario aiuta il cliente a definire i propri obiettivi, comprendere la situazione economica e patrimoniale e individuare un percorso coerente per la gestione degli investimenti e delle esigenze di protezione.',
+  },
+  {
+    question: 'A chi è rivolta la consulenza di Sergio Contegiacomo?',
+    answer:
+      'La consulenza è rivolta a persone, famiglie e imprenditori che desiderano pianificare e gestire il patrimonio con maggiore consapevolezza, considerando obiettivi, rischi e orizzonte temporale.',
+  },
+  {
+    question: 'Dove si trova lo studio?',
+    answer:
+      'Lo studio di Sergio Contegiacomo si trova in Piazza Roma 39, a Bra, in provincia di Cuneo.',
+  },
+  {
+    question: 'Come si svolge il primo incontro?',
+    answer:
+      'Il primo confronto serve a conoscere la situazione e gli obiettivi del cliente. Prima di parlare di possibili soluzioni viene dato spazio all’ascolto delle esigenze personali, familiari e professionali.',
+  },
+  {
+    question: 'È possibile prenotare una call?',
+    answer:
+      'Sì. È possibile utilizzare il sistema di prenotazione presente sul sito oppure contattare direttamente lo studio attraverso i recapiti disponibili.',
+  },
+  {
+    question: 'La consulenza riguarda soltanto gli investimenti?',
+    answer:
+      'No. Il percorso può considerare anche protezione personale e familiare, pianificazione assicurativa, esigenze patrimoniali e passaggio generazionale, coinvolgendo quando necessario i professionisti competenti per gli aspetti specialistici.',
+  },
+];
+
+const pageId = `${pageUrl}#webpage`;
+const personId = `${siteConfig.siteUrl}/#person`;
+const serviceId = `${pageUrl}#financialservice`;
+const breadcrumbId = `${pageUrl}#breadcrumb`;
+const faqId = `${pageUrl}#faq`;
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      '@id': pageId,
+      url: pageUrl,
+      name: `${pageTitle} | ${siteConfig.name}`,
+      description: pageDescription,
+      inLanguage: 'it-IT',
+      isPartOf: {
+        '@type': 'WebSite',
+        '@id': `${siteConfig.siteUrl}/#website`,
+        url: siteConfig.siteUrl,
+        name: siteConfig.name,
+      },
+      about: { '@id': personId },
+      mainEntity: [{ '@id': serviceId }, { '@id': faqId }],
+      breadcrumb: { '@id': breadcrumbId },
+      primaryImageOfPage: {
+        '@type': 'ImageObject',
+        url: personImage,
+      },
+    },
+    {
+      '@type': 'Person',
+      '@id': personId,
+      name: siteConfig.name,
+      jobTitle: 'Consulente finanziario e patrimoniale',
+      description:
+        'Consulente finanziario e patrimoniale a Bra con oltre 35 anni di esperienza nel Private Banking e nella consulenza patrimoniale.',
+      url: `${siteConfig.siteUrl}/chi-sono`,
+      image: personImage,
+      email: siteConfig.contactEmail,
+      telephone: [`+39 ${siteConfig.phone}`, `+39 ${siteConfig.mobilePhone}`],
+      sameAs: [siteConfig.social.linkedin, siteConfig.allianzProfileUrl],
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Piazza Roma 39',
+        addressLocality: 'Bra',
+        addressRegion: 'CN',
+        postalCode: '12042',
+        addressCountry: 'IT',
+      },
+    },
+    {
+      '@type': 'FinancialService',
+      '@id': serviceId,
+      name: 'Consulenza finanziaria e patrimoniale a Bra',
+      url: pageUrl,
+      image: personImage,
+      description: pageDescription,
+      provider: { '@id': personId },
+      telephone: `+39 ${siteConfig.phone}`,
+      email: siteConfig.contactEmail,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Piazza Roma 39',
+        addressLocality: 'Bra',
+        addressRegion: 'CN',
+        postalCode: '12042',
+        addressCountry: 'IT',
+      },
+      areaServed: [
+        {
+          '@type': 'City',
+          name: 'Bra',
+        },
+        {
+          '@type': 'AdministrativeArea',
+          name: 'Provincia di Cuneo',
+        },
+      ],
+      sameAs: [siteConfig.social.linkedin, siteConfig.allianzProfileUrl],
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': breadcrumbId,
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: siteConfig.siteUrl,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Consulente finanziario a Bra',
+          item: pageUrl,
+        },
+      ],
+    },
+    {
+      '@type': 'FAQPage',
+      '@id': faqId,
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.answer,
+        },
+      })),
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={pageUrl}
+  ogImage={ogImagePath}
+  keywords="consulente finanziario Bra, consulente finanziario a Bra, consulente patrimoniale Bra, consulenza patrimoniale Bra, Sergio Contegiacomo Bra"
+  activePath={pagePath}
+  showLoader={false}
+  disableDefaultStructuredData={true}
+  structuredData={structuredData}
+>
+  <section class="relative py-16 lg:py-24 bg-neutral-base dark:bg-neutral-950 overflow-hidden">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none">
+      <div class="absolute top-20 right-0 w-96 h-96 bg-brand-primary/5 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="mx-auto max-w-6xl px-6 relative z-10">
+      <nav aria-label="Breadcrumb" class="mb-10 text-sm text-neutral-muted dark:text-neutral-400">
+        <ol class="flex flex-wrap items-center gap-2">
+          <li>
+            <a href="/" class="hover:text-brand-primary transition">Home</a>
+          </li>
+          <li aria-hidden="true">/</li>
+          <li class="text-neutral-text dark:text-neutral-200 font-medium">Consulente finanziario a Bra</li>
+        </ol>
+      </nav>
+
+      <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        <div class="space-y-8">
+          <div class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand-primary shadow-sm dark:bg-neutral-900 dark:text-brand-light border border-neutral-100 dark:border-neutral-800">
+            <span class="h-1.5 w-1.5 rounded-full bg-brand-primary dark:bg-brand-light"></span>
+            CONSULENZA FINANZIARIA E PATRIMONIALE A BRA
+          </div>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-medium text-neutral-text dark:text-white leading-[1.1] tracking-tight">
+            Consulente finanziario e patrimoniale a Bra
+          </h1>
+          <p class="text-lg md:text-xl text-neutral-muted leading-relaxed dark:text-neutral-300 max-w-2xl">
+            Sono Sergio Contegiacomo e da oltre 35 anni affianco famiglie e imprenditori nella protezione, gestione e crescita consapevole del patrimonio. Nel mio studio di Bra costruisco percorsi personalizzati che tengono insieme obiettivi finanziari, esigenze familiari, protezione e pianificazione nel tempo.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a
+              href="/contatti"
+              data-track-event="contact_click"
+              data-track-location="landing_bra_hero"
+              class="inline-flex items-center justify-center rounded-full bg-brand-primary px-6 py-3 text-white text-sm font-semibold shadow-md shadow-brand-primary/20 hover:bg-brand-light transition"
+            >
+              Prenota una call
+            </a>
+            <a
+              href="/contatti"
+              class="inline-flex items-center justify-center rounded-full border border-brand-primary/30 px-6 py-3 text-sm font-semibold text-brand-primary hover:bg-brand-primary/5 transition dark:border-brand-light/40 dark:text-brand-light"
+            >
+              Contattami
+            </a>
+          </div>
+          <p class="text-sm text-neutral-muted dark:text-neutral-400">
+            Approfondisci anche i
+            <a href="/cosa-faccio" class="font-semibold text-brand-primary hover:text-brand-light transition">servizi</a>
+            e la pagina
+            <a href="/chi-sono" class="font-semibold text-brand-primary hover:text-brand-light transition">Chi sono</a>.
+          </p>
+        </div>
+
+        <div class="relative">
+          <div class="aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl shadow-brand-primary/10">
+            <Image
+              src={ritratto}
+              alt="Sergio Contegiacomo, consulente finanziario e patrimoniale a Bra"
+              widths={[480, 720, 960]}
+              sizes="(max-width: 1024px) 100vw, 480px"
+              class="w-full h-full object-cover"
+              loading="eager"
+              fetchpriority="high"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 lg:py-28 bg-white dark:bg-neutral-950">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="max-w-3xl space-y-6">
+        <SectionHeading title="Una consulenza costruita intorno alla persona" />
+        <p class="text-lg text-neutral-muted leading-relaxed dark:text-neutral-300">
+          Ogni patrimonio nasce da una storia diversa e deve rispondere a esigenze diverse. Prima di valutare strumenti o soluzioni, il percorso parte dall’ascolto: situazione familiare, attività professionale, obiettivi futuri, necessità di protezione e rapporto personale con il denaro.
+        </p>
+        <p class="text-lg text-neutral-muted leading-relaxed dark:text-neutral-300">
+          L’obiettivo è costruire una visione ordinata e comprensibile, definendo priorità realistiche e un percorso coerente nel tempo. La consulenza non si limita quindi alla scelta di singoli strumenti finanziari, ma considera il patrimonio nel suo insieme e il ruolo che deve svolgere nella vita della persona e della famiglia.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 lg:py-28 bg-neutral-base dark:bg-neutral-950">
+    <div class="mx-auto max-w-6xl px-6 space-y-12">
+      <SectionHeading
+        title="Consulenza finanziaria e patrimoniale per famiglie e imprenditori"
+        description="Sergio Contegiacomo affianca clienti privati, famiglie e imprenditori che desiderano gestire il proprio patrimonio con maggiore consapevolezza, metodo e continuità."
+      />
+      <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {ambiti.map((ambito) => (
+          <ServiceCard title={ambito.title} description={ambito.description} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 lg:py-28 bg-white dark:bg-neutral-950">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
+        <div class="lg:sticky lg:top-32 space-y-6">
+          <SectionHeading
+            eyebrow="METODO"
+            title="Un metodo basato su ascolto, analisi e continuità"
+            description="Un percorso chiaro, costruito intorno alla persona e alle esigenze della famiglia o dell’attività."
+          />
+        </div>
+
+        <div class="space-y-12 relative py-4">
+          <div class="absolute left-8 top-8 bottom-8 w-px bg-neutral-200 dark:bg-neutral-800 hidden md:block"></div>
+          {metodo.map((step, index) => (
+            <div class="relative pl-0 md:pl-28 group">
+              <div class="hidden md:flex absolute left-0 top-0 h-16 w-16 items-center justify-center rounded-full border-4 border-white bg-neutral-100 text-xl font-bold text-brand-primary shadow-sm group-hover:bg-brand-primary group-hover:text-white transition duration-300 dark:border-neutral-950 dark:bg-neutral-900 dark:text-brand-light z-10">
+                {index + 1}
+              </div>
+              <div class="rounded-3xl border border-neutral-border bg-white p-8 shadow-sm transition duration-300 hover:shadow-card hover:-translate-y-1 dark:border-neutral-800 dark:bg-neutral-900">
+                <div class="md:hidden mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand-primary/10 text-brand-primary font-bold text-sm">
+                  {index + 1}
+                </div>
+                <h3 class="text-xl font-semibold text-neutral-text dark:text-white mb-3">{step.title}</h3>
+                <p class="text-neutral-muted leading-relaxed dark:text-neutral-300">{step.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 lg:py-28 bg-neutral-base dark:bg-neutral-950">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        <div class="space-y-6">
+          <SectionHeading title="Oltre 35 anni di esperienza nella consulenza" />
+          <p class="text-lg text-neutral-muted leading-relaxed dark:text-neutral-300">
+            Sergio Contegiacomo opera da oltre 35 anni nel settore del Private Banking e della consulenza patrimoniale. L’esperienza maturata nel tempo consente di affrontare le decisioni finanziarie con metodo, prudenza e una visione di lungo periodo.
+          </p>
+          <p class="text-lg text-neutral-muted leading-relaxed dark:text-neutral-300">
+            Accanto all’esperienza professionale, Sergio dedica particolare attenzione all’educazione finanziaria e al coaching. Comprendere le ragioni di una scelta è infatti importante quanto individuare la soluzione più adatta.
+          </p>
+          <a
+            href="/chi-sono"
+            class="inline-flex items-center gap-2 text-sm font-semibold text-brand-primary hover:text-brand-light transition"
+          >
+            Scopri il percorso professionale di Sergio Contegiacomo
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m9 5 7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+        <div class="rounded-[2rem] overflow-hidden shadow-xl shadow-brand-primary/10">
+          <Image
+            src={studio}
+            alt="Studio di consulenza a Bra"
+            widths={[640, 960]}
+            sizes="(max-width: 1024px) 100vw, 560px"
+            class="w-full h-full object-cover aspect-[4/3]"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 lg:py-28 bg-white dark:bg-neutral-950">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid lg:grid-cols-2 gap-12 items-start">
+        <div class="space-y-6">
+          <SectionHeading title="Consulente finanziario a Bra" />
+          <p class="text-lg text-neutral-muted leading-relaxed dark:text-neutral-300">
+            Lo studio di Sergio Contegiacomo si trova in Piazza Roma 39, a Bra, in provincia di Cuneo. La presenza sul territorio permette di offrire un rapporto diretto e continuativo a famiglie e imprenditori di Bra e delle aree vicine.
+          </p>
+          <p class="text-lg text-neutral-muted leading-relaxed dark:text-neutral-300">
+            Gli incontri possono essere organizzati nello studio di Bra oppure secondo le modalità di consulenza già previste dal sito.
+          </p>
+        </div>
+
+        <div class="rounded-3xl border border-neutral-border bg-neutral-50 p-8 space-y-6 dark:border-neutral-800 dark:bg-neutral-900">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-brand-primary dark:text-brand-light mb-2">Studio</p>
+            <p class="text-lg font-medium text-neutral-text dark:text-white">{siteConfig.address}</p>
+          </div>
+          <div class="space-y-3 text-neutral-muted dark:text-neutral-300">
+            <a href={`tel:${siteConfig.phone.replace(/\s+/g, '')}`} class="block hover:text-brand-primary transition">
+              Tel. {siteConfig.phone}
+            </a>
+            <a href={`tel:${siteConfig.mobilePhone.replace(/\s+/g, '')}`} class="block hover:text-brand-primary transition">
+              Cell. {siteConfig.mobilePhone}
+            </a>
+            <a href={`mailto:${siteConfig.contactEmail}`} class="block hover:text-brand-primary transition">
+              {siteConfig.contactEmail}
+            </a>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-3 pt-2">
+            <a
+              href={siteConfig.mapsDirectionsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center rounded-full bg-brand-primary px-5 py-3 text-sm font-semibold text-white hover:bg-brand-light transition"
+            >
+              Ottieni indicazioni
+            </a>
+            <a
+              href="/contatti"
+              class="inline-flex items-center justify-center rounded-full border border-brand-primary/30 px-5 py-3 text-sm font-semibold text-brand-primary hover:bg-brand-primary/5 transition dark:border-brand-light/40 dark:text-brand-light"
+            >
+              Contatti
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 lg:py-28 bg-neutral-base dark:bg-neutral-950">
+    <div class="mx-auto max-w-6xl px-6 space-y-10">
+      <SectionHeading title="Domande frequenti" />
+      <div class="grid gap-6 md:grid-cols-2">
+        {faqs.map((faq) => (
+          <article class="rounded-3xl border border-neutral-border bg-white p-8 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+            <h3 class="text-xl font-semibold text-neutral-text dark:text-white mb-4">{faq.question}</h3>
+            <p class="text-neutral-muted leading-relaxed dark:text-neutral-300">{faq.answer}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection
+    title="Costruiamo un percorso per il tuo patrimonio"
+    description="Prenota un primo confronto con Sergio Contegiacomo per parlare dei tuoi obiettivi e delle esigenze finanziarie e patrimoniali della tua famiglia o della tua attività."
+    primaryCta={{ label: 'Prenota una call', href: '/contatti' }}
+    secondaryCta={{ label: 'Contatta lo studio', href: '/contatti' }}
+  />
+</BaseLayout>
