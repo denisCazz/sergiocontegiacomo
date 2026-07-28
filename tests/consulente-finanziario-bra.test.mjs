@@ -85,6 +85,22 @@ test('BaseLayout supports structured data opt-out', () => {
   assert.match(layout, /disableDefaultStructuredData/);
 });
 
+test('BaseLayout breadcrumb JSON-LD uses set:html so Astro evaluates it', () => {
+  const layout = readFileSync(layoutPath, 'utf8');
+  // Without set:html, Astro emits literal "{JSON.stringify(...)}" and Google reports
+  // "Parsing error: Missing '}' or object member name".
+  const breadcrumbSection = layout.slice(layout.indexOf('<!-- Breadcrumb Schema'));
+  assert.match(breadcrumbSection, /"@type":\s*"BreadcrumbList"/);
+  assert.match(
+    breadcrumbSection,
+    /<script\s+type="application\/ld\+json"\s+set:html=\{JSON\.stringify/,
+  );
+  assert.doesNotMatch(
+    breadcrumbSection,
+    /<script type="application\/ld\+json">\s*\{JSON\.stringify/,
+  );
+});
+
 test('siteConfig exposes verified Allianz and Maps URLs', () => {
   const config = readFileSync(configPath, 'utf8');
   assert.match(config, /allianzbankfa\.it\/sergiocontegiacomo/);
