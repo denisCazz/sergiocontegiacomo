@@ -1,4 +1,4 @@
----
+﻿---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 import { createPodcast } from '../../../lib/cms';
 
@@ -206,8 +206,6 @@ if (Astro.request.method === 'POST') {
 </AdminLayout>
 
 <script>
-  import { supabase } from '../../../lib/supabase';
-
   const dropzone = document.getElementById('dropzone');
   const fileInput = document.getElementById('file-input') as HTMLInputElement;
   const dropzoneContent = document.getElementById('dropzone-content');
@@ -294,15 +292,7 @@ if (Astro.request.method === 'POST') {
     if (progressText) progressText.textContent = 'Caricamento in corso...';
 
     try {
-      // Get session token
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        showError('Sessione scaduta. Effettua nuovamente il login.');
-        resetUpload();
-        return;
-      }
-
-      // Upload file to Supabase Storage
+      // Upload file
       const formData = new FormData();
       formData.append('file', file);
       formData.append('category', 'audio');
@@ -315,13 +305,16 @@ if (Astro.request.method === 'POST') {
         if (progressBar) progressBar.style.width = progress + '%';
       }, 200);
 
-      const response = await fetch('/api/upload-supabase', {
+      const response = await fetch('/api/upload', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-        },
+        credentials: 'include',
         body: formData,
       });
+
+      if (response.status === 401) {
+        window.location.href = '/admin/login';
+        return;
+      }
 
       clearInterval(progressInterval);
 

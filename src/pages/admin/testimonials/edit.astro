@@ -1,4 +1,4 @@
----
+﻿---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
@@ -91,8 +91,6 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
   </div>
 
   <script>
-    import { supabase } from '../../../lib/supabase';
-
     // Load Testimonial Data
     const urlParams = new URLSearchParams(window.location.search);
     const testimonialId = urlParams.get('id');
@@ -103,17 +101,18 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     }
 
     const loadTestimonial = async () => {
-        const { data, error } = await supabase
-            .from('testimonials')
-            .select('*')
-            .eq('id', testimonialId)
-            .single();
-
-        if (error) {
-            alert('Errore caricamento testimonianza: ' + error.message);
+        const res = await fetch(`/api/admin/testimonials?id=${testimonialId}`, { credentials: 'include' });
+        if (res.status === 401) {
+            window.location.href = '/admin/login';
+            return;
+        }
+        const result = await res.json();
+        if (!res.ok) {
+            alert('Errore caricamento testimonianza: ' + (result.error || 'Errore'));
             return;
         }
 
+        const data = result.item;
         if (data) {
             (document.getElementById('testimonialId') as HTMLInputElement).value = data.id;
             (document.getElementById('author_name') as HTMLInputElement).value = data.author_name;
@@ -150,13 +149,19 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         featured: formData.get('featured') === 'on',
       };
 
-      const { error } = await supabase
-        .from('testimonials')
-        .update(payload)
-        .eq('id', id);
-
-      if (error) {
-        alert('Errore: ' + error.message);
+      const response = await fetch(`/api/admin/testimonials?id=${id}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (response.status === 401) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      const result = await response.json();
+      if (!response.ok) {
+        alert('Errore: ' + (result.error || 'Errore'));
         return;
       }
 

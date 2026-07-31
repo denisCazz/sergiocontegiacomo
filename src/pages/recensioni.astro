@@ -1,26 +1,12 @@
----
+﻿---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import { siteConfig } from '../lib/config';
-import { supabase } from '../lib/supabase';
+import { getAllTestimonials } from '../lib/cms';
 
 export const prerender = false;
 
-const testimonials = await (async () => {
-  try {
-    const { data, error } = await supabase
-      .from('testimonials')
-      .select('*')
-      .eq('is_published', true)
-      .order('featured', { ascending: false })
-      .order('display_order', { ascending: false })
-      .order('created_at', { ascending: false });
-    if (error) return [];
-    return data || [];
-  } catch {
-    return [];
-  }
-})();
+const testimonials = await getAllTestimonials(true);
 ---
 
 <BaseLayout 

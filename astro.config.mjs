@@ -19,4 +19,9 @@ export default defineConfig({
       sitemap(),
 		],
     scopedStyleStrategy: 'where',
+    vite: {
+      ssr: {
+        external: ['postgres', '@aws-sdk/client-s3'],
+      },
+    },
 });

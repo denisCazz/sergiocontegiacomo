@@ -1,4 +1,4 @@
----
+﻿---
 import AdminLayout from '../../layouts/AdminLayout.astro';
 ---
 
@@ -14,7 +14,6 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   </div>
 
   <script>
-    import { getAllComments, deleteComment } from '../../lib/cms';
     import dayjs from 'dayjs';
 
     const list = document.getElementById('reviewsList');
@@ -23,14 +22,24 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       if (!list) return;
       list.innerHTML = '<li class="p-4 text-center text-gray-500 dark:text-gray-400">Caricamento...</li>';
 
-      const comments = await getAllComments();
+      const res = await fetch('/api/admin/comments', { credentials: 'include' });
+      if (res.status === 401) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      if (!res.ok) {
+        list.innerHTML = '<li class="p-4 text-red-500">Errore nel caricamento</li>';
+        return;
+      }
+
+      const { comments } = await res.json();
 
       if (!comments || comments.length === 0) {
         list.innerHTML = '<li class="p-4 text-center text-gray-500">Nessuna recensione trovata.</li>';
         return;
       }
 
-      list.innerHTML = comments.map(comment => `
+      list.innerHTML = comments.map((comment: any) => `
         <li>
           <div class="px-4 py-4 sm:px-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out">
             <div class="flex items-center justify-between mb-2">
@@ -65,16 +74,18 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         </li>
       `).join('');
 
-      // Add event listeners for delete buttons
       document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', async (e) => {
           if (!confirm('Sei sicuro di voler eliminare questa recensione?')) return;
-          
+
           const id = parseInt((e.target as HTMLElement).dataset.id || '0');
           if (id) {
-            const success = await deleteComment(id);
-            if (success) {
-              renderReviews(); // Reload list
+            const del = await fetch(`/api/admin/comments?id=${id}`, {
+              method: 'DELETE',
+              credentials: 'include',
+            });
+            if (del.ok) {
+              renderReviews();
             } else {
               alert('Errore durante l\'eliminazione');
             }

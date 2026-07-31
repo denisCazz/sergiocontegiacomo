@@ -1,4 +1,4 @@
----
+﻿---
 import '../../styles/base.css';
 ---
 
@@ -75,8 +75,6 @@ import '../../styles/base.css';
     </div>
 
     <script>
-      import { supabase } from '../../lib/supabase';
-
       const form = document.getElementById('loginForm');
       const errorMessage = document.getElementById('errorMessage');
       const errorText = document.getElementById('errorText');
@@ -87,18 +85,29 @@ import '../../styles/base.css';
           const email = (document.getElementById('email') as HTMLInputElement).value;
           const password = (document.getElementById('password') as HTMLInputElement).value;
 
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
+          try {
+            const response = await fetch('/api/auth/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({ email, password }),
+            });
+            const result = await response.json().catch(() => ({}));
 
-          if (error) {
+            if (!response.ok) {
+              if (errorMessage && errorText) {
+                errorText.textContent = result.error || 'Credenziali non valide';
+                errorMessage.classList.remove('hidden');
+              }
+              return;
+            }
+
+            window.location.href = '/admin';
+          } catch (err: any) {
             if (errorMessage && errorText) {
-              errorText.textContent = error.message;
+              errorText.textContent = err?.message || 'Errore di autenticazione';
               errorMessage.classList.remove('hidden');
             }
-          } else {
-            window.location.href = '/admin';
           }
         });
       }

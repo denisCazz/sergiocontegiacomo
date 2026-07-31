@@ -1,4 +1,4 @@
----
+﻿---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import CTASection from '../../components/CTASection.astro';
@@ -194,15 +194,6 @@ const articleStructuredData = {
 </BaseLayout>
 
 <script>
-  import { createClient } from '@supabase/supabase-js';
-
-  const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('Supabase env vars missing');
-  }
-  const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
-
   const commentsSection = document.getElementById('comments-section');
   const slug = commentsSection?.dataset.slug;
 
@@ -284,14 +275,11 @@ const articleStructuredData = {
     async function loadComments() {
       if (!commentsList || !avgRatingEl || !totalReviewsEl || !avgStarsEl) return;
 
-      const { data: comments, error } = await supabase
-        .from('comments')
-        .select('*')
-        .eq('article_slug', slug)
-        .order('created_at', { ascending: false });
+      const res = await fetch(`/api/comments?slug=${encodeURIComponent(slug!)}`);
+      const { comments } = await res.json();
 
-      if (error) {
-        console.error('Error loading comments:', error);
+      if (!res.ok || !Array.isArray(comments)) {
+        console.error('Error loading comments');
         commentsList.innerHTML = '<p class="text-sm text-red-500 text-center">Errore nel caricamento dei commenti.</p>';
         return;
       }
@@ -356,12 +344,14 @@ const articleStructuredData = {
         (submitBtn as HTMLButtonElement).disabled = true;
         submitBtn.textContent = 'Invio...';
 
-        const { error } = await supabase
-          .from('comments')
-          .insert([{ article_slug: slug, user_name, rating, content }]);
+        const res = await fetch('/api/comments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ article_slug: slug, user_name, rating, content }),
+        });
 
-        if (error) {
-          console.error('Error submitting comment:', error);
+        if (!res.ok) {
+          console.error('Error submitting comment');
           formMessage.textContent = 'Errore durante l\'invio. Riprova.';
           formMessage.className = 'text-xs text-center text-red-500 block';
           formMessage.hidden = false;
