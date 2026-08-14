@@ -6,6 +6,7 @@ import PageLoader from '../components/PageLoader.astro';
 import StickyMobileCta from '../components/StickyMobileCta.astro';
 import CookieConsent from '../components/CookieConsent.astro';
 import { siteConfig } from '../lib/config';
+import { stripTrailingSlash } from '../lib/seo';
 
 export interface Props {
   title?: string;
@@ -43,7 +44,8 @@ const pageDescription = description ??
   'Consulenza patrimoniale su misura, coaching finanziario e percorsi di educazione economica per imprenditori e famiglie.';
 // NOTE: prefer JPG for social scrapers (many don’t support AVIF for OG images)
 const image = ogImage ?? '/og.jpg';
-const canonicalUrl = canonical ?? new URL(Astro.url.pathname, siteConfig.siteUrl).toString();
+const canonicalPath = stripTrailingSlash(Astro.url.pathname);
+const canonicalUrl = canonical ?? new URL(canonicalPath, siteConfig.siteUrl).toString();
 const defaultKeywords = 'consulente patrimoniale Bra, coach finanziario Piemonte, wealth management Cuneo, educazione finanziaria, pianificazione patrimoniale, Sergio Contegiacomo, consulenza finanziaria, private banking, gestione patrimonio, Allianz Bank, ANASF';
 ---
 
@@ -97,11 +99,12 @@ const defaultKeywords = 'consulente patrimoniale Bra, coach finanziario Piemonte
     <meta name="twitter:site" content="@sergiocontegiacomo" />
     <meta name="twitter:creator" content="@sergiocontegiacomo" />
     <!-- Favicons - Multi-format per massima compatibilità (Google richiede questi link) -->
-    <link rel="shortcut icon" href="/logo_sergio.ico" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="icon" type="image/x-icon" href="/logo_sergio.ico" />
     <link rel="icon" type="image/avif" sizes="32x32" href="/logo_sergio.avif" />
     <link rel="icon" type="image/avif" sizes="16x16" href="/logo_sergio.avif" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/logo_sergio.avif" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#1a1a1a" />
     <meta name="msapplication-TileColor" content="#1a1a1a" />

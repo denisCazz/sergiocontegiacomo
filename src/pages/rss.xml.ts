@@ -2,10 +2,10 @@ import rss from '@astrojs/rss';
 import { getArticles } from '../lib/cms';
 import { siteConfig } from '../lib/config';
 
-export const prerender = true;
+export const prerender = false;
 
 export async function GET() {
-  const { data } = await getArticles();
+  const { data } = await getArticles({ pagination: { page: 1, pageSize: 1000 } });
   const articles = data ?? [];
 
   return rss({

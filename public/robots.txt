@@ -2,10 +2,12 @@
 User-agent: *
 Allow: /
 
-# Disallow admin/api routes
+# Admin and API are not public content
+Disallow: /admin
 Disallow: /admin/
+Disallow: /api
 Disallow: /api/
-Disallow: /_astro/
 
 # Sitemap
 Sitemap: https://www.sergiocontegiacomo.it/sitemap-index.xml
+Sitemap: https://www.sergiocontegiacomo.it/sitemap.xml
