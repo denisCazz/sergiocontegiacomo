@@ -7,24 +7,26 @@ import BlogCard from '../components/BlogCard.astro';
 import EventCard from '../components/EventCard.astro';
 import TestimonialCard from '../components/TestimonialCard.astro';
 import CTASection from '../components/CTASection.astro';
-import { getArticles, getEvents, getLatestPressItems, getPublishedTestimonials, type Article, type EventItem } from '../lib/cms';
+import { getArticles, getEvents, getLatestPressItems, getPublishedPodcasts, getPublishedTestimonials, type Article, type EventItem } from '../lib/cms';
+import { audioMimeType, podcastPageUrl } from '../lib/podcast';
 import { siteConfig } from '../lib/config';
 import dayjs from 'dayjs';
 
-export const prerender = true;
+export const prerender = false;
 
 const todayIso = dayjs().startOf('day').toISOString();
 
 const dbTestimonials = await getPublishedTestimonials();
 
-const [{ data: articleEntries }, { data: eventEntries }, latestPress] = await Promise.all([
-	getArticles({ pagination: { page: 1, pageSize: 3 } }),
+const [{ data: articleEntries }, { data: eventEntries }, latestPress, publishedPodcasts] = await Promise.all([
+	getArticles({ pagination: { page: 1, pageSize: 1 } }),
 	getEvents({ pagination: { page: 1, pageSize: 6 }, filters: { date: { $gte: todayIso } } }),
 	getLatestPressItems(3),
+	getPublishedPodcasts(),
 ]);
-const latestArticles = (articleEntries ?? [])
-	.map((entry) => entry.attributes as Article)
-	.slice(0, 3);
+const latestArticle = (articleEntries ?? [])
+	.map((entry) => entry.attributes as Article)[0];
+const latestPodcast = publishedPodcasts[0];
 const upcomingEvents = (eventEntries ?? [])
 	.map((entry) => entry.attributes as EventItem)
 	.filter(Boolean)
@@ -589,29 +591,65 @@ const testimonials: { quote: string; author: string; rating?: number }[] = dbTes
 		});
 	</script>
 
+	{(latestArticle || latestPodcast || latestPress.length > 0) && (
 	<section class="py-24 lg:py-32 bg-white dark:bg-neutral-950">
 		<div class="mx-auto max-w-6xl px-6 space-y-16">
-			<div>
-				<div class="flex items-center justify-between mb-8">
-					<div class="flex items-center gap-3">
-						<span class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
-							<svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-2-2h-2" /></svg>
-						</span>
-						<h3 class="text-xl font-serif font-medium text-neutral-text dark:text-white">Articoli</h3>
-					</div>
-					<a href="/blog" class="text-sm font-semibold text-brand-primary hover:text-brand-light transition flex items-center gap-1">
-						Vedi tutti
-						<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-					</a>
+			{(latestArticle || latestPodcast) && (
+				<div class={`grid gap-10 ${latestArticle && latestPodcast ? 'lg:grid-cols-2' : 'max-w-2xl'}`}>
+					{latestArticle && (
+						<div>
+							<div class="flex items-center justify-between mb-8">
+								<div class="flex items-center gap-3">
+									<span class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
+										<svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-2-2h-2" /></svg>
+									</span>
+									<h3 class="text-xl font-serif font-medium text-neutral-text dark:text-white">Ultimo articolo</h3>
+								</div>
+								<a href="/blog" class="text-sm font-semibold text-brand-primary hover:text-brand-light transition flex items-center gap-1">
+									Vedi tutti
+									<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+								</a>
+							</div>
+							<BlogCard article={latestArticle} />
+						</div>
+					)}
+					{latestPodcast && (
+						<div>
+							<div class="flex items-center justify-between mb-8">
+								<div class="flex items-center gap-3">
+									<span class="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-accent/15 text-brand-accent">
+										<svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" /></svg>
+									</span>
+									<h3 class="text-xl font-serif font-medium text-neutral-text dark:text-white">Ultimo podcast</h3>
+								</div>
+								<a href="/blog/podcast" class="text-sm font-semibold text-brand-primary hover:text-brand-light transition flex items-center gap-1">
+									Tutti gli episodi
+									<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+								</a>
+							</div>
+							<article class="h-full flex flex-col rounded-3xl border border-neutral-border bg-white overflow-hidden shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+								<div class="p-6 flex flex-col flex-grow">
+									<div class="flex items-center gap-2 mb-3">
+										<span class="rounded-full bg-brand-accent/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-brand-dark dark:text-brand-accent">Nuovo</span>
+										{latestPodcast.episode_number != null && (
+											<span class="text-xs uppercase tracking-[0.2em] text-neutral-muted dark:text-neutral-400">Ep. {latestPodcast.episode_number}</span>
+										)}
+									</div>
+									<a href={podcastPageUrl(latestPodcast.id)} class="block flex-grow">
+										<h4 class="text-xl font-semibold text-neutral-text dark:text-white mb-2 line-clamp-2 hover:text-brand-primary transition">{latestPodcast.title}</h4>
+										{latestPodcast.description && (
+											<p class="text-sm text-neutral-muted dark:text-neutral-300 leading-relaxed line-clamp-3 mb-4">{latestPodcast.description}</p>
+										)}
+									</a>
+									<audio class="w-full mt-auto" controls preload="none">
+										<source src={latestPodcast.file_url} type={audioMimeType(latestPodcast.file_url)} />
+									</audio>
+								</div>
+							</article>
+						</div>
+					)}
 				</div>
-			</div>
-			<div class="grid gap-8 md:grid-cols-3">
-				{latestArticles.length > 0 ? (
-					latestArticles.map((article) => <BlogCard article={article} />)
-				) : (
-					<p class="text-neutral-muted dark:text-neutral-300">Gli articoli saranno disponibili a breve.</p>
-				)}
-			</div>
+			)}
 
 			{latestPress.length > 0 && (
 				<div class="pt-8 border-t border-neutral-200 dark:border-neutral-800">
@@ -689,6 +727,7 @@ const testimonials: { quote: string; author: string; rating?: number }[] = dbTes
 			)}
 		</div>
 	</section>
+	)}
 
 	<script is:inline type="module">
 		const pdfjsLib = await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.min.mjs');
@@ -722,25 +761,23 @@ const testimonials: { quote: string; author: string; rating?: number }[] = dbTes
 		document.querySelectorAll('[data-pdf-thumb]').forEach((el) => observer.observe(el));
 	</script>
 
-	<section class="bg-neutral-base py-24 lg:py-32 dark:bg-neutral-950">
-		<div class="mx-auto max-w-6xl px-6 space-y-16">
-			<div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-				<SectionHeading
-					eyebrow="EVENTI"
-					title="Esperienze formative e networking selezionato"
-					description="Workshop riservati, webinar e percorsi immersivi per chi desidera confrontarsi su strategie patrimoniali evolute."
-				/>
-				<a href="/eventi" class="text-sm font-semibold text-brand-primary hover:text-brand-light transition">Calendario completo</a>
+	{upcomingEvents.length > 0 && (
+		<section class="bg-neutral-base py-24 lg:py-32 dark:bg-neutral-950">
+			<div class="mx-auto max-w-6xl px-6 space-y-16">
+				<div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+					<SectionHeading
+						eyebrow="EVENTI"
+						title="Esperienze formative e networking selezionato"
+						description="Workshop riservati, webinar e percorsi immersivi per chi desidera confrontarsi su strategie patrimoniali evolute."
+					/>
+					<a href="/eventi" class="text-sm font-semibold text-brand-primary hover:text-brand-light transition">Calendario completo</a>
+				</div>
+				<div class="grid gap-8 md:grid-cols-3">
+					{upcomingEvents.map((event) => <EventCard event={event} />)}
+				</div>
 			</div>
-			<div class="grid gap-8 md:grid-cols-3">
-				{upcomingEvents.length > 0 ? (
-					upcomingEvents.map((event) => <EventCard event={event} />)
-				) : (
-					<p class="text-neutral-muted dark:text-neutral-300">Gli eventi in programma saranno pubblicati a breve.</p>
-				)}
-			</div>
-		</div>
-	</section>
+		</section>
+	)}
 
 	<CTASection
 		title="Vuoi migliorare la gestione dei tuoi investimenti e del tuo portafoglio?"

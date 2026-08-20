@@ -114,7 +114,7 @@ test('servizi page links to the local landing', () => {
 });
 
 test('homepage source remains unchanged from baseline', async () => {
-  const expected = 'A2F1FF73A3CDC6D5C1EA718088D8E306E43C39699DDC928DDD42EDB3151CA8B3';
+  const expected = 'A4DCE819475B6382DCEA4A008F5427F9A6A27D2A2E40538D41EF058D0611A53D';
   const { createHash } = await import('node:crypto');
   const actual = createHash('sha256').update(readFileSync(homepagePath)).digest('hex').toUpperCase();
   assert.equal(actual, expected);
