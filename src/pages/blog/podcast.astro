@@ -1,200 +1,579 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublishedPodcasts } from '../../lib/cms';
+import { siteConfig } from '../../lib/config';
+import {
+  podcastShow,
+  podcastFeedUrl,
+  podcastPageUrl,
+  podcastCoverUrl,
+  audioMimeType,
+} from '../../lib/podcast';
 
-// Placeholder per futuri podcast
-const podcastItems: Array<{
-  title: string;
-  description?: string;
-  file_url: string;
-  duration?: string;
-  published_at: string;
-}> = [];
+const podcastItems = await getPublishedPodcasts();
+const latest = podcastItems[0];
+const feedUrl = podcastFeedUrl();
+const pageUrl = podcastPageUrl();
+const coverUrl = podcastCoverUrl();
+
+const formatDate = (dateStr: string) => {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
+};
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'PodcastSeries',
+  name: podcastShow.title,
+  description: podcastShow.description,
+  url: pageUrl,
+  webFeed: feedUrl,
+  image: coverUrl,
+  inLanguage: 'it',
+  author: {
+    '@type': 'Person',
+    name: siteConfig.name,
+    url: siteConfig.siteUrl,
+  },
+  publisher: {
+    '@type': 'Person',
+    name: siteConfig.name,
+  },
+  episode: podcastItems.map((ep, index) => ({
+    '@type': 'PodcastEpisode',
+    name: ep.title,
+    description: ep.description || ep.title,
+    url: podcastPageUrl(ep.id),
+    datePublished: ep.published_at,
+    episodeNumber: ep.episode_number ?? podcastItems.length - index,
+    associatedMedia: {
+      '@type': 'MediaObject',
+      contentUrl: ep.file_url,
+      encodingFormat: audioMimeType(ep.file_url),
+    },
+    partOfSeries: {
+      '@type': 'PodcastSeries',
+      name: podcastShow.title,
+      url: pageUrl,
+    },
+  })),
+};
 ---
 
-<BaseLayout title="Podcast" description="Podcast di Sergio Contegiacomo su finanza personale, gestione patrimoniale e coaching finanziario." keywords="podcast finanza personale, podcast consulenza patrimoniale, Sergio Contegiacomo podcast" activePath="/blog/podcast">
-	<section class="relative min-h-screen py-24 lg:py-32 bg-gradient-to-br from-brand-accent/10 via-neutral-50 to-brand-accent/5 dark:from-neutral-900 dark:via-neutral-950 dark:to-neutral-900 overflow-hidden">
-		<!-- Background decorativo -->
-		<div class="absolute inset-0 overflow-hidden pointer-events-none">
-			<div class="absolute top-1/4 -left-32 w-96 h-96 bg-brand-accent/20 rounded-full blur-3xl animate-pulse"></div>
-			<div class="absolute bottom-1/4 -right-32 w-80 h-80 bg-brand-primary/15 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
-		</div>
+<BaseLayout
+  title="Podcast"
+  description={podcastShow.description}
+  keywords="podcast finanza personale, podcast consulenza patrimoniale, Sergio Contegiacomo podcast"
+  activePath="/blog/podcast"
+  rssFeed={{ href: feedUrl, title: `${podcastShow.title} — RSS` }}
+  structuredData={structuredData}
+>
+  <section class="relative min-h-screen bg-neutral-base dark:bg-neutral-950 overflow-hidden">
+    <div class="relative bg-gradient-to-br from-neutral-900 via-brand-dark to-neutral-950 py-16 lg:py-24 overflow-hidden">
+      <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute top-0 -left-24 w-96 h-96 bg-brand-accent/20 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 right-0 w-80 h-80 bg-brand-primary/25 rounded-full blur-3xl"></div>
+      </div>
 
-		<div class="mx-auto max-w-4xl px-6 relative z-10">
-			<!-- Header -->
-			<div class="text-center mb-16">
-				<div class="inline-flex items-center gap-3 rounded-full bg-brand-accent/20 backdrop-blur-sm px-5 py-2 text-sm font-semibold uppercase tracking-wider text-brand-accent mb-6 border border-brand-accent/30">
-					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-					</svg>
-					Podcast
-				</div>
-				<h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-medium text-neutral-text dark:text-white mb-6">
-					Conversazioni su <span class="text-brand-accent">finanza e crescita</span>
-				</h1>
-				<p class="text-xl text-neutral-muted dark:text-neutral-400 leading-relaxed max-w-2xl mx-auto">
-					Episodi approfonditi su temi di finanza personale, investimenti e crescita patrimoniale. Ascolta le conversazioni con esperti del settore.
-				</p>
-			</div>
+      <div class="mx-auto max-w-5xl px-6 relative z-10">
+        <div class="flex flex-col md:flex-row items-center md:items-start gap-8 lg:gap-12">
+          <div class="flex-shrink-0">
+            <div class="relative w-52 h-52 sm:w-60 sm:h-60 rounded-3xl overflow-hidden shadow-2xl shadow-black/40 ring-1 ring-white/10">
+              <img
+                src={podcastShow.coverPath}
+                alt={`Copertina podcast ${podcastShow.title}`}
+                width="240"
+                height="240"
+                class="h-full w-full object-cover"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+              <div class="absolute bottom-4 left-4 right-4">
+                <p class="text-[11px] uppercase tracking-[0.2em] text-brand-accent font-semibold">Podcast</p>
+                <p class="text-white text-sm font-medium truncate">{siteConfig.name}</p>
+              </div>
+            </div>
+          </div>
 
-			<!-- Podcast Episodes -->
-			{podcastItems.length > 0 ? (
-				<div class="space-y-6">
-					{podcastItems.map((episode, index) => (
-						<div class="group relative rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 transition-all duration-500 hover:shadow-xl hover:-translate-y-1">
-							<div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-								<!-- Numero e icona -->
-								<div class="flex items-center gap-4">
-									<div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-accent to-brand-primary flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-brand-accent/30">
-										{String(index + 1).padStart(2, '0')}
-									</div>
-								</div>
+          <div class="flex-1 text-center md:text-left">
+            <div class="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-sm px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-brand-accent mb-4 border border-white/10">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+              </svg>
+              Disponibile nelle app podcast
+            </div>
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-serif font-medium text-white mb-3">
+              Conversazioni su <span class="text-brand-accent">finanza e crescita</span>
+            </h1>
+            <p class="text-neutral-300 leading-relaxed max-w-xl mx-auto md:mx-0 mb-3">
+              {podcastShow.description}
+            </p>
+            <p class="text-sm text-neutral-400 mb-7">
+              {siteConfig.name}
+              {podcastItems.length > 0 && (
+                <>
+                  <span class="mx-2 text-neutral-600">·</span>
+                  {podcastItems.length} {podcastItems.length === 1 ? 'episodio' : 'episodi'}
+                </>
+              )}
+            </p>
 
-								<!-- Info e player -->
-								<div class="flex-1 w-full space-y-4">
-									<div class="text-center sm:text-left">
-										<h3 class="text-lg font-semibold text-neutral-text dark:text-white group-hover:text-brand-accent transition-colors">
-											{episode.title}
-										</h3>
-										{episode.description && (
-											<p class="text-sm text-neutral-muted dark:text-neutral-400 mt-1">{episode.description}</p>
-										)}
-									</div>
-									
-									<!-- Custom Audio Player -->
-									<div class="audio-player-container">
-										<audio class="audio-element" preload="metadata">
-											<source src={episode.file_url} type="audio/mpeg" />
-											Il tuo browser non supporta l'elemento audio.
-										</audio>
-										
-										<div class="flex items-center gap-4">
-											<!-- Play/Pause Button -->
-											<button class="play-btn flex-shrink-0 w-12 h-12 rounded-full bg-brand-accent text-white flex items-center justify-center hover:bg-brand-primary hover:scale-110 transition-all duration-300 shadow-lg shadow-brand-accent/30">
-												<svg class="play-icon w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-													<path d="M8 5v14l11-7z"/>
-												</svg>
-												<svg class="pause-icon w-5 h-5 hidden" fill="currentColor" viewBox="0 0 24 24">
-													<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-												</svg>
-											</button>
-											
-											<!-- Progress Bar -->
-											<div class="flex-1 space-y-1">
-												<div class="flex items-center justify-between text-xs text-neutral-muted dark:text-neutral-400">
-													<span class="current-time">0:00</span>
-													{episode.duration && <span class="duration">{episode.duration}</span>}
-												</div>
-												<div class="w-full h-2 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden cursor-pointer">
-													<div class="progress-bar h-full bg-brand-accent transition-all duration-150" style="width: 0%"></div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					))}
-				</div>
-			) : (
-				<!-- Empty state -->
-				<div class="text-center py-20 rounded-3xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-900/50">
-					<div class="inline-flex h-20 w-20 items-center justify-center rounded-full bg-brand-accent/10 text-brand-accent mb-6">
-						<svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-						</svg>
-					</div>
-					<h3 class="text-2xl font-semibold text-neutral-text dark:text-white mb-3">Podcast in arrivo</h3>
-					<p class="text-neutral-muted dark:text-neutral-400 max-w-md mx-auto mb-6">
-						I primi episodi del podcast saranno disponibili a breve. Torna presto per ascoltare conversazioni approfondite su finanza e crescita patrimoniale!
-					</p>
-					<a href="/blog" class="inline-flex items-center gap-2 text-brand-accent hover:text-brand-primary transition-colors font-medium">
-						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-						</svg>
-						Torna al Blog
-					</a>
-				</div>
-			)}
-		</div>
-	</section>
+            <div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
+              {latest && (
+                <button
+                  type="button"
+                  class="hero-play-latest inline-flex items-center gap-2 rounded-full bg-brand-accent px-5 py-2.5 text-sm font-semibold text-neutral-900 hover:bg-amber-300 transition shadow-lg shadow-brand-accent/20"
+                  data-id={String(latest.id ?? '')}
+                  data-src={latest.file_url}
+                  data-title={latest.title}
+                >
+                  <svg class="w-4 h-4 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  Ascolta l'ultimo episodio
+                </button>
+              )}
+              <button
+                type="button"
+                id="share-show-btn"
+                class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10 transition"
+                data-share-title={podcastShow.title}
+                data-share-url={pageUrl}
+              >
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+                Condividi
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mx-auto max-w-5xl px-6 py-12 lg:py-16 relative z-10">
+      {podcastItems.length > 0 ? (
+        <div class="space-y-4" id="episode-list">
+          {podcastItems.map((episode, index) => (
+            <article
+              id={`episodio-${episode.id}`}
+              class="episode-card group rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-5 sm:p-6 transition-all duration-300 hover:shadow-lg hover:border-brand-accent/30"
+              data-id={String(episode.id ?? '')}
+              data-src={episode.file_url}
+              data-title={episode.title}
+              data-mime={audioMimeType(episode.file_url)}
+            >
+              <div class="flex items-start gap-4 sm:gap-5">
+                <button
+                  type="button"
+                  class="item-play-btn flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-accent to-brand-primary text-white flex items-center justify-center hover:scale-105 transition-all shadow-lg shadow-brand-accent/25"
+                  aria-label={`Riproduci ${episode.title}`}
+                >
+                  <svg class="item-play-icon w-6 h-6 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  <svg class="item-eq-icon w-6 h-6 hidden" viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="4" y="10" width="3" height="10" rx="1.5"><animate attributeName="height" values="10;4;10" dur="0.6s" repeatCount="indefinite"/><animate attributeName="y" values="10;16;10" dur="0.6s" repeatCount="indefinite"/></rect>
+                    <rect x="10.5" y="6" width="3" height="14" rx="1.5"><animate attributeName="height" values="14;6;14" dur="0.8s" repeatCount="indefinite"/><animate attributeName="y" values="6;14;6" dur="0.8s" repeatCount="indefinite"/></rect>
+                    <rect x="17" y="8" width="3" height="12" rx="1.5"><animate attributeName="height" values="12;4;12" dur="0.7s" repeatCount="indefinite"/><animate attributeName="y" values="8;16;8" dur="0.7s" repeatCount="indefinite"/></rect>
+                  </svg>
+                </button>
+
+                <div class="flex-1 min-w-0">
+                  {index === 0 && (
+                    <div class="mb-1">
+                      <span class="rounded-full bg-brand-accent/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-brand-dark dark:text-brand-accent">Nuovo</span>
+                    </div>
+                  )}
+                  <h2 class="text-lg font-semibold text-neutral-text dark:text-white group-hover:text-brand-primary transition-colors">
+                    {episode.title}
+                  </h2>
+                  {episode.description && (
+                    <p class="text-sm text-neutral-muted dark:text-neutral-400 mt-1 leading-relaxed">{episode.description}</p>
+                  )}
+                  <div class="flex flex-wrap items-center gap-4 mt-3 text-xs text-neutral-400 dark:text-neutral-500">
+                    {episode.published_at && (
+                      <span class="flex items-center gap-1">
+                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        {formatDate(episode.published_at)}
+                      </span>
+                    )}
+                    {episode.duration && (
+                      <span class="flex items-center gap-1">
+                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        {episode.duration}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  class="share-episode-btn flex-shrink-0 w-10 h-10 rounded-full text-neutral-400 hover:text-brand-primary hover:bg-brand-primary/10 transition flex items-center justify-center"
+                  aria-label={`Condividi ${episode.title}`}
+                  data-share-title={episode.title}
+                  data-share-url={podcastPageUrl(episode.id)}
+                >
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                  </svg>
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-20 rounded-3xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-900/50">
+          <div class="inline-flex h-20 w-20 items-center justify-center rounded-full bg-brand-accent/10 text-brand-accent mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+            </svg>
+          </div>
+          <h3 class="text-2xl font-semibold text-neutral-text dark:text-white mb-3">Podcast in arrivo</h3>
+          <p class="text-neutral-muted dark:text-neutral-400 max-w-md mx-auto mb-6">
+            I primi episodi del podcast saranno disponibili a breve.
+          </p>
+          <a href="/blog" class="inline-flex items-center gap-2 text-brand-accent hover:text-brand-primary transition-colors font-medium">
+            Torna al Blog
+          </a>
+        </div>
+      )}
+
+      {podcastItems.length > 0 && (
+        <div class="text-center mt-14">
+          <a href="/blog" class="inline-flex items-center gap-2 text-sm text-neutral-muted dark:text-neutral-400 hover:text-brand-primary transition group">
+            <svg class="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            Torna al Blog
+          </a>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <div
+    id="now-playing"
+    class="hidden fixed inset-x-4 z-[60] rounded-2xl bg-neutral-900/95 border border-white/10 p-3 sm:p-4 shadow-2xl backdrop-blur-xl bottom-24 md:bottom-6 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-2xl"
+    role="region"
+    aria-label="Lettore podcast"
+  >
+    <div class="flex items-center gap-3">
+      <button id="np-prev" class="hidden sm:flex flex-shrink-0 text-neutral-400 hover:text-white p-1" aria-label="Episodio precedente">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6V6zm3.5 6l8.5 6V6l-8.5 6z"/></svg>
+      </button>
+      <button id="np-back" class="flex-shrink-0 text-neutral-400 hover:text-white p-1 w-8 text-center" aria-label="Indietro 15 secondi" title="−15s">
+        <svg class="w-5 h-5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.5 8.5L9 12l3.5 3.5M9 12h9M7 7v10"/></svg>
+      </button>
+      <button id="np-play-btn" class="flex-shrink-0 w-11 h-11 rounded-full bg-brand-accent text-neutral-900 flex items-center justify-center hover:bg-amber-300 transition shadow-lg">
+        <svg id="np-play-icon" class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="np-pause-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>
+      </button>
+      <button id="np-fwd" class="flex-shrink-0 text-neutral-400 hover:text-white p-1 w-8 text-center" aria-label="Avanti 15 secondi" title="+15s">
+        <svg class="w-5 h-5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.5 8.5L15 12l-3.5 3.5M15 12H6M17 7v10"/></svg>
+      </button>
+      <button id="np-next" class="hidden sm:flex flex-shrink-0 text-neutral-400 hover:text-white p-1" aria-label="Episodio successivo">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M16 18h2V6h-2v12zM6 18l8.5-6L6 6v12z"/></svg>
+      </button>
+      <div class="flex-1 min-w-0">
+        <p id="np-title" class="text-sm font-medium text-white truncate"></p>
+        <div class="flex items-center gap-3 mt-1.5">
+          <span id="np-current" class="text-[11px] font-mono text-neutral-400 w-8">0:00</span>
+          <div id="np-progress-wrap" class="flex-1 h-1.5 bg-white/10 rounded-full cursor-pointer overflow-hidden">
+            <div id="np-progress" class="h-full bg-gradient-to-r from-brand-accent to-brand-primary rounded-full" style="width:0%"></div>
+          </div>
+          <span id="np-duration" class="text-[11px] font-mono text-neutral-400 w-8 text-right">0:00</span>
+        </div>
+      </div>
+      <button id="np-rate" class="flex-shrink-0 text-[11px] font-semibold text-neutral-300 hover:text-white w-9 h-8 rounded-md border border-white/10" aria-label="Velocità di riproduzione">1×</button>
+      <button id="np-close" class="flex-shrink-0 text-neutral-500 hover:text-white p-1" aria-label="Chiudi lettore">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="toast" class="hidden fixed top-24 left-1/2 -translate-x-1/2 z-[70] rounded-full bg-neutral-900 text-white text-sm px-4 py-2 shadow-lg" role="status"></div>
+
+  <audio id="global-audio" preload="metadata" playsinline class="hidden"></audio>
 </BaseLayout>
 
-<script>
-	// Audio player functionality (same as audiopillole)
-	document.addEventListener('DOMContentLoaded', () => {
-		const audioCards = document.querySelectorAll('.audio-card');
-		
-		audioCards.forEach((card) => {
-			const audio = card.querySelector('.audio-element') as HTMLAudioElement;
-			const playBtn = card.querySelector('.play-btn');
-			const playIcon = card.querySelector('.play-icon');
-			const pauseIcon = card.querySelector('.pause-icon');
-			const progressBar = card.querySelector('.progress-bar') as HTMLElement;
-			const currentTimeEl = card.querySelector('.current-time');
-			
-			if (!audio || !playBtn) return;
-			
-			let isPlaying = false;
-			
-			playBtn.addEventListener('click', () => {
-				if (isPlaying) {
-					audio.pause();
-				} else {
-					// Pause all other audios
-					document.querySelectorAll('.audio-element').forEach((el) => {
-						const a = el as HTMLAudioElement;
-						if (a !== audio) {
-							a.pause();
-							const otherCard = a.closest('.audio-card');
-							if (otherCard) {
-								const otherPlayIcon = otherCard.querySelector('.play-icon');
-								const otherPauseIcon = otherCard.querySelector('.pause-icon');
-								if (otherPlayIcon) otherPlayIcon.classList.remove('hidden');
-								if (otherPauseIcon) otherPauseIcon.classList.add('hidden');
-							}
-						}
-					});
-					audio.play();
-				}
-			});
-			
-			audio.addEventListener('play', () => {
-				isPlaying = true;
-				if (playIcon) playIcon.classList.add('hidden');
-				if (pauseIcon) pauseIcon.classList.remove('hidden');
-			});
-			
-			audio.addEventListener('pause', () => {
-				isPlaying = false;
-				if (playIcon) playIcon.classList.remove('hidden');
-				if (pauseIcon) pauseIcon.classList.add('hidden');
-			});
-			
-			audio.addEventListener('timeupdate', () => {
-				if (progressBar && audio.duration) {
-					const progress = (audio.currentTime / audio.duration) * 100;
-					progressBar.style.width = `${progress}%`;
-				}
-				if (currentTimeEl) {
-					const minutes = Math.floor(audio.currentTime / 60);
-					const seconds = Math.floor(audio.currentTime % 60);
-					currentTimeEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-				}
-			});
-			
-			// Click on progress bar to seek
-			const progressContainer = card.querySelector('.audio-player-container .bg-neutral-200');
-			if (progressContainer) {
-				progressContainer.addEventListener('click', (e) => {
-					const rect = progressContainer.getBoundingClientRect();
-					const x = (e as MouseEvent).clientX - rect.left;
-					const percentage = x / rect.width;
-					if (audio.duration) {
-						audio.currentTime = percentage * audio.duration;
-					}
-				});
-			}
-		});
-	});
-</script>
+<script is:inline>
+(() => {
+  const audioEl = document.getElementById('global-audio');
+  const np = document.getElementById('now-playing');
+  const npTitle = document.getElementById('np-title');
+  const npPlayBtn = document.getElementById('np-play-btn');
+  const npPlayIcon = document.getElementById('np-play-icon');
+  const npPauseIcon = document.getElementById('np-pause-icon');
+  const npCurrent = document.getElementById('np-current');
+  const npDuration = document.getElementById('np-duration');
+  const npProgress = document.getElementById('np-progress');
+  const npProgressWrap = document.getElementById('np-progress-wrap');
+  const npClose = document.getElementById('np-close');
+  const npBack = document.getElementById('np-back');
+  const npFwd = document.getElementById('np-fwd');
+  const npPrev = document.getElementById('np-prev');
+  const npNext = document.getElementById('np-next');
+  const npRate = document.getElementById('np-rate');
+  const toastEl = document.getElementById('toast');
+  const artwork = '/og.jpg';
+  const artist = 'Sergio Contegiacomo';
+  const album = 'Conversazioni su finanza e crescita';
+  const rates = [1, 1.25, 1.5, 2];
+  const progressKey = 'podcast-progress-v1';
+  if (!audioEl || !np) return;
 
+  const cards = Array.from(document.querySelectorAll('.episode-card'));
+  let activeCard = null;
+  let activeSrc = null;
+  let rateIndex = 0;
+  let toastTimer = 0;
+
+  const fmt = (s) => {
+    if (!s || !isFinite(s)) return '0:00';
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return m + ':' + String(sec).padStart(2, '0');
+  };
+
+  const showToast = (msg) => {
+    if (!toastEl) return;
+    toastEl.textContent = msg;
+    toastEl.classList.remove('hidden');
+    window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => toastEl.classList.add('hidden'), 2200);
+  };
+
+  const loadProgress = () => {
+    try {
+      return JSON.parse(localStorage.getItem(progressKey) || '{}');
+    } catch {
+      return {};
+    }
+  };
+
+  const saveProgress = (id, time, duration) => {
+    if (!id) return;
+    const all = loadProgress();
+    all[id] = { time: Math.floor(time), duration: Math.floor(duration || 0), updated: Date.now() };
+    try {
+      localStorage.setItem(progressKey, JSON.stringify(all));
+    } catch {}
+  };
+
+  const restoreProgress = (id) => {
+    const saved = loadProgress()[id];
+    if (!saved || !saved.time || saved.time < 8) return 0;
+    if (saved.duration && saved.time > saved.duration - 10) return 0;
+    return saved.time;
+  };
+
+  const setCardState = (card, playing) => {
+    if (!card) return;
+    const btn = card.querySelector('.item-play-btn');
+    const playI = btn?.querySelector('.item-play-icon');
+    const eqI = btn?.querySelector('.item-eq-icon');
+    if (playing) {
+      playI?.classList.add('hidden');
+      eqI?.classList.remove('hidden');
+      card.classList.add('ring-2', 'ring-brand-accent/40', 'border-brand-accent/40');
+    } else {
+      playI?.classList.remove('hidden');
+      eqI?.classList.add('hidden');
+      card.classList.remove('ring-2', 'ring-brand-accent/40', 'border-brand-accent/40');
+    }
+  };
+
+  const setPlayingUi = (playing) => {
+    if (playing) {
+      npPlayIcon.classList.add('hidden');
+      npPauseIcon.classList.remove('hidden');
+    } else {
+      npPlayIcon.classList.remove('hidden');
+      npPauseIcon.classList.add('hidden');
+    }
+    setCardState(activeCard, playing);
+  };
+
+  const bindMediaSession = (title) => {
+    if (!('mediaSession' in navigator)) return;
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: title,
+      artist: artist,
+      album: album,
+      artwork: [
+        { src: artwork, sizes: '512x512', type: 'image/jpeg' },
+        { src: artwork, sizes: '1024x1024', type: 'image/jpeg' },
+      ],
+    });
+    const seek = (delta) => {
+      if (!audioEl.duration) return;
+      audioEl.currentTime = Math.max(0, Math.min(audioEl.duration, audioEl.currentTime + delta));
+    };
+    navigator.mediaSession.setActionHandler('play', () => audioEl.play());
+    navigator.mediaSession.setActionHandler('pause', () => audioEl.pause());
+    navigator.mediaSession.setActionHandler('seekbackward', () => seek(-15));
+    navigator.mediaSession.setActionHandler('seekforward', () => seek(15));
+    navigator.mediaSession.setActionHandler('previoustrack', () => playRelative(-1));
+    navigator.mediaSession.setActionHandler('nexttrack', () => playRelative(1));
+  };
+
+  const playCard = (card, { resume } = { resume: true }) => {
+    if (!card) return;
+    const src = card.getAttribute('data-src');
+    const title = card.getAttribute('data-title') || '';
+    const id = card.getAttribute('data-id') || '';
+    if (!src) return;
+
+    if (activeCard && activeCard !== card) setCardState(activeCard, false);
+
+    if (activeSrc === src && !audioEl.paused) {
+      audioEl.pause();
+      return;
+    }
+
+    if (activeSrc !== src) {
+      audioEl.src = src;
+      audioEl.load();
+      activeSrc = src;
+      const startAt = resume ? restoreProgress(id) : 0;
+      if (startAt > 0) {
+        const onMeta = () => {
+          audioEl.currentTime = startAt;
+          audioEl.removeEventListener('loadedmetadata', onMeta);
+        };
+        audioEl.addEventListener('loadedmetadata', onMeta);
+      }
+    }
+
+    audioEl.playbackRate = rates[rateIndex];
+    audioEl.play().catch(() => {});
+    activeCard = card;
+    npTitle.textContent = title;
+    np.classList.remove('hidden');
+    bindMediaSession(title);
+  };
+
+  const playRelative = (dir) => {
+    if (!cards.length) return;
+    const idx = activeCard ? cards.indexOf(activeCard) : 0;
+    const next = cards[idx + dir];
+    if (next) playCard(next);
+  };
+
+  cards.forEach((card) => {
+    card.querySelector('.item-play-btn')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      playCard(card);
+    });
+  });
+
+  document.querySelectorAll('.hero-play-latest').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (cards[0]) playCard(cards[0]);
+    });
+  });
+
+  npPlayBtn?.addEventListener('click', () => {
+    if (!activeSrc) return;
+    if (audioEl.paused) audioEl.play();
+    else audioEl.pause();
+  });
+
+  npClose?.addEventListener('click', () => {
+    audioEl.pause();
+    audioEl.removeAttribute('src');
+    activeSrc = null;
+    if (activeCard) setCardState(activeCard, false);
+    activeCard = null;
+    np.classList.add('hidden');
+  });
+
+  npBack?.addEventListener('click', () => {
+    audioEl.currentTime = Math.max(0, audioEl.currentTime - 15);
+  });
+  npFwd?.addEventListener('click', () => {
+    if (!audioEl.duration) return;
+    audioEl.currentTime = Math.min(audioEl.duration, audioEl.currentTime + 15);
+  });
+  npPrev?.addEventListener('click', () => playRelative(-1));
+  npNext?.addEventListener('click', () => playRelative(1));
+
+  npRate?.addEventListener('click', () => {
+    rateIndex = (rateIndex + 1) % rates.length;
+    audioEl.playbackRate = rates[rateIndex];
+    npRate.textContent = rates[rateIndex] + '×';
+  });
+
+  audioEl.addEventListener('play', () => setPlayingUi(true));
+  audioEl.addEventListener('pause', () => setPlayingUi(false));
+  audioEl.addEventListener('timeupdate', () => {
+    if (!audioEl.duration) return;
+    npProgress.style.width = (audioEl.currentTime / audioEl.duration * 100) + '%';
+    npCurrent.textContent = fmt(audioEl.currentTime);
+    const id = activeCard?.getAttribute('data-id');
+    if (id) saveProgress(id, audioEl.currentTime, audioEl.duration);
+    if ('mediaSession' in navigator && navigator.mediaSession.setPositionState) {
+      try {
+        navigator.mediaSession.setPositionState({
+          duration: audioEl.duration,
+          playbackRate: audioEl.playbackRate,
+          position: audioEl.currentTime,
+        });
+      } catch {}
+    }
+  });
+  audioEl.addEventListener('loadedmetadata', () => {
+    npDuration.textContent = fmt(audioEl.duration);
+  });
+  audioEl.addEventListener('ended', () => {
+    setPlayingUi(false);
+    npProgress.style.width = '0%';
+    playRelative(1);
+  });
+
+  npProgressWrap?.addEventListener('click', (e) => {
+    if (!audioEl.duration) return;
+    const rect = npProgressWrap.getBoundingClientRect();
+    audioEl.currentTime = ((e.clientX - rect.left) / rect.width) * audioEl.duration;
+  });
+
+  const share = async (title, url) => {
+    const data = {
+      title: title,
+      text: 'Ascolta "' + title + '" — podcast di Sergio Contegiacomo',
+      url: url,
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(data);
+        return;
+      } catch (err) {
+        if (err && err.name === 'AbortError') return;
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast('Link copiato');
+    } catch {
+      showToast(url);
+    }
+  };
+
+  document.getElementById('share-show-btn')?.addEventListener('click', () => {
+    const btn = document.getElementById('share-show-btn');
+    share(btn.getAttribute('data-share-title') || album, btn.getAttribute('data-share-url') || window.location.href);
+  });
+
+  document.querySelectorAll('.share-episode-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      share(btn.getAttribute('data-share-title') || '', btn.getAttribute('data-share-url') || window.location.href);
+    });
+  });
+
+  const params = new URLSearchParams(window.location.search);
+  const episodeId = params.get('e');
+  if (episodeId) {
+    const target = cards.find((c) => c.getAttribute('data-id') === episodeId);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      playCard(target);
+    }
+  }
+})();
+</script>

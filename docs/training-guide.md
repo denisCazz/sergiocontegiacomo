@@ -1,14 +1,13 @@
 # Guida operativa per Sergio
 
-Questa guida riassume le azioni principali da svolgere all'interno del CMS (Strapi) per gestire articoli del blog ed eventi.
+Questa guida riassume le azioni principali da svolgere nel pannello admin del sito (`/admin`) per gestire articoli del blog ed eventi.
 
 ## 1. Accesso
-- Vai su `https://<dominio-cms>/admin`.
+- Vai su `https://www.sergiocontegiacomo.it/admin`.
 - Inserisci email e password ricevute.
-- Se abilitata, completa la verifica a due fattori.
 
 ## 2. Creare o modificare un articolo
-1. Nel menu laterale seleziona **Content Manager → Articoli**.
+1. Nel menu laterale seleziona **Articoli**.
 2. Premi **Create new entry** (o apri l'articolo da modificare).
 3. Compila i campi:
    - **Titolo**: frase chiara (max ~75 caratteri).
@@ -21,7 +20,7 @@ Questa guida riassume le azioni principali da svolgere all'interno del CMS (Stra
 4. Premi **Save**. Per pubblicare scegli **Publish** (o **Schedule** per programmare).
 
 ## 3. Creare o aggiornare un evento
-1. Vai su **Content Manager → Eventi**.
+1. Vai su **Eventi**.
 2. Clicca **Create new entry** oppure apri un evento esistente.
 3. Compila:
    - **Titolo** e **Slug**.

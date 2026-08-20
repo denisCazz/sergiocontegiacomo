@@ -32,14 +32,6 @@ RESEND_API_KEY=
 psql "$DATABASE_URL" -f sql/schema.sql
 ```
 
-Migrazione dati da un dump precedente: vedi `scripts/migrate-db-notes.mjs`.
-
-Migrazione media Supabase → R2:
-
-```bash
-npm run migrate:media
-```
-
 ## Build / run (Node adapter)
 
 ```bash

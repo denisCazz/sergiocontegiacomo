@@ -22,6 +22,7 @@ export interface Props {
   modifiedTime?: string;
   structuredData?: unknown;
   disableDefaultStructuredData?: boolean;
+  rssFeed?: { href: string; title: string };
 }
 
 const {
@@ -38,6 +39,7 @@ const {
   modifiedTime,
   structuredData,
   disableDefaultStructuredData = false,
+  rssFeed,
 } = Astro.props;
 const pageTitle = title ? `${title} | ${siteConfig.name}` : `${siteConfig.name} - ${siteConfig.role}`;
 const pageDescription = description ??
@@ -59,6 +61,9 @@ const defaultKeywords = 'consulente patrimoniale Bra, coach finanziario Piemonte
     <!-- SEO Meta -->
     <link rel="canonical" href={canonicalUrl} />
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+    {rssFeed && (
+      <link rel="alternate" type="application/rss+xml" title={rssFeed.title} href={rssFeed.href} />
+    )}
     <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
     <meta name="author" content="Sergio Contegiacomo" />
     <meta name="keywords" content={keywords ?? defaultKeywords} />

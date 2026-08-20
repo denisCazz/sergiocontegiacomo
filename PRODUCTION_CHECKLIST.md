@@ -13,7 +13,7 @@
 
 - [ ] Eseguito `sql/schema.sql`
 - [ ] Dati importati (se migrazione)
-- [ ] Eseguito `npm run migrate:media` (se URL Supabase residui)
+- [ ] Eseguito `npm run check:media` (tutti gli URL su R2)
 - [ ] Login admin funzionante
 - [ ] Upload immagine/audio/PDF su R2
 

@@ -30,7 +30,7 @@ export type R2UploadResult = {
 // MIME types per validazione
 const ALLOWED_TYPES: Record<FileCategory, string[]> = {
   images: ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml'],
-  audio: ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/m4a', 'audio/x-m4a'],
+  audio: ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/m4a', 'audio/x-m4a', 'audio/mp4'],
   press: ['application/pdf'],
 };
 

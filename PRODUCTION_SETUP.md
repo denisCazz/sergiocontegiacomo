@@ -29,8 +29,7 @@ R2_PUBLIC_URL=
 
 1. Crea il database Postgres
 2. Esegui lo schema: `psql "$DATABASE_URL" -f sql/schema.sql`
-3. (Opzionale) Importa dati esistenti: vedi `scripts/migrate-db-notes.mjs`
-4. (Opzionale) Migra URL media Supabase → R2: `node --env-file=.env scripts/migrate-media-to-r2.mjs`
+3. Verifica gli URL media: `npm run check:media`
 
 ## Deploy
 

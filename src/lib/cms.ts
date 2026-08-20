@@ -91,7 +91,7 @@ type FetchOptions = {
   };
 };
 
-type StrapiResponse<T> = {
+type CmsListResponse<T> = {
   data: Array<{
     id: number;
     attributes: T;
@@ -311,7 +311,7 @@ export async function getEventStats(slug: string) {
 
 export async function getArticles(options: FetchOptions = {}) {
   const cacheKey = `articles:list:v1:${JSON.stringify(options)}`;
-  const cached = getCached<StrapiResponse<Article>>(cacheKey);
+  const cached = getCached<CmsListResponse<Article>>(cacheKey);
   if (cached) return cached;
 
   const page = options.pagination?.page ?? 1;
@@ -369,7 +369,7 @@ export async function getArticles(options: FetchOptions = {}) {
           total,
         },
       },
-    } satisfies StrapiResponse<Article>;
+    } satisfies CmsListResponse<Article>;
 
     setCached(cacheKey, result, LIST_CACHE_TTL_MS);
     return result;
@@ -407,7 +407,7 @@ export async function getArticleBySlug(slug: string) {
 
 export async function getEvents(options: FetchOptions = {}) {
   const cacheKey = `events:list:v1:${JSON.stringify(options)}`;
-  const cached = getCached<StrapiResponse<EventItem>>(cacheKey);
+  const cached = getCached<CmsListResponse<EventItem>>(cacheKey);
   if (cached) return cached;
 
   const page = options.pagination?.page ?? 1;
@@ -466,7 +466,7 @@ export async function getEvents(options: FetchOptions = {}) {
           total,
         },
       },
-    } satisfies StrapiResponse<EventItem>;
+    } satisfies CmsListResponse<EventItem>;
 
     setCached(cacheKey, result, LIST_CACHE_TTL_MS);
     return result;
@@ -728,16 +728,41 @@ export type Podcast = {
   description?: string;
   file_url: string;
   duration?: string;
+  episode_number?: number | null;
+  is_published?: boolean;
   published_at: string;
   created_at?: string;
 };
 
 export async function getPodcasts() {
   try {
-    const data = await sql`SELECT * FROM podcasts ORDER BY published_at DESC`;
+    const data = await sql`
+      SELECT * FROM podcasts
+      ORDER BY episode_number ASC NULLS LAST, published_at DESC
+    `;
     return data as unknown as Podcast[];
   } catch (error) {
     console.error('Error fetching podcasts:', error);
+    return [];
+  }
+}
+
+export async function getPublishedPodcasts() {
+  const cacheKey = 'podcasts:published:v2';
+  const cached = getCached<Podcast[]>(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const data = await sql`
+      SELECT * FROM podcasts
+      WHERE is_published = true
+      ORDER BY published_at DESC, episode_number DESC NULLS LAST
+    `;
+    const items = data as unknown as Podcast[];
+    setCached(cacheKey, items, LIST_CACHE_TTL_MS);
+    return items;
+  } catch (error) {
+    console.error('Error fetching published podcasts:', error);
     return [];
   }
 }
@@ -754,8 +779,16 @@ export async function getPodcast(id: number) {
 
 export async function createPodcast(item: Omit<Podcast, 'id' | 'created_at'>) {
   const data = await sql`
-    INSERT INTO podcasts (title, description, file_url, duration, published_at)
-    VALUES (${item.title}, ${item.description ?? null}, ${item.file_url}, ${item.duration ?? null}, ${item.published_at})
+    INSERT INTO podcasts (title, description, file_url, duration, episode_number, is_published, published_at)
+    VALUES (
+      ${item.title},
+      ${item.description ?? null},
+      ${item.file_url},
+      ${item.duration ?? null},
+      ${item.episode_number ?? null},
+      ${item.is_published ?? true},
+      ${item.published_at}
+    )
     RETURNING *
   `;
   clearCmsCache();
@@ -769,6 +802,8 @@ export async function updatePodcast(id: number, item: Partial<Podcast>) {
       description = COALESCE(${item.description ?? null}, description),
       file_url = COALESCE(${item.file_url ?? null}, file_url),
       duration = COALESCE(${item.duration ?? null}, duration),
+      episode_number = COALESCE(${item.episode_number ?? null}, episode_number),
+      is_published = COALESCE(${item.is_published ?? null}, is_published),
       published_at = COALESCE(${item.published_at ?? null}, published_at)
     WHERE id = ${id}
     RETURNING *

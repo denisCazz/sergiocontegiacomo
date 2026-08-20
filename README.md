@@ -30,7 +30,7 @@ Copia `.env.example` in `.env` e compila i valori (DB, admin, R2).
 | `npm run dev` | Dev server (`http://localhost:4321`) |
 | `npm run build` | Build produzione in `dist/` |
 | `npm run preview` | Anteprima build |
-| `npm run migrate:media` | Migra URL Supabase Storage → R2 |
+| `npm run check:media` | Conta gli URL media (R2 vs altro) |
 
 ## Documentazione
 

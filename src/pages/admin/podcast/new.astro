@@ -14,6 +14,8 @@ if (Astro.request.method === 'POST') {
     const file_url = formData.get('file_url') as string;
     const duration = formData.get('duration') as string;
     const published_at = formData.get('published_at') as string;
+    const episodeNumberRaw = formData.get('episode_number') as string;
+    const is_published = formData.get('is_published') === 'on';
 
     if (!title || !file_url || !published_at) {
       error = 'Titolo, file audio e data sono obbligatori';
@@ -23,6 +25,8 @@ if (Astro.request.method === 'POST') {
         description: description || undefined,
         file_url,
         duration: duration || undefined,
+        episode_number: episodeNumberRaw ? Number(episodeNumberRaw) : null,
+        is_published,
         published_at,
       });
       return Astro.redirect('/admin/podcast');
@@ -179,6 +183,37 @@ if (Astro.request.method === 'POST') {
             value={new Date().toISOString().split('T')[0]}
             class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
           />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="episode_number" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Numero episodio
+          </label>
+          <input
+            type="number"
+            id="episode_number"
+            name="episode_number"
+            min="1"
+            class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+            placeholder="Es: 1"
+          />
+        </div>
+        <div class="flex items-end pb-1">
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input
+              id="is_published"
+              name="is_published"
+              type="checkbox"
+              checked
+              class="mt-1 h-4 w-4 rounded border-gray-300 text-brand-accent focus:ring-brand-accent"
+            />
+            <span>
+              <span class="block text-sm font-medium text-gray-700 dark:text-gray-300">Pubblica sul sito</span>
+              <span class="block text-xs text-gray-500">Se deselezionato, l'episodio resta visibile solo in admin.</span>
+            </span>
+          </label>
         </div>
       </div>
 

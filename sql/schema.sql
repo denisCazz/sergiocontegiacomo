@@ -85,6 +85,8 @@ CREATE TABLE IF NOT EXISTS public.podcasts (
   description TEXT,
   file_url TEXT NOT NULL,
   duration TEXT,
+  episode_number INTEGER,
+  is_published BOOLEAN NOT NULL DEFAULT true,
   published_at DATE NOT NULL DEFAULT CURRENT_DATE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -113,6 +115,7 @@ CREATE INDEX IF NOT EXISTS idx_event_rsvps_event_slug ON public.event_rsvps(even
 CREATE INDEX IF NOT EXISTS idx_audio_pillole_published_at ON public.audio_pillole(published_at DESC);
 CREATE INDEX IF NOT EXISTS idx_press_published_at ON public.press(published_at DESC);
 CREATE INDEX IF NOT EXISTS idx_podcasts_published_at ON public.podcasts(published_at DESC);
+CREATE INDEX IF NOT EXISTS idx_podcasts_published ON public.podcasts(is_published, episode_number);
 CREATE INDEX IF NOT EXISTS testimonials_published_idx ON public.testimonials(is_published, display_order);
 CREATE INDEX IF NOT EXISTS testimonials_featured_idx ON public.testimonials(featured);
 
