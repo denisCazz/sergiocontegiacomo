@@ -8,7 +8,7 @@ import EventCard from '../components/EventCard.astro';
 import TestimonialCard from '../components/TestimonialCard.astro';
 import CTASection from '../components/CTASection.astro';
 import { getArticles, getEvents, getLatestPressItems, getPublishedPodcasts, getPublishedTestimonials, type Article, type EventItem } from '../lib/cms';
-import { audioMimeType, podcastPageUrl } from '../lib/podcast';
+import { podcastPageUrl, podcastShow } from '../lib/podcast';
 import { siteConfig } from '../lib/config';
 import dayjs from 'dayjs';
 
@@ -592,58 +592,83 @@ const testimonials: { quote: string; author: string; rating?: number }[] = dbTes
 	</script>
 
 	{(latestArticle || latestPodcast || latestPress.length > 0) && (
-	<section class="py-24 lg:py-32 bg-white dark:bg-neutral-950">
-		<div class="mx-auto max-w-6xl px-6 space-y-16">
+	<section class="py-16 sm:py-24 lg:py-32 bg-white dark:bg-neutral-950 overflow-x-hidden">
+		<div class="mx-auto max-w-6xl px-4 sm:px-6 space-y-12 sm:space-y-16 min-w-0">
 			{(latestArticle || latestPodcast) && (
-				<div class={`grid gap-10 ${latestArticle && latestPodcast ? 'lg:grid-cols-2' : 'max-w-2xl'}`}>
+				<div class={`grid items-start gap-12 min-w-0 ${latestArticle && latestPodcast ? 'lg:grid-cols-2 lg:items-stretch lg:gap-10' : 'max-w-2xl'}`}>
 					{latestArticle && (
-						<div>
-							<div class="flex items-center justify-between mb-8">
-								<div class="flex items-center gap-3">
-									<span class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
-										<svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-2-2h-2" /></svg>
+						<div class="flex min-w-0 flex-col">
+							<div class="mb-5 flex shrink-0 items-center justify-between gap-3">
+								<div class="flex min-w-0 items-center gap-2.5">
+									<span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
+										<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-2-2h-2" /></svg>
 									</span>
-									<h3 class="text-xl font-serif font-medium text-neutral-text dark:text-white">Ultimo articolo</h3>
+									<h3 class="truncate text-lg font-serif font-medium leading-8 text-neutral-text dark:text-white sm:text-xl">Ultimo articolo</h3>
 								</div>
-								<a href="/blog" class="text-sm font-semibold text-brand-primary hover:text-brand-light transition flex items-center gap-1">
+								<a href="/blog" class="shrink-0 text-xs font-semibold leading-8 text-brand-primary transition hover:text-brand-light sm:text-sm">
 									Vedi tutti
-									<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
 								</a>
 							</div>
-							<BlogCard article={latestArticle} />
+							<div class="min-h-0 flex-1">
+								<BlogCard article={latestArticle} />
+							</div>
 						</div>
 					)}
 					{latestPodcast && (
-						<div>
-							<div class="flex items-center justify-between mb-8">
-								<div class="flex items-center gap-3">
-									<span class="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-accent/15 text-brand-accent">
-										<svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" /></svg>
+						<div class="flex min-w-0 flex-col">
+							<div class="mb-5 flex shrink-0 items-center justify-between gap-3">
+								<div class="flex min-w-0 items-center gap-2.5">
+									<span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-brand-accent/15 text-brand-accent">
+										<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" /></svg>
 									</span>
-									<h3 class="text-xl font-serif font-medium text-neutral-text dark:text-white">Ultimo podcast</h3>
+									<h3 class="truncate text-lg font-serif font-medium leading-8 text-neutral-text dark:text-white sm:text-xl">Ultimo podcast</h3>
 								</div>
-								<a href="/blog/podcast" class="text-sm font-semibold text-brand-primary hover:text-brand-light transition flex items-center gap-1">
-									Tutti gli episodi
-									<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+								<a href="/blog/podcast" class="shrink-0 text-xs font-semibold leading-8 text-brand-primary transition hover:text-brand-light sm:text-sm">
+									Tutti
 								</a>
 							</div>
-							<article class="h-full flex flex-col rounded-3xl border border-neutral-border bg-white overflow-hidden shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-								<div class="p-6 flex flex-col flex-grow">
-									<div class="flex items-center gap-2 mb-3">
+							<article class="flex h-auto min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-neutral-border bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+								<a href={podcastPageUrl(latestPodcast.id)} class="relative block aspect-[16/10] overflow-hidden flex-shrink-0">
+									<img
+										src={podcastShow.coverPath}
+										alt={`Copertina podcast ${latestPodcast.title}`}
+										width="640"
+										height="400"
+										loading="lazy"
+										decoding="async"
+										class="h-full w-full object-cover"
+									/>
+									<div class="absolute inset-0 bg-black/35 flex items-center justify-center">
+										<span class="flex h-14 w-14 items-center justify-center rounded-full bg-brand-accent text-neutral-900 shadow-lg">
+											<svg class="h-6 w-6 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+										</span>
+									</div>
+								</a>
+								<div class="p-5 sm:p-6 flex flex-col flex-grow min-w-0">
+									<div class="flex flex-wrap items-center gap-2 mb-3">
 										<span class="rounded-full bg-brand-accent/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-brand-dark dark:text-brand-accent">Nuovo</span>
 										{latestPodcast.episode_number != null && (
-											<span class="text-xs uppercase tracking-[0.2em] text-neutral-muted dark:text-neutral-400">Ep. {latestPodcast.episode_number}</span>
+											<span class="text-xs uppercase tracking-wider text-neutral-muted dark:text-neutral-400">Ep. {latestPodcast.episode_number}</span>
+										)}
+										{latestPodcast.duration && (
+											<span class="text-xs text-neutral-muted dark:text-neutral-400">{latestPodcast.duration}</span>
 										)}
 									</div>
-									<a href={podcastPageUrl(latestPodcast.id)} class="block flex-grow">
-										<h4 class="text-xl font-semibold text-neutral-text dark:text-white mb-2 line-clamp-2 hover:text-brand-primary transition">{latestPodcast.title}</h4>
+									<a href={podcastPageUrl(latestPodcast.id)} class="block min-w-0 flex-grow">
+										<h4 class="text-lg sm:text-xl font-semibold text-neutral-text dark:text-white mb-2 line-clamp-2 hover:text-brand-primary transition">{latestPodcast.title}</h4>
 										{latestPodcast.description && (
-											<p class="text-sm text-neutral-muted dark:text-neutral-300 leading-relaxed line-clamp-3 mb-4">{latestPodcast.description}</p>
+											<p class="text-sm text-neutral-muted dark:text-neutral-300 leading-relaxed line-clamp-3">{latestPodcast.description}</p>
 										)}
 									</a>
-									<audio class="w-full mt-auto" controls preload="none">
-										<source src={latestPodcast.file_url} type={audioMimeType(latestPodcast.file_url)} />
-									</audio>
+									<a
+										href={podcastPageUrl(latestPodcast.id)}
+										class="inline-flex items-center gap-1 text-xs font-semibold text-brand-primary mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-800"
+									>
+										Ascolta l'episodio
+										<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14M12 5l7 7-7 7" />
+										</svg>
+									</a>
 								</div>
 							</article>
 						</div>
@@ -652,17 +677,16 @@ const testimonials: { quote: string; author: string; rating?: number }[] = dbTes
 			)}
 
 			{latestPress.length > 0 && (
-				<div class="pt-8 border-t border-neutral-200 dark:border-neutral-800">
-					<div class="flex items-center justify-between mb-8">
-						<div class="flex items-center gap-3">
-							<span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-500/10 text-rose-500">
-								<svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
+				<div class="pt-8 border-t border-neutral-200 dark:border-neutral-800 min-w-0">
+					<div class="flex items-center justify-between gap-3 mb-5 sm:mb-8">
+						<div class="flex items-center gap-2.5 min-w-0">
+							<span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-rose-500/10 text-rose-500">
+								<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
 							</span>
-							<h3 class="text-xl font-serif font-medium text-neutral-text dark:text-white">Rassegna Stampa</h3>
+							<h3 class="text-lg sm:text-xl font-serif font-medium text-neutral-text dark:text-white truncate">Rassegna Stampa</h3>
 						</div>
-						<a href="/blog/rassegna-stampa" class="text-sm font-semibold text-brand-primary hover:text-brand-light transition flex items-center gap-1">
+						<a href="/blog/rassegna-stampa" class="shrink-0 text-xs sm:text-sm font-semibold text-brand-primary hover:text-brand-light transition">
 							Vedi tutte
-							<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
 						</a>
 					</div>
 					<div class="grid gap-6 md:grid-cols-3">
@@ -762,8 +786,8 @@ const testimonials: { quote: string; author: string; rating?: number }[] = dbTes
 	</script>
 
 	{upcomingEvents.length > 0 && (
-		<section class="bg-neutral-base py-24 lg:py-32 dark:bg-neutral-950">
-			<div class="mx-auto max-w-6xl px-6 space-y-16">
+		<section class="bg-neutral-base py-16 sm:py-24 lg:py-32 dark:bg-neutral-950 overflow-x-hidden">
+			<div class="mx-auto max-w-6xl px-4 sm:px-6 space-y-12 sm:space-y-16">
 				<div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
 					<SectionHeading
 						eyebrow="EVENTI"

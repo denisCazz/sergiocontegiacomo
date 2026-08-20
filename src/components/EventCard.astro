@@ -65,12 +65,12 @@ const pdfModalId = `event-pdf-modal-${event.slug}`;
       )}
     </div>
   )}
-  <div class="p-6 space-y-4">
-    <div class="flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-neutral-muted dark:text-neutral-400">
+  <div class="p-5 sm:p-6 space-y-4 min-w-0">
+    <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs uppercase tracking-wider text-neutral-muted dark:text-neutral-400">
       <span>{formattedDate}</span>
       {event.time && <span>{event.time}</span>}
-      <span>|</span>
-      <span>{event.location}</span>
+      <span class="hidden sm:inline">|</span>
+      <span class="break-words">{event.location}</span>
     </div>
     <div class="space-y-3">
       <a href={`/eventi/${event.slug}`} class="block">
@@ -82,9 +82,9 @@ const pdfModalId = `event-pdf-modal-${event.slug}`;
         <p class="text-sm text-neutral-muted leading-relaxed dark:text-neutral-300">{truncatedDescription}</p>
       )}
     </div>
-    <div class="flex items-center justify-between text-xs text-neutral-muted dark:text-neutral-400">
+    <div class="flex flex-wrap items-center justify-between gap-3 text-xs text-neutral-muted dark:text-neutral-400">
       {event.price && <span>Costo: {event.price}</span>}
-      <div class="flex items-center gap-2">
+      <div class="flex flex-wrap items-center gap-2">
         {event.pdfUrl && (
           <button
             type="button"
