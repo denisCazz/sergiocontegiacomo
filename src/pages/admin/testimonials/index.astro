@@ -1,4 +1,4 @@
----
+﻿---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
@@ -17,30 +17,30 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
   </div>
 
   <script>
-    import { supabase } from '../../../lib/supabase';
     import dayjs from 'dayjs';
 
     const list = document.getElementById('testimonialsList');
 
     const fetchTestimonials = async () => {
-      const { data, error } = await supabase
-        .from('testimonials')
-        .select('*')
-        .order('display_order', { ascending: false })
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        if (list) list.innerHTML = `<li class="p-4 text-red-500">Errore nel caricamento: ${error.message}</li>`;
+      const res = await fetch('/api/admin/testimonials', { credentials: 'include' });
+      if (res.status === 401) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      const result = await res.json();
+      if (!res.ok) {
+        if (list) list.innerHTML = `<li class="p-4 text-red-500">Errore nel caricamento: ${result.error || 'Errore'}</li>`;
         return;
       }
 
-      if (!data || data.length === 0) {
+      const data = result.items || [];
+      if (data.length === 0) {
         if (list) list.innerHTML = '<li class="p-4 text-center text-gray-500">Nessuna testimonianza trovata.</li>';
         return;
       }
 
       if (list) {
-        list.innerHTML = data.map(testimonial => `
+        list.innerHTML = data.map((testimonial: any) => `
           <li>
             <div class="px-4 py-4 sm:px-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out">
               <div class="flex items-center justify-between mb-2">
@@ -73,62 +73,61 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           </li>
         `).join('');
 
-        // Add delete listeners
         document.querySelectorAll('[data-delete]').forEach(btn => {
           btn.addEventListener('click', async (e) => {
             if (!confirm('Sei sicuro di voler eliminare questa testimonianza?')) return;
             const id = (e.target as HTMLElement).getAttribute('data-delete');
-            const { error } = await supabase.from('testimonials').delete().eq('id', id);
-            if (error) alert('Errore: ' + error.message);
-            else fetchTestimonials(); // Reload
+            const delRes = await fetch(`/api/admin/testimonials?id=${id}`, { method: 'DELETE', credentials: 'include' });
+            if (delRes.status === 401) {
+              window.location.href = '/admin/login';
+              return;
+            }
+            const delResult = await delRes.json().catch(() => ({}));
+            if (!delRes.ok) alert('Errore: ' + (delResult.error || 'Eliminazione fallita'));
+            else fetchTestimonials();
           });
         });
 
-        // Add revoke/publish listeners
         document.querySelectorAll('[data-revoke]').forEach(btn => {
           btn.addEventListener('click', async (e) => {
             const id = (e.target as HTMLElement).getAttribute('data-revoke');
-            const { error } = await supabase
-              .from('testimonials')
-              .update({ is_published: false })
-              .eq('id', id);
-            if (error) alert('Errore: ' + error.message);
-            else fetchTestimonials(); // Reload
+            const patchRes = await fetch(`/api/admin/testimonials?id=${id}`, {
+              method: 'PATCH',
+              credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ is_published: false }),
+            });
+            if (patchRes.status === 401) {
+              window.location.href = '/admin/login';
+              return;
+            }
+            const patchResult = await patchRes.json().catch(() => ({}));
+            if (!patchRes.ok) alert('Errore: ' + (patchResult.error || 'Aggiornamento fallito'));
+            else fetchTestimonials();
           });
         });
 
         document.querySelectorAll('[data-publish]').forEach(btn => {
           btn.addEventListener('click', async (e) => {
             const id = (e.target as HTMLElement).getAttribute('data-publish');
-            const { error } = await supabase
-              .from('testimonials')
-              .update({ is_published: true })
-              .eq('id', id);
-            if (error) alert('Errore: ' + error.message);
-            else fetchTestimonials(); // Reload
+            const patchRes = await fetch(`/api/admin/testimonials?id=${id}`, {
+              method: 'PATCH',
+              credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ is_published: true }),
+            });
+            if (patchRes.status === 401) {
+              window.location.href = '/admin/login';
+              return;
+            }
+            const patchResult = await patchRes.json().catch(() => ({}));
+            if (!patchRes.ok) alert('Errore: ' + (patchResult.error || 'Aggiornamento fallito'));
+            else fetchTestimonials();
           });
         });
       }
     };
 
-    // Initial load
     fetchTestimonials();
-
-    // Real-time subscription
-    const subscription = supabase
-      .channel('testimonials-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'testimonials' },
-        (payload) => {
-          fetchTestimonials();
-        }
-      )
-      .subscribe();
-
-    // Cleanup subscription on page unload
-    window.addEventListener('beforeunload', () => {
-      subscription.unsubscribe();
-    });
   </script>
 </AdminLayout>

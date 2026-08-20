@@ -1,8 +1,11 @@
 import { defineMiddleware } from 'astro:middleware';
+import { getSessionFromCookies } from './lib/auth';
 import { canonicalRedirectUrl } from './lib/seo';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const method = context.request.method;
+  const { pathname } = context.url;
+
   if (method === 'GET' || method === 'HEAD') {
     const target = canonicalRedirectUrl(context.request);
     if (target) {
@@ -10,10 +13,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
 
-  const response = await next();
-  const path = context.url.pathname;
+  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
+    const session = getSessionFromCookies(context.cookies);
+    if (!session) {
+      return context.redirect('/admin/login');
+    }
+  }
 
-  if (path.startsWith('/admin') || path.startsWith('/api')) {
+  const response = await next();
+
+  if (pathname.startsWith('/admin') || pathname.startsWith('/api')) {
     response.headers.set('X-Robots-Tag', 'noindex, nofollow');
   }
 

@@ -1,4 +1,4 @@
----
+﻿---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
@@ -90,8 +90,6 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
   </div>
 
   <script>
-    import { supabase } from '../../../lib/supabase';
-
     const form = document.getElementById('testimonialForm') as HTMLFormElement;
 
     form?.addEventListener('submit', async (e) => {
@@ -110,12 +108,19 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         featured: formData.get('featured') === 'on',
       };
 
-      const { error } = await supabase
-        .from('testimonials')
-        .insert([payload]);
-
-      if (error) {
-        alert('Errore: ' + error.message);
+      const response = await fetch('/api/admin/testimonials', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (response.status === 401) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      const result = await response.json();
+      if (!response.ok) {
+        alert('Errore: ' + (result.error || 'Errore'));
         return;
       }
 

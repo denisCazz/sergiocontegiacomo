@@ -1,4 +1,4 @@
----
+﻿---
 import AdminLayout from '../../layouts/AdminLayout.astro';
 ---
 
@@ -100,7 +100,6 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   </div>
 
   <script>
-    import { supabase } from '../../lib/supabase';
     import dayjs from 'dayjs';
     import 'dayjs/locale/it';
     dayjs.locale('it');
@@ -118,50 +117,42 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     const dateEl = document.getElementById('currentDate');
     if (dateEl) dateEl.textContent = dayjs().format('dddd D MMMM YYYY');
 
-    const loadStats = async () => {
-      const [articles, audio, events, press, podcasts, testimonials] = await Promise.all([
-        supabase.from('articles').select('id', { count: 'exact', head: true }),
-        supabase.from('audio_pillole').select('id', { count: 'exact', head: true }),
-        supabase.from('events').select('id', { count: 'exact', head: true }),
-        supabase.from('press').select('id', { count: 'exact', head: true }),
-        supabase.from('podcasts').select('id', { count: 'exact', head: true }),
-        supabase.from('testimonials').select('id', { count: 'exact', head: true }),
-      ]);
+    const loadDashboard = async () => {
+      const res = await fetch('/api/admin/stats', { credentials: 'include' });
+      if (res.status === 401) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      if (!res.ok) {
+        console.error('Errore caricamento stats');
+        return;
+      }
 
-      document.getElementById('stat-articles')!.textContent = String(articles.count || 0);
-      document.getElementById('stat-audio')!.textContent = String(audio.count || 0);
-      document.getElementById('stat-podcasts')!.textContent = String(podcasts.count || 0);
-      document.getElementById('stat-events')!.textContent = String(events.count || 0);
-      document.getElementById('stat-press')!.textContent = String(press.count || 0);
-      document.getElementById('stat-testimonials')!.textContent = String(testimonials.count || 0);
-    };
+      const { counts, recent } = await res.json();
 
-    // Carica attività recenti
-    const loadRecentActivity = async () => {
-      const [articles, audio, events, press, podcasts] = await Promise.all([
-        supabase.from('articles').select('id, title, created_at').order('created_at', { ascending: false }).limit(3),
-        supabase.from('audio_pillole').select('id, title, created_at').order('created_at', { ascending: false }).limit(3),
-        supabase.from('events').select('id, title, created_at').order('created_at', { ascending: false }).limit(3),
-        supabase.from('press').select('id, title, created_at').order('created_at', { ascending: false }).limit(3),
-        supabase.from('podcasts').select('id, title, created_at').order('created_at', { ascending: false }).limit(3),
-      ]);
+      document.getElementById('stat-articles')!.textContent = String(counts?.articles || 0);
+      document.getElementById('stat-audio')!.textContent = String(counts?.audio || 0);
+      document.getElementById('stat-podcasts')!.textContent = String(counts?.podcasts || 0);
+      document.getElementById('stat-events')!.textContent = String(counts?.events || 0);
+      document.getElementById('stat-press')!.textContent = String(counts?.press || 0);
+      document.getElementById('stat-testimonials')!.textContent = String(counts?.testimonials || 0);
 
       type ActivityItem = { id: string; title: string; created_at: string; type: string; color: string; link: string };
       const allItems: ActivityItem[] = [
-        ...(articles.data || []).map((a: any) => ({ ...a, type: 'Articolo', color: 'blue', link: `/admin/articles/edit?id=${a.id}` })),
-        ...(audio.data || []).map((a: any) => ({ ...a, type: 'Audio', color: 'purple', link: `/admin/audio/edit?id=${a.id}` })),
-        ...(events.data || []).map((e: any) => ({ ...e, type: 'Evento', color: 'amber', link: `/admin/events` })),
-        ...(press.data || []).map((p: any) => ({ ...p, type: 'Stampa', color: 'rose', link: `/admin/press/edit?id=${p.id}` })),
-        ...(podcasts.data || []).map((p: any) => ({ ...p, type: 'Podcast', color: 'teal', link: `/admin/podcast/edit?id=${p.id}` })),
+        ...(recent?.articles || []).map((a: any) => ({ ...a, type: 'Articolo', color: 'blue', link: `/admin/articles/edit?id=${a.id}` })),
+        ...(recent?.audio || []).map((a: any) => ({ ...a, type: 'Audio', color: 'purple', link: `/admin/audio/edit?id=${a.id}` })),
+        ...(recent?.events || []).map((e: any) => ({ ...e, type: 'Evento', color: 'amber', link: `/admin/events` })),
+        ...(recent?.press || []).map((p: any) => ({ ...p, type: 'Stampa', color: 'rose', link: `/admin/press/edit?id=${p.id}` })),
+        ...(recent?.podcasts || []).map((p: any) => ({ ...p, type: 'Podcast', color: 'teal', link: `/admin/podcast/edit?id=${p.id}` })),
       ];
 
       allItems.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-      const recent = allItems.slice(0, 8);
+      const recentItems = allItems.slice(0, 8);
 
       const list = document.getElementById('recentActivity');
       if (!list) return;
 
-      if (recent.length === 0) {
+      if (recentItems.length === 0) {
         list.innerHTML = '<li class="p-4 text-center text-gray-500 dark:text-gray-400">Nessuna attivita\' recente</li>';
         return;
       }
@@ -174,7 +165,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         teal: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
       };
 
-      list.innerHTML = recent.map(item => `
+      list.innerHTML = recentItems.map(item => `
         <li>
           <a href="${item.link}" class="flex items-center gap-4 px-4 py-3 transition hover:bg-gray-50 dark:hover:bg-gray-700/50">
             <span class="inline-flex items-center rounded-md px-2 py-1 text-[11px] font-bold uppercase tracking-wider ${badgeColors[item.color] || badgeColors.blue}">${item.type}</span>
@@ -190,7 +181,6 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       `).join('');
     };
 
-    loadStats();
-    loadRecentActivity();
+    loadDashboard();
   </script>
 </AdminLayout>

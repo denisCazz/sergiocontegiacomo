@@ -1,9 +1,4 @@
-﻿export const cmsConfig = {
-  strapiBaseUrl: import.meta.env.STRAPI_BASE_URL ?? '',
-  strapiToken: import.meta.env.STRAPI_API_TOKEN ?? '',
-};
-
-// Production URL - always use this for canonical URLs and SEO tags
+﻿// Production URL - always use this for canonical URLs and SEO tags
 const productionUrl = 'https://www.sergiocontegiacomo.it';
 
 function normalizeHttpsUrl(value: unknown): string | undefined {

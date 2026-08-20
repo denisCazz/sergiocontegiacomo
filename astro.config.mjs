@@ -18,4 +18,9 @@ export default defineConfig({
       tailwind({ configFile: './tailwind.config.cjs' }),
 		],
     scopedStyleStrategy: 'where',
+    vite: {
+      ssr: {
+        external: ['postgres', '@aws-sdk/client-s3'],
+      },
+    },
 });

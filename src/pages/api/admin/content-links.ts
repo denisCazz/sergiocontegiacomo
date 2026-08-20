@@ -1,54 +1,66 @@
-import type { APIRoute } from 'astro';
-import { supabase } from '../../../lib/supabase';
+﻿import type { APIRoute } from 'astro';
+import { sql } from '../../../lib/db';
+import { requireAdminFromRequest, unauthorizedResponse } from '../../../lib/auth';
 
-export const GET: APIRoute = async () => {
+export const prerender = false;
+
+export const GET: APIRoute = async ({ request }) => {
   try {
-    // Fetch articles, events, and press items in parallel
-    const [articlesRes, eventsRes, pressRes] = await Promise.all([
-      supabase
-        .from('articles')
-        .select('id, title, slug, published_at')
-        .not('published_at', 'is', null)
-        .order('published_at', { ascending: false }),
-      supabase
-        .from('events')
-        .select('id, title, slug, date')
-        .order('date', { ascending: false }),
-      supabase
-        .from('press')
-        .select('id, title, testata, file_url, published_at')
-        .order('published_at', { ascending: false }),
+    try {
+      requireAdminFromRequest(request);
+    } catch {
+      return unauthorizedResponse();
+    }
+
+    const [articles, events, press] = await Promise.all([
+      sql`
+        SELECT id, title, slug, published_at
+        FROM articles
+        WHERE published_at IS NOT NULL
+        ORDER BY published_at DESC
+      `,
+      sql`
+        SELECT id, title, slug, date
+        FROM events
+        ORDER BY date DESC NULLS LAST
+      `,
+      sql`
+        SELECT id, title, testata, file_url, published_at
+        FROM press
+        ORDER BY published_at DESC
+      `,
     ]);
 
-    const articles = (articlesRes.data ?? []).map((a) => ({
-      type: 'article' as const,
-      id: a.id,
-      title: a.title,
-      url: `/blog/${a.slug}`,
-      date: a.published_at,
-    }));
-
-    const events = (eventsRes.data ?? []).map((e) => ({
-      type: 'event' as const,
-      id: e.id,
-      title: e.title,
-      url: `/eventi/${e.slug}`,
-      date: e.date,
-    }));
-
-    const press = (pressRes.data ?? []).map((p) => ({
-      type: 'press' as const,
-      id: p.id,
-      title: p.title,
-      url: p.file_url,
-      date: p.published_at,
-      testata: p.testata,
-    }));
-
-    return new Response(JSON.stringify({ articles, events, press }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({
+        articles: articles.map((a: any) => ({
+          type: 'article' as const,
+          id: a.id,
+          title: a.title,
+          url: `/blog/${a.slug}`,
+          date: a.published_at,
+        })),
+        events: events.map((e: any) => ({
+          type: 'event' as const,
+          id: e.id,
+          title: e.title,
+          url: `/eventi/${e.slug}`,
+          date: e.date,
+        })),
+        press: press.map((p: any) => ({
+          type: 'press' as const,
+          id: p.id,
+          title: p.title,
+          url: p.file_url,
+          date: p.published_at,
+          testata: p.testata,
+        })),
+      }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   } catch (err: any) {
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,

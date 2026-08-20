@@ -1,4 +1,4 @@
----
+﻿---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import CTASection from '../../components/CTASection.astro';
@@ -262,15 +262,6 @@ const eventStructuredData = {
 </BaseLayout>
 
 <script>
-  import { createClient } from '@supabase/supabase-js';
-
-  const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('Supabase env vars missing');
-  }
-  const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
-
   const article = document.getElementById('event-article');
   const slug = article?.dataset.slug;
 
@@ -288,17 +279,9 @@ const eventStructuredData = {
     console.error('Slug not found');
   } else {
     async function loadStats() {
-      const { data, error } = await supabase
-        .from('event_rsvps')
-        .select('status')
-        .eq('event_slug', slug);
-      
-      if (error) {
-        console.error('Error loading stats:', error);
-        return;
-      }
-
-      const attending = data.filter((r: any) => r.status === 'attending').length;
+      const res = await fetch(`/api/rsvp?slug=${encodeURIComponent(slug!)}`);
+      const { rsvps } = await res.json();
+      const attending = (rsvps||[]).filter((r:any) => r.status === 'attending').length;
 
       if (countAttendEl) countAttendEl.textContent = `${attending} partecipanti`;
     }
@@ -345,17 +328,14 @@ const eventStructuredData = {
         return;
       }
 
-      const { error } = await supabase
-        .from('event_rsvps')
-        .insert([{ 
-          event_slug: slug, 
-          user_name: 'Partecipante', // Fallback for schema compatibility
-          user_email: email,
-          status: selectedStatus 
-        }]);
+      const res = await fetch('/api/rsvp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ event_slug: slug, user_name: 'Partecipante', user_email: email, status: selectedStatus }),
+      });
 
-      if (error) {
-        console.error('Error saving RSVP:', error);
+      if (!res.ok) {
+        console.error('Error saving RSVP');
         alert('Errore durante il salvataggio. Riprova.');
       } else {
         localStorage.setItem(`rsvp_${slug}`, selectedStatus || '');
@@ -390,8 +370,3 @@ const eventStructuredData = {
     loadStats();
   }
 </script>
-        </aside>
-      </div>
-    </div>
-  </article>
-</BaseLayout>

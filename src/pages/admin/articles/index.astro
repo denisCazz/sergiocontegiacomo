@@ -1,4 +1,4 @@
----
+﻿---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
@@ -17,30 +17,30 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
   </div>
 
   <script>
-    import { supabase } from '../../../lib/supabase';
     import dayjs from 'dayjs';
 
     const list = document.getElementById('articlesList');
 
     const fetchArticles = async () => {
-      const { data, error } = await supabase
-        .from('articles')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error(error);
-        if (list) list.innerHTML = `<li class="p-4 text-red-500">Errore nel caricamento: ${error.message}</li>`;
+      const res = await fetch('/api/admin/articles', { credentials: 'include' });
+      if (res.status === 401) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      const result = await res.json();
+      if (!res.ok) {
+        if (list) list.innerHTML = `<li class="p-4 text-red-500">Errore nel caricamento: ${result.error || 'Errore'}</li>`;
         return;
       }
 
-      if (!data || data.length === 0) {
+      const data = result.articles || [];
+      if (data.length === 0) {
         if (list) list.innerHTML = '<li class="p-4 text-center text-gray-500">Nessun articolo trovato.</li>';
         return;
       }
 
       if (list) {
-        list.innerHTML = data.map(article => `
+        list.innerHTML = data.map((article: any) => `
           <li>
             <div class="px-4 py-4 sm:px-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out">
               <div class="flex items-center justify-between">
@@ -73,14 +73,18 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           </li>
         `).join('');
 
-        // Add delete listeners
         document.querySelectorAll('[data-delete]').forEach(btn => {
           btn.addEventListener('click', async (e) => {
             if (!confirm('Sei sicuro di voler eliminare questo articolo?')) return;
             const id = (e.target as HTMLElement).getAttribute('data-delete');
-            const { error } = await supabase.from('articles').delete().eq('id', id);
-            if (error) alert('Errore: ' + error.message);
-            else fetchArticles(); // Reload
+            const delRes = await fetch(`/api/admin/articles?id=${id}`, { method: 'DELETE', credentials: 'include' });
+            if (delRes.status === 401) {
+              window.location.href = '/admin/login';
+              return;
+            }
+            const delResult = await delRes.json().catch(() => ({}));
+            if (!delRes.ok) alert('Errore: ' + (delResult.error || 'Eliminazione fallita'));
+            else fetchArticles();
           });
         });
       }

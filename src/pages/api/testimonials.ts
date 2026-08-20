@@ -1,6 +1,6 @@
-export const prerender = false;
+﻿export const prerender = false;
 
-import { supabase } from '../../lib/supabase';
+import { sql } from '../../lib/db';
 
 function getString(value: unknown): string | undefined {
   if (typeof value !== 'string') return undefined;
@@ -16,7 +16,6 @@ export async function POST({ request }: { request: Request }) {
   try {
     const payload = await request.json().catch(() => ({}));
 
-    // Honeypot anti-bot
     const honey = getString((payload as any)?.website) || getString((payload as any)?.company);
     if (honey) {
       return new Response(JSON.stringify({ success: true, message: 'Testimonianza ricevuta.' }), {
@@ -67,30 +66,22 @@ export async function POST({ request }: { request: Request }) {
       });
     }
 
-    // Insert testimonial (published by default, can be revoked by admin if needed)
-    const { error } = await supabase
-      .from('testimonials')
-      .insert([{
-        author_name: authorName,
-        author_role: authorRole || null,
-        quote: quote.slice(0, 1000),
-        rating: rating,
-        is_published: true, // Published automatically
-        featured: false,
-        display_order: 0,
-      }]);
+    await sql`
+      INSERT INTO testimonials (author_name, author_role, quote, rating, is_published, featured, display_order)
+      VALUES (
+        ${authorName},
+        ${authorRole || null},
+        ${quote.slice(0, 1000)},
+        ${rating},
+        true,
+        false,
+        0
+      )
+    `;
 
-    if (error) {
-      console.error('[testimonials] Errore inserimento:', error);
-      return new Response(JSON.stringify({ success: false, message: 'Errore durante l\'invio della testimonianza' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    return new Response(JSON.stringify({ 
-      success: true, 
-      message: 'Grazie! La tua testimonianza è stata pubblicata.' 
+    return new Response(JSON.stringify({
+      success: true,
+      message: 'Grazie! La tua testimonianza è stata pubblicata.',
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
