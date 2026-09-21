@@ -1,6 +1,7 @@
 ﻿import type { APIRoute } from 'astro';
 import { requireAdminFromRequest, unauthorizedResponse } from '../../../lib/auth';
 import { sql } from '../../../lib/db';
+import { ensureGallerySchema } from '../../../lib/cms';
 
 export const prerender = false;
 
@@ -12,6 +13,7 @@ export const GET: APIRoute = async ({ request }) => {
   }
 
   try {
+    await ensureGallerySchema();
     const [counts, recentArticles, recentAudio, recentEvents, recentPress, recentPodcasts] = await Promise.all([
       sql`
         SELECT
@@ -20,7 +22,8 @@ export const GET: APIRoute = async ({ request }) => {
           (SELECT COUNT(*)::int FROM events) AS events,
           (SELECT COUNT(*)::int FROM press) AS press,
           (SELECT COUNT(*)::int FROM podcasts) AS podcasts,
-          (SELECT COUNT(*)::int FROM testimonials) AS testimonials
+          (SELECT COUNT(*)::int FROM testimonials) AS testimonials,
+          (SELECT COUNT(*)::int FROM gallery_images) AS gallery
       `,
       sql`SELECT id, title, created_at FROM articles ORDER BY created_at DESC LIMIT 3`,
       sql`SELECT id, title, created_at FROM audio_pillole ORDER BY created_at DESC LIMIT 3`,

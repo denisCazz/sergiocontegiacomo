@@ -16,6 +16,7 @@
     "pdf:optimize": "node scripts/optimize-pdfs.mjs",
     "pdf:optimize:win": "powershell -ExecutionPolicy Bypass -File scripts/optimize-pdfs.ps1 -Preset ebook",
     "migrate:media": "node --env-file=.env scripts/migrate-media-to-r2.mjs",
+    "gallery:import": "node --env-file=.env scripts/import-gallery-to-r2.mjs",
     "check:media": "node --env-file=.env scripts/check-media-urls.mjs"
   },
   "dependencies": {

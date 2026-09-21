@@ -1,12 +1,11 @@
----
+﻿---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
-import { Image } from 'astro:assets';
+import { getPublishedGalleryImages } from '../lib/cms';
 
-export const prerender = true;
+export const prerender = false;
 
-const imageModules = import.meta.glob('../assets/gallery/*.{jpg,jpeg,png,webp,avif}', { eager: true });
-const images = Object.values(imageModules).map((mod: any) => mod.default);
+const images = await getPublishedGalleryImages();
 ---
 
 <BaseLayout
@@ -29,10 +28,7 @@ const images = Object.values(imageModules).map((mod: any) => mod.default);
       {images.length === 0 ? (
         <div class="mt-10 rounded-3xl border border-neutral-border bg-neutral-50 p-8 text-center dark:border-neutral-800 dark:bg-neutral-900">
           <p class="text-neutral-muted dark:text-neutral-300">
-            Nessuna immagine trovata. Aggiungi i file in
-            <span class="font-semibold text-neutral-text dark:text-white"> src/assets/gallery</span>
-            e poi esegui
-            <span class="font-semibold text-neutral-text dark:text-white"> npm run assets:optimize</span>.
+            Nessuna immagine pubblicata al momento.
           </p>
         </div>
       ) : (
@@ -44,20 +40,24 @@ const images = Object.values(imageModules).map((mod: any) => mod.default);
                 class="block w-full text-left"
                 data-gallery-item
                 data-index={i}
-                data-full-src=""
-                data-alt={`Immagine gallery ${i + 1}`}
+                data-full-src={img.image_url}
+                data-alt={img.alt || img.caption || `Immagine gallery ${i + 1}`}
                 aria-label={`Apri immagine ${i + 1} in carousel`}
               >
-                <Image
-                  src={img}
-                  alt={`Immagine gallery ${i + 1}`}
-                  widths={[400, 800, 1200]}
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                <img
+                  src={img.image_url}
+                  alt={img.alt || img.caption || `Immagine gallery ${i + 1}`}
                   loading="lazy"
+                  decoding="async"
                   class="w-full h-auto transition-transform duration-500 group-hover:scale-[1.03]"
                   data-gallery-thumb
                 />
               </button>
+              {img.caption && (
+                <figcaption class="px-4 py-3 text-sm text-neutral-muted dark:text-neutral-300">
+                  {img.caption}
+                </figcaption>
+              )}
             </figure>
           ))}
         </div>

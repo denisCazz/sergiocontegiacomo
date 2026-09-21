@@ -1,0 +1,346 @@
+﻿---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Gallery">
+  <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Gallery</h1>
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        Trascina le foto per caricarle o riordinarle. Puoi modificare alt, didascalia e visibilità sulla card.
+      </p>
+    </div>
+    <a
+      href="/gallery"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="inline-flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+    >
+      Vedi pagina pubblica
+    </a>
+  </div>
+
+  <div
+    id="dropzone"
+    class="mb-6 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 bg-white px-6 py-10 text-center transition hover:border-brand-primary hover:bg-brand-primary/5 dark:border-gray-600 dark:bg-gray-800"
+  >
+    <svg class="mb-3 h-10 w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16l4.5-4.5a2.121 2.121 0 013 0L15 16m-1.5-1.5l1.5-1.5a2.121 2.121 0 013 0L21 16M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
+    </svg>
+    <p class="text-sm font-medium text-gray-700 dark:text-gray-200">Trascina qui le immagini oppure clicca per selezionarle</p>
+    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">JPG, PNG, WEBP, GIF, SVG · massimo 50 MB ciascuna</p>
+    <input id="fileInput" type="file" accept="image/*" multiple class="hidden" />
+  </div>
+
+  <p id="statusMessage" class="mb-4 hidden text-sm text-gray-500 dark:text-gray-400"></p>
+
+  <div id="galleryGrid" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <p class="col-span-full p-4 text-center text-gray-500 dark:text-gray-400">Caricamento...</p>
+  </div>
+
+  <script>
+    import { altFromFilename, isGalleryImageFile } from '../../lib/gallery';
+
+    type GalleryImage = {
+      id: number;
+      image_url: string;
+      alt: string;
+      caption?: string | null;
+      display_order: number;
+      is_published: boolean;
+    };
+
+    const dropzone = document.getElementById('dropzone') as HTMLElement | null;
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement | null;
+    const grid = document.getElementById('galleryGrid');
+    const statusMessage = document.getElementById('statusMessage');
+    let items: GalleryImage[] = [];
+    let dragId: number | null = null;
+
+    const setStatus = (text: string, isError = false) => {
+      if (!statusMessage) return;
+      if (!text) {
+        statusMessage.classList.add('hidden');
+        return;
+      }
+      statusMessage.textContent = text;
+      statusMessage.classList.remove('hidden');
+      statusMessage.classList.toggle('text-red-600', isError);
+      statusMessage.classList.toggle('dark:text-red-400', isError);
+      statusMessage.classList.toggle('text-gray-500', !isError);
+    };
+
+    const escapeHtml = (value: string) =>
+      value
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+
+    const redirectIfUnauthorized = (status: number) => {
+      if (status === 401) {
+        window.location.href = '/admin/login';
+        return true;
+      }
+      return false;
+    };
+
+    const render = () => {
+      if (!grid) return;
+      if (items.length === 0) {
+        grid.innerHTML = '<p class="col-span-full rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-500 dark:border-gray-600 dark:text-gray-400">Nessuna foto. Trascina i file qui sopra per iniziare.</p>';
+        return;
+      }
+
+      grid.innerHTML = items
+        .map(
+          (item) => `
+        <article
+          data-card-id="${item.id}"
+          class="group flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800 ${item.is_published ? '' : 'opacity-70'}"
+        >
+          <div draggable="true" data-id="${item.id}" class="relative cursor-grab bg-gray-100 dark:bg-gray-900">
+            <img src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.alt || '')}" class="pointer-events-none h-48 w-full object-cover" />
+            <span class="pointer-events-none absolute left-2 top-2 rounded bg-black/60 px-2 py-0.5 text-[11px] font-medium text-white">Trascina per ordine</span>
+            ${item.is_published ? '' : '<span class="absolute right-2 top-2 rounded bg-gray-800/80 px-2 py-0.5 text-[11px] font-medium text-white">Nascosta</span>'}
+          </div>
+          <div class="flex flex-1 flex-col gap-3 p-4">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              Testo alternativo
+              <input data-field="alt" data-id="${item.id}" value="${escapeHtml(item.alt || '')}" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white" />
+            </label>
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              Didascalia
+              <input data-field="caption" data-id="${item.id}" value="${escapeHtml(item.caption || '')}" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white" />
+            </label>
+            <div class="mt-auto flex items-center justify-between gap-2">
+              <label class="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                <input type="checkbox" data-publish="${item.id}" ${item.is_published ? 'checked' : ''} class="rounded border-gray-300 text-brand-primary focus:ring-brand-primary" />
+                Visibile
+              </label>
+              <div class="flex items-center gap-2">
+                <label class="cursor-pointer text-sm font-medium text-brand-primary hover:text-brand-dark">
+                  Sostituisci
+                  <input type="file" accept="image/*" data-replace="${item.id}" class="hidden" />
+                </label>
+                <button type="button" data-delete="${item.id}" class="text-sm font-medium text-red-600 hover:text-red-800">Elimina</button>
+              </div>
+            </div>
+          </div>
+        </article>
+      `
+        )
+        .join('');
+
+      bindCardEvents();
+    };
+
+    const fetchItems = async () => {
+      const res = await fetch('/api/admin/gallery', { credentials: 'include' });
+      if (redirectIfUnauthorized(res.status)) return;
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setStatus(result.error || 'Errore nel caricamento', true);
+        return;
+      }
+      items = result.items || [];
+      render();
+    };
+
+    const patchItem = async (id: number, body: Record<string, unknown>) => {
+      const res = await fetch(`/api/admin/gallery?id=${id}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (redirectIfUnauthorized(res.status)) return null;
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        alert(result.error || 'Aggiornamento fallito');
+        return null;
+      }
+      return result.item as GalleryImage;
+    };
+
+    const saveOrder = async () => {
+      const res = await fetch('/api/admin/gallery', {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reorder: items.map((item) => item.id) }),
+      });
+      if (redirectIfUnauthorized(res.status)) return;
+      if (!res.ok) {
+        const result = await res.json().catch(() => ({}));
+        alert(result.error || 'Riordino fallito');
+      }
+    };
+
+    const uploadFile = async (file: File) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('category', 'images');
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+      });
+      if (redirectIfUnauthorized(res.status)) return null;
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok || !result.url) {
+        throw new Error(result.error || `Upload fallito (${res.status})`);
+      }
+      return result.url as string;
+    };
+
+    const addFiles = async (fileList: FileList | File[]) => {
+      const files = Array.from(fileList).filter((file) => isGalleryImageFile(file.name) || file.type.startsWith('image/'));
+      if (!files.length) {
+        setStatus('Nessuna immagine valida selezionata.', true);
+        return;
+      }
+
+      setStatus(`Caricamento di ${files.length} file...`);
+      for (const [index, file] of files.entries()) {
+        setStatus(`Caricamento ${index + 1} di ${files.length}: ${file.name}`);
+        try {
+          const url = await uploadFile(file);
+          if (!url) return;
+          const res = await fetch('/api/admin/gallery', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              image_url: url,
+              alt: altFromFilename(file.name),
+              is_published: true,
+            }),
+          });
+          if (redirectIfUnauthorized(res.status)) return;
+          const result = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(result.error || 'Salvataggio fallito');
+          items.push(result.item);
+        } catch (error: any) {
+          setStatus(`Errore su ${file.name}: ${error.message}`, true);
+          render();
+          return;
+        }
+      }
+      setStatus(`${files.length} foto caricate.`);
+      render();
+    };
+
+    const bindCardEvents = () => {
+      grid?.querySelectorAll<HTMLElement>('[data-card-id]').forEach((card) => {
+        const handle = card.querySelector<HTMLElement>('[data-id]');
+        handle?.addEventListener('dragstart', () => {
+          dragId = Number(handle.getAttribute('data-id'));
+          card.classList.add('ring-2', 'ring-brand-primary');
+        });
+        handle?.addEventListener('dragend', () => {
+          card.classList.remove('ring-2', 'ring-brand-primary');
+          dragId = null;
+        });
+        card.addEventListener('dragover', (event) => {
+          event.preventDefault();
+        });
+        card.addEventListener('drop', async (event) => {
+          event.preventDefault();
+          const targetId = Number(card.getAttribute('data-card-id'));
+          if (!dragId || dragId === targetId) return;
+          const from = items.findIndex((item) => item.id === dragId);
+          const to = items.findIndex((item) => item.id === targetId);
+          if (from < 0 || to < 0) return;
+          const [moved] = items.splice(from, 1);
+          items.splice(to, 0, moved);
+          render();
+          await saveOrder();
+        });
+      });
+
+      grid?.querySelectorAll<HTMLInputElement>('[data-field]').forEach((input) => {
+        input.addEventListener('change', async () => {
+          const id = Number(input.getAttribute('data-id'));
+          const field = input.getAttribute('data-field');
+          if (!id || !field) return;
+          const item = await patchItem(id, { [field]: input.value });
+          if (item) {
+            items = items.map((entry) => (entry.id === id ? item : entry));
+          }
+        });
+      });
+
+      grid?.querySelectorAll<HTMLInputElement>('[data-publish]').forEach((input) => {
+        input.addEventListener('change', async () => {
+          const id = Number(input.getAttribute('data-publish'));
+          const item = await patchItem(id, { is_published: input.checked });
+          if (item) {
+            items = items.map((entry) => (entry.id === id ? item : entry));
+            render();
+          }
+        });
+      });
+
+      grid?.querySelectorAll<HTMLInputElement>('[data-replace]').forEach((input) => {
+        input.addEventListener('change', async () => {
+          const file = input.files?.[0];
+          const id = Number(input.getAttribute('data-replace'));
+          if (!file || !id) return;
+          try {
+            setStatus(`Sostituzione foto ${id}...`);
+            const url = await uploadFile(file);
+            if (!url) return;
+            const item = await patchItem(id, { image_url: url });
+            if (item) {
+              items = items.map((entry) => (entry.id === id ? item : entry));
+              render();
+              setStatus('Foto sostituita.');
+            }
+          } catch (error: any) {
+            setStatus(error.message || 'Sostituzione fallita', true);
+          }
+        });
+      });
+
+      grid?.querySelectorAll<HTMLButtonElement>('[data-delete]').forEach((button) => {
+        button.addEventListener('click', async () => {
+          if (!confirm('Eliminare questa foto dalla gallery?')) return;
+          const id = Number(button.getAttribute('data-delete'));
+          const res = await fetch(`/api/admin/gallery?id=${id}`, {
+            method: 'DELETE',
+            credentials: 'include',
+          });
+          if (redirectIfUnauthorized(res.status)) return;
+          const result = await res.json().catch(() => ({}));
+          if (!res.ok) {
+            alert(result.error || 'Eliminazione fallita');
+            return;
+          }
+          items = items.filter((item) => item.id !== id);
+          render();
+        });
+      });
+    };
+
+    dropzone?.addEventListener('click', () => fileInput?.click());
+    dropzone?.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      dropzone.classList.add('border-brand-primary', 'bg-brand-primary/5');
+    });
+    dropzone?.addEventListener('dragleave', () => {
+      dropzone.classList.remove('border-brand-primary', 'bg-brand-primary/5');
+    });
+    dropzone?.addEventListener('drop', (event) => {
+      event.preventDefault();
+      dropzone.classList.remove('border-brand-primary', 'bg-brand-primary/5');
+      if (event.dataTransfer?.files?.length) addFiles(event.dataTransfer.files);
+    });
+    fileInput?.addEventListener('change', () => {
+      if (fileInput.files?.length) addFiles(fileInput.files);
+      fileInput.value = '';
+    });
+
+    fetchItems();
+  </script>
+</AdminLayout>

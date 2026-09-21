@@ -24,7 +24,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   </div>
 
   <!-- Statistiche con azioni rapide integrate -->
-  <div class="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+  <div class="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
     <div class="group relative rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 p-4 text-white shadow-md transition hover:shadow-lg">
       <a href="/admin/articles" class="block">
         <p class="text-[11px] font-medium text-blue-100 uppercase tracking-wide">Articoli</p>
@@ -67,6 +67,15 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         <p class="text-2xl font-bold mt-1" id="stat-press">-</p>
       </a>
       <a href="/admin/press/new" class="absolute top-3 right-3 flex h-7 w-7 items-center justify-center rounded-lg bg-white/20 text-white hover:bg-white/40 transition" title="Nuova Rassegna">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+      </a>
+    </div>
+    <div class="group relative rounded-xl bg-gradient-to-br from-teal-500 to-cyan-600 p-4 text-white shadow-md transition hover:shadow-lg">
+      <a href="/admin/gallery" class="block">
+        <p class="text-[11px] font-medium text-teal-100 uppercase tracking-wide">Gallery</p>
+        <p class="text-2xl font-bold mt-1" id="stat-gallery">-</p>
+      </a>
+      <a href="/admin/gallery" class="absolute top-3 right-3 flex h-7 w-7 items-center justify-center rounded-lg bg-white/20 text-white hover:bg-white/40 transition" title="Gestisci Gallery">
         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
       </a>
     </div>
@@ -136,6 +145,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       document.getElementById('stat-events')!.textContent = String(counts?.events || 0);
       document.getElementById('stat-press')!.textContent = String(counts?.press || 0);
       document.getElementById('stat-testimonials')!.textContent = String(counts?.testimonials || 0);
+      document.getElementById('stat-gallery')!.textContent = String(counts?.gallery || 0);
 
       type ActivityItem = { id: string; title: string; created_at: string; type: string; color: string; link: string };
       const allItems: ActivityItem[] = [
