@@ -74,12 +74,12 @@ const desktopNavHover =
 ---
 
 <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-neutral-border dark:bg-neutral-900/90 dark:border-neutral-800">
-  <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-3 group">
-      <img src="/logo_sergio.avif" alt="Logo Sergio Contegiacomo" width="48" height="48" class="h-12 w-12 rounded-full object-cover flex-shrink-0" />
-      <div class="flex flex-col justify-center">
-        <span class="text-sm uppercase tracking-[0.3em] text-brand-primary leading-tight">{siteConfig.name}</span>
-        <span class="text-xs text-neutral-muted dark:text-neutral-300 leading-tight">{siteConfig.role}</span>
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
+    <a href="/" class="flex min-w-0 items-center gap-3 group">
+      <img src="/logo_sergio.avif" alt="Logo Sergio Contegiacomo" width="48" height="48" class="h-11 w-11 rounded-full object-cover flex-shrink-0 sm:h-12 sm:w-12" />
+      <div class="flex min-w-0 flex-col justify-center">
+        <span class="whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.06em] text-brand-primary leading-tight min-[400px]:text-[11px] min-[400px]:tracking-[0.12em] sm:text-sm sm:font-normal sm:tracking-[0.3em]">{siteConfig.name}</span>
+        <span class="hidden text-xs text-neutral-muted leading-tight sm:block dark:text-neutral-300">{siteConfig.role}</span>
       </div>
     </a>
     <nav aria-label="Principale" class="hidden lg:flex items-center gap-6 text-sm font-medium">
@@ -161,13 +161,26 @@ const desktopNavHover =
       ))}
       <a
         href="/contatti"
-        class="ml-6 inline-flex items-center rounded-full bg-brand-primary px-4 py-2 text-white text-sm font-semibold shadow-md shadow-brand-primary/20 hover:bg-brand-light transition"
+        data-track-event="contact_click"
+        data-track-location="header"
+        class="ml-3 inline-flex items-center gap-2 rounded-full bg-brand-primary px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_24px_-8px_rgba(47,90,168,0.85)] ring-2 ring-brand-accent ring-offset-2 ring-offset-white transition hover:-translate-y-0.5 hover:bg-brand-dark dark:ring-offset-neutral-900"
       >
+        <span class="h-1.5 w-1.5 rounded-full bg-brand-accent" aria-hidden="true"></span>
         Parliamo
       </a>
     </nav>
+    <div class="flex items-center gap-2 sm:gap-3 lg:hidden">
+      <a
+        href="/contatti"
+        data-track-event="contact_click"
+        data-track-location="header_mobile"
+        class="inline-flex items-center gap-1.5 rounded-full bg-brand-primary px-3.5 py-2 text-sm font-semibold text-white shadow-[0_8px_18px_-8px_rgba(47,90,168,0.9)] ring-2 ring-brand-accent ring-offset-2 ring-offset-white dark:ring-offset-neutral-900"
+      >
+        <span class="h-1.5 w-1.5 rounded-full bg-brand-accent" aria-hidden="true"></span>
+        Parliamo
+      </a>
     <button
-      class="lg:hidden text-brand-primary"
+      class="text-brand-primary"
       type="button"
       aria-label="Apri menu"
       aria-expanded="false"
@@ -178,6 +191,7 @@ const desktopNavHover =
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
       </svg>
     </button>
+    </div>
   </div>
 </header>
 
@@ -246,9 +260,12 @@ const desktopNavHover =
     </nav>
     <a
       href="/contatti"
-      class="mt-auto inline-flex items-center justify-center rounded-full bg-brand-primary px-4 py-3 text-white font-semibold shadow-md shadow-brand-primary/20 hover:bg-brand-light transition"
+      data-track-event="contact_click"
+      data-track-location="header_drawer"
+      class="mt-auto inline-flex items-center justify-center gap-2 rounded-full bg-brand-primary px-4 py-3 font-semibold text-white shadow-md shadow-brand-primary/20 ring-2 ring-brand-accent ring-offset-2 ring-offset-white transition hover:bg-brand-dark dark:ring-offset-neutral-900"
     >
-      Prenota una call
+      <span class="h-1.5 w-1.5 rounded-full bg-brand-accent" aria-hidden="true"></span>
+      Parliamo
     </a>
   </div>
 </div>

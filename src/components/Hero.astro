@@ -14,86 +14,190 @@ interface Props {
   stats?: Array<{ value: string; label: string }>;
 }
 
-const { eyebrow, title, description, primaryCta, secondaryCta, stats } = Astro.props;
+const { eyebrow, title, description, primaryCta, secondaryCta, stats = [] } = Astro.props;
 ---
 
-<section class="relative overflow-hidden bg-neutral-base dark:bg-neutral-950">
-  <div class="absolute inset-0 bg-gradient-to-br from-brand-primary/10 via-transparent to-brand-light/10 dark:from-brand-dark/40 dark:via-transparent dark:to-brand-accent/20"></div>
-  <div class="relative mx-auto max-w-6xl px-6 py-20 lg:py-28">
-    <div class="grid gap-10 lg:grid-cols-12 lg:items-center">
-      <div class="lg:col-span-7 space-y-8 animate-slide-up">
+<section class="hero-stage relative bg-neutral-base dark:bg-neutral-950 lg:h-[205vh]" data-hero-stage style="--p: 1">
+  <script is:inline>
+    (() => {
+      const stage = document.currentScript && document.currentScript.parentElement;
+      if (!stage) return;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce) {
+        stage.style.setProperty('--p', '1');
+        return;
+      }
+      stage.style.setProperty('--p', '0');
+      let ticking = false;
+      const update = () => {
+        const rect = stage.getBoundingClientRect();
+        const span = Math.max(stage.offsetHeight - window.innerHeight, window.innerHeight * 0.55);
+        const p = Math.min(1, Math.max(0, -rect.top / span));
+        stage.style.setProperty('--p', p.toFixed(4));
+        ticking = false;
+      };
+      const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(update);
+      };
+      update();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+    })();
+  </script>
+
+  <div class="hero-pin relative lg:sticky lg:top-0 lg:h-svh lg:overflow-hidden">
+    <div class="relative h-[46vh] min-h-[260px] lg:absolute lg:inset-y-0 lg:left-[42%] lg:right-0 lg:h-auto lg:min-h-0">
+      <img
+        src="/sergio-hero.avif"
+        alt="Sergio Contegiacomo - Consulente Patrimoniale e Coach Finanziario"
+        width="1400"
+        height="1310"
+        fetchpriority="high"
+        decoding="async"
+        class="hero-photo h-full w-full object-cover object-[center_22%]"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-neutral-base via-transparent to-transparent lg:bg-gradient-to-r lg:from-neutral-base lg:via-neutral-base/25 lg:to-transparent dark:from-neutral-950 dark:lg:from-neutral-950 dark:lg:via-neutral-950/35"></div>
+    </div>
+
+    <div class="relative z-10 mx-auto flex max-w-6xl flex-col justify-center px-4 pb-12 pt-8 sm:px-6 lg:h-svh lg:pb-16 lg:pt-24">
+      <div class="max-w-xl lg:max-w-[28rem]">
         {eyebrow && (
-          <div class="inline-flex items-center gap-2 rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand-primary dark:bg-brand-primary/20 dark:text-brand-light">
-            <span class="h-1.5 w-1.5 rounded-full bg-brand-primary dark:bg-brand-light"></span>
+          <div class="mb-5 inline-flex items-center gap-2 rounded-full border border-brand-accent/40 bg-white/90 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-brand-primary shadow-sm backdrop-blur dark:border-brand-accent/30 dark:bg-neutral-900/80 dark:text-brand-light">
+            <span class="h-1.5 w-1.5 rounded-full bg-brand-accent"></span>
             {eyebrow}
           </div>
         )}
-        <div class="space-y-5">
-          <h1 class="text-3xl sm:text-4xl md:text-5xl font-serif font-medium text-neutral-text leading-snug md:leading-normal dark:text-white tracking-tight">
-             "Nella <span class="text-brand-primary">consulenza patrimoniale olistica</span> gli aspetti <span class="text-brand-primary">legali</span>, <span class="text-brand-primary">fiscali</span> ed <span class="text-brand-primary">assicurativi</span>
-            <span class="italic block mt-1">hanno sempre <span class="text-brand-primary font-semibold">priorità e precedenza</span>"</span>
-          </h1>
-          <p class="text-lg md:text-xl font-medium text-neutral-700 dark:text-neutral-200 max-w-2xl leading-relaxed">
-            {title}
-          </p>
-          <p class="text-base text-neutral-muted leading-relaxed dark:text-neutral-400 max-w-xl">
-            {description}
-          </p>
-        </div>
-        <div class="flex flex-col sm:flex-row gap-4 pt-4">
+
+        <h1 class="font-serif text-[1.65rem] font-medium leading-[1.25] tracking-tight text-neutral-text sm:text-4xl lg:text-[2.45rem] dark:text-white">
+          "Nella <span class="text-brand-primary">consulenza patrimoniale olistica</span> gli aspetti <span class="text-brand-primary">legali</span>, <span class="text-brand-primary">fiscali</span> ed <span class="text-brand-primary">assicurativi</span>
+          <span class="mt-2 block italic">hanno sempre <span class="font-semibold not-italic text-brand-primary">priorità e precedenza</span>"</span>
+        </h1>
+
+        <p class="mt-5 border-l-2 border-brand-accent pl-4 text-lg font-medium leading-relaxed text-neutral-800 md:text-xl dark:text-neutral-100">
+          {title}
+        </p>
+        <p class="mt-4 text-base leading-relaxed text-neutral-muted dark:text-neutral-300">
+          {description}
+        </p>
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
           <a
             href={primaryCta.href}
             data-track-event="contact_click"
             data-track-location="hero"
-            class="inline-flex items-center justify-center rounded-full bg-brand-primary px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-brand-primary/20 hover:bg-brand-light hover:-translate-y-0.5 transition duration-300"
+            class="inline-flex items-center justify-center rounded-full bg-brand-primary px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-brand-primary/25 ring-2 ring-brand-accent/80 ring-offset-2 ring-offset-neutral-base transition duration-300 hover:-translate-y-0.5 hover:bg-brand-dark dark:ring-offset-neutral-950"
           >
             {primaryCta.label}
+            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
           </a>
           {secondaryCta && (
             <a
               href={secondaryCta.href}
-              class="inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-8 py-4 text-sm font-semibold text-neutral-700 hover:border-brand-primary hover:text-brand-primary transition duration-300 dark:bg-neutral-900 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-brand-light dark:hover:text-white"
+              class="inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white/90 px-8 py-4 text-sm font-semibold text-neutral-700 backdrop-blur transition duration-300 hover:border-brand-primary hover:text-brand-primary dark:border-neutral-700 dark:bg-neutral-900/80 dark:text-neutral-200 dark:hover:border-brand-light dark:hover:text-white"
             >
               {secondaryCta.label}
             </a>
           )}
         </div>
-        {stats && stats.length > 0 && (
-          <div class="pt-8 border-t border-neutral-200 dark:border-neutral-800">
-            <dl class="grid grid-cols-3 gap-6">
-              {stats.map((item) => (
-                <div class="text-center sm:text-left">
-                  <dd class="text-4xl md:text-5xl font-bold text-brand-primary dark:text-brand-light mb-1">{item.value}</dd>
-                  <dt class="text-xs uppercase tracking-wider text-neutral-500 dark:text-neutral-400">{item.label}</dt>
+
+        <div class="mt-6 flex items-start gap-2 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="mt-0.5 h-4 w-4 shrink-0 text-brand-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+          <span>Iscritto all'Albo dei Consulenti Finanziari — Delibera CONSOB n. 7413 del 28/09/1993</span>
+        </div>
+      </div>
+
+      {stats.length > 0 && (
+        <div class="hero-figures relative z-20 mt-8 lg:absolute lg:bottom-24 lg:right-10 lg:mt-0 lg:w-[27rem]">
+          <div class="rounded-3xl border border-neutral-200 bg-white p-5 shadow-[0_20px_50px_-24px_rgba(30,61,106,0.45)] dark:border-neutral-700 dark:bg-neutral-900 sm:p-6">
+            <dl class="space-y-5">
+              {stats.map((item, index) => (
+                <div class="hero-figure" style={`--i: ${index}; --bar: ${[0.78, 1, 0.92][index] ?? 1}`}>
+                  <div class="flex items-baseline justify-between gap-4">
+                    <dt class="text-sm font-medium leading-snug text-neutral-600 dark:text-neutral-300">{item.label}</dt>
+                    <dd class="shrink-0 font-serif text-3xl leading-none text-brand-primary dark:text-brand-light">{item.value}</dd>
+                  </div>
+                  <div class="mt-2.5 h-3 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800" aria-hidden="true">
+                    <div class="hero-meter h-full rounded-full bg-brand-primary dark:bg-brand-light"></div>
+                  </div>
                 </div>
               ))}
             </dl>
-            <div class="mt-6 flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
-              <span>Iscritto all'Albo dei Consulenti Finanziari — Delibera CONSOB n. 7413 del 28/09/1993</span>
-            </div>
           </div>
-        )}
-      </div>
-      <div class="lg:col-span-5 lg:self-start lg:-mt-4 relative animate-fade-in" style="animation-delay: 0.2s;">
-        <div class="relative z-10 rounded-[2rem] overflow-hidden shadow-2xl shadow-brand-primary/20 border-4 border-white/50 dark:border-neutral-800/50">
-          <img
-            src="/sergio.avif"
-            alt="Sergio Contegiacomo - Consulente Patrimoniale e Coach Finanziario"
-            width="600"
-            height="750"
-            fetchpriority="high"
-            decoding="async"
-            class="w-full h-auto object-cover transform hover:scale-105 transition duration-700 ease-out"
-            style="aspect-ratio: 600/750;"
-          />
         </div>
-        
-        <div class="absolute -top-8 -right-8 -z-10 h-48 w-48 rounded-full bg-brand-primary/20 blur-3xl dark:bg-brand-primary/10"></div>
-        <div class="absolute -bottom-8 -left-8 -z-10 h-48 w-48 rounded-full bg-brand-accent/20 blur-3xl dark:bg-brand-accent/10"></div>
-      </div>
+      )}
+    </div>
+
+    <div class="hero-hint pointer-events-none absolute bottom-6 left-1/2 z-20 hidden -translate-x-1/2 lg:block" aria-hidden="true">
+      <span class="flex h-9 w-9 items-center justify-center rounded-full border border-brand-accent/50 bg-white/80 text-brand-primary shadow-sm dark:bg-neutral-900/70 dark:text-brand-light">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 9l-7 7-7-7" />
+        </svg>
+      </span>
     </div>
   </div>
 </section>
+
+<style>
+  .hero-figures {
+    opacity: clamp(0, (var(--p) - 0.04) * 1.7, 1);
+    transform: translate3d(0, calc((1 - var(--p)) * 2.75rem), 0) scale(calc(0.94 + var(--p) * 0.06));
+  }
+
+  .hero-figure {
+    opacity: clamp(0, (var(--p) - (var(--i) * 0.1)) * 2.6, 1);
+    transform: translate3d(0, calc((1 - var(--p)) * 1.1rem), 0);
+  }
+
+  .hero-meter {
+    width: calc(var(--bar) * 100%);
+    transform: scaleX(clamp(0.08, var(--p), 1));
+    transform-origin: left center;
+  }
+
+  @media (max-width: 1023px) {
+    .hero-figures,
+    .hero-figure {
+      opacity: 1;
+      transform: none;
+    }
+
+    .hero-meter {
+      transform: none;
+    }
+  }
+
+  .hero-hint {
+    opacity: clamp(0, 1 - var(--p) * 3.2, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-stage {
+      height: auto !important;
+      --p: 1 !important;
+    }
+
+    .hero-pin {
+      position: relative !important;
+      height: auto !important;
+      overflow: visible !important;
+    }
+
+    .hero-figures,
+    .hero-figure,
+    .hero-meter {
+      transform: none !important;
+    }
+
+    .hero-figures,
+    .hero-figure,
+    .hero-hint {
+      opacity: 1 !important;
+    }
+  }
+</style>
