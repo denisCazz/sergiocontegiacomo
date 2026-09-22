@@ -1,4 +1,4 @@
-# Guida operativa per Sergio
+﻿# Guida operativa per Sergio
 
 Questa guida riassume le azioni principali da svolgere nel pannello admin del sito (`/admin`) per gestire articoli del blog ed eventi.
 
@@ -48,9 +48,10 @@ Gli eventi con data inferiore a oggi vengono mostrati come *Evento terminato*; p
 - Ottimizza i file prima dell'upload (formato JPG/WEBP, max 300 KB).
 - Compila sempre il campo *Alternative text*.
 
-## 7. Newsletter & CRM
-- Le richieste arrivate dal modulo contatti vengono registrate nel log server (o nel servizio esterno integrato). Controlla la inbox dedicata o il CRM.
-- Le iscrizioni alla newsletter vengono inviate all'integrazione configurata (Mailchimp/Brevo). Puoi esportare la lista dal provider.
+## 7. Contatti e newsletter
+- Le richieste del modulo contatti e le iscrizioni newsletter sono salvate nel database del sito.
+- Aprilo da admin in **Richieste** (`/admin/leads`): segna una richiesta come gestita, disiscrivi un indirizzo o eliminalo.
+- Una copia arriva anche via email allo staff (`PUBLIC_EVENT_EMAIL`), se Resend è configurato.
 
 ## 8. Pianificazione editoriale
 - Suggerimento: mantieni almeno 3 articoli programmati e aggiorna il calendario eventi una volta al mese.

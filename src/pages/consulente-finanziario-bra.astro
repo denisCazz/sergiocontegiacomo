@@ -186,6 +186,14 @@ const structuredData = {
           name: 'Provincia di Cuneo',
         },
       ],
+      hasMap: siteConfig.mapsDirectionsUrl,
+      openingHoursSpecification: [
+        { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Wednesday'], opens: '08:30', closes: '13:00' },
+        { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Wednesday'], opens: '18:00', closes: '20:00' },
+        { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Tuesday', 'Friday'], opens: '08:30', closes: '13:00' },
+        { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Thursday', opens: '08:30', closes: '12:00' },
+        { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Thursday', opens: '14:00', closes: '18:00' },
+      ],
       sameAs: [siteConfig.social.linkedin, siteConfig.allianzProfileUrl],
     },
     {

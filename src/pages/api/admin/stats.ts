@@ -2,6 +2,7 @@
 import { requireAdminFromRequest, unauthorizedResponse } from '../../../lib/auth';
 import { sql } from '../../../lib/db';
 import { ensureGallerySchema } from '../../../lib/cms';
+import { ensureLeadsSchema } from '../../../lib/leads';
 
 export const prerender = false;
 
@@ -14,6 +15,7 @@ export const GET: APIRoute = async ({ request }) => {
 
   try {
     await ensureGallerySchema();
+    await ensureLeadsSchema();
     const [counts, recentArticles, recentAudio, recentEvents, recentPress, recentPodcasts] = await Promise.all([
       sql`
         SELECT
@@ -23,7 +25,10 @@ export const GET: APIRoute = async ({ request }) => {
           (SELECT COUNT(*)::int FROM press) AS press,
           (SELECT COUNT(*)::int FROM podcasts) AS podcasts,
           (SELECT COUNT(*)::int FROM testimonials) AS testimonials,
-          (SELECT COUNT(*)::int FROM gallery_images) AS gallery
+          (SELECT COUNT(*)::int FROM gallery_images) AS gallery,
+          (SELECT COUNT(*)::int FROM contact_requests) AS contacts,
+          (SELECT COUNT(*)::int FROM contact_requests WHERE status = 'new') AS contacts_new,
+          (SELECT COUNT(*)::int FROM newsletter_subscribers WHERE status = 'active') AS newsletter
       `,
       sql`SELECT id, title, created_at FROM articles ORDER BY created_at DESC LIMIT 3`,
       sql`SELECT id, title, created_at FROM audio_pillole ORDER BY created_at DESC LIMIT 3`,

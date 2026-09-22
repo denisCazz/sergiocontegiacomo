@@ -1,0 +1,214 @@
+﻿---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Richieste">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Richieste</h1>
+    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Contatti e iscrizioni newsletter salvati sul sito.</p>
+  </div>
+
+  <div class="mb-10">
+    <h2 class="mb-3 text-lg font-semibold text-gray-900 dark:text-white">Modulo contatti</h2>
+    <div class="bg-white dark:bg-gray-800 shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl overflow-hidden">
+      <ul id="contactsList" class="divide-y divide-gray-200 dark:divide-gray-700">
+        <li class="p-4 text-center text-gray-500 dark:text-gray-400">Caricamento...</li>
+      </ul>
+    </div>
+  </div>
+
+  <div>
+    <h2 class="mb-3 text-lg font-semibold text-gray-900 dark:text-white">Newsletter</h2>
+    <div class="bg-white dark:bg-gray-800 shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl overflow-hidden">
+      <ul id="subscribersList" class="divide-y divide-gray-200 dark:divide-gray-700">
+        <li class="p-4 text-center text-gray-500 dark:text-gray-400">Caricamento...</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    import dayjs from 'dayjs';
+
+    type ContactRow = {
+      id: number;
+      created_at: string;
+      first_name: string;
+      last_name: string;
+      email: string;
+      phone: string | null;
+      message: string | null;
+      status: 'new' | 'handled';
+    };
+
+    type SubscriberRow = {
+      id: number;
+      created_at: string;
+      email: string;
+      first_name: string | null;
+      last_name: string | null;
+      status: 'active' | 'unsubscribed';
+    };
+
+    const contactsList = document.getElementById('contactsList');
+    const subscribersList = document.getElementById('subscribersList');
+
+    function escapeHtml(value: string): string {
+      return value
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    async function loadLeads() {
+      const res = await fetch('/api/admin/leads', { credentials: 'include' });
+      if (res.status === 401) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      if (!res.ok || !contactsList || !subscribersList) {
+        if (contactsList) contactsList.innerHTML = '<li class="p-4 text-red-500">Errore nel caricamento</li>';
+        return;
+      }
+
+      const data = await res.json() as { contacts: ContactRow[]; subscribers: SubscriberRow[] };
+      renderContacts(data.contacts || []);
+      renderSubscribers(data.subscribers || []);
+    }
+
+    function renderContacts(contacts: ContactRow[]) {
+      if (!contactsList) return;
+      if (contacts.length === 0) {
+        contactsList.innerHTML = '<li class="p-4 text-center text-gray-500">Nessuna richiesta.</li>';
+        return;
+      }
+
+      contactsList.innerHTML = contacts.map((row) => {
+        const handled = row.status === 'handled';
+        const name = escapeHtml(`${row.first_name} ${row.last_name}`.trim());
+        return `
+          <li class="px-4 py-4 sm:px-6">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div class="min-w-0">
+                <p class="text-sm font-medium text-gray-900 dark:text-white">${name}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                  <a class="hover:underline" href="mailto:${escapeHtml(row.email)}">${escapeHtml(row.email)}</a>
+                  ${row.phone ? ` · ${escapeHtml(row.phone)}` : ''}
+                </p>
+              </div>
+              <div class="flex items-center gap-3 text-sm">
+                <span class="rounded-full px-2 py-0.5 text-xs font-semibold ${handled ? 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300' : 'bg-green-100 text-green-800'}">
+                  ${handled ? 'Gestita' : 'Nuova'}
+                </span>
+                <span class="text-gray-400">${dayjs(row.created_at).format('DD/MM/YYYY HH:mm')}</span>
+              </div>
+            </div>
+            <p class="mt-2 whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300">${escapeHtml(row.message || '(nessun messaggio)')}</p>
+            <div class="mt-3 flex gap-4 text-sm">
+              <button type="button" class="contact-status font-medium text-brand-primary" data-id="${row.id}" data-next="${handled ? 'new' : 'handled'}">
+                ${handled ? 'Segna come nuova' : 'Segna come gestita'}
+              </button>
+              <button type="button" class="contact-delete font-medium text-red-600" data-id="${row.id}">Elimina</button>
+            </div>
+          </li>
+        `;
+      }).join('');
+
+      contactsList.querySelectorAll('.contact-status').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const id = btn.getAttribute('data-id');
+          const status = btn.getAttribute('data-next');
+          await patchLead('contact', id, status);
+        });
+      });
+      contactsList.querySelectorAll('.contact-delete').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Eliminare questa richiesta?')) return;
+          await deleteLead('contact', btn.getAttribute('data-id'));
+        });
+      });
+    }
+
+    function renderSubscribers(subscribers: SubscriberRow[]) {
+      if (!subscribersList) return;
+      if (subscribers.length === 0) {
+        subscribersList.innerHTML = '<li class="p-4 text-center text-gray-500">Nessun iscritto.</li>';
+        return;
+      }
+
+      subscribersList.innerHTML = subscribers.map((row) => {
+        const active = row.status === 'active';
+        const name = [row.first_name, row.last_name].filter(Boolean).join(' ');
+        return `
+          <li class="px-4 py-4 sm:px-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p class="text-sm font-medium text-gray-900 dark:text-white">${escapeHtml(row.email)}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">${name ? escapeHtml(name) : 'Senza nome'} · ${dayjs(row.created_at).format('DD/MM/YYYY')}</p>
+              </div>
+              <div class="flex items-center gap-4 text-sm">
+                <span class="rounded-full px-2 py-0.5 text-xs font-semibold ${active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'}">
+                  ${active ? 'Attivo' : 'Disiscritto'}
+                </span>
+                <button type="button" class="subscriber-status font-medium text-brand-primary" data-id="${row.id}" data-next="${active ? 'unsubscribed' : 'active'}">
+                  ${active ? 'Disiscrivi' : 'Riattiva'}
+                </button>
+                <button type="button" class="subscriber-delete font-medium text-red-600" data-id="${row.id}">Elimina</button>
+              </div>
+            </div>
+          </li>
+        `;
+      }).join('');
+
+      subscribersList.querySelectorAll('.subscriber-status').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          await patchLead('newsletter', btn.getAttribute('data-id'), btn.getAttribute('data-next'));
+        });
+      });
+      subscribersList.querySelectorAll('.subscriber-delete').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Eliminare questo iscritto?')) return;
+          await deleteLead('newsletter', btn.getAttribute('data-id'));
+        });
+      });
+    }
+
+    async function patchLead(kind: string, id: string | null, status: string | null) {
+      if (!id || !status) return;
+      const res = await fetch('/api/admin/leads', {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ kind, id: Number(id), status }),
+      });
+      if (res.status === 401) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      if (!res.ok) {
+        alert('Aggiornamento non riuscito');
+        return;
+      }
+      await loadLeads();
+    }
+
+    async function deleteLead(kind: string, id: string | null) {
+      if (!id) return;
+      const res = await fetch(`/api/admin/leads?kind=${kind}&id=${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (res.status === 401) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      if (!res.ok) {
+        alert('Eliminazione non riuscita');
+        return;
+      }
+      await loadLeads();
+    }
+
+    loadLeads();
+  </script>
+</AdminLayout>

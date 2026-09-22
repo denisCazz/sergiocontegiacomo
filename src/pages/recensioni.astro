@@ -17,65 +17,63 @@ const testimonials = await getAllTestimonials(true);
 >
   {/* ── Carousel testimonianze ── */}
   {testimonials.length > 0 && (
-    <section class="relative py-20 lg:py-28 overflow-hidden">
-      <div class="absolute inset-0 bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900"></div>
-      <div class="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-brand-primary/20 blur-3xl"></div>
-      <div class="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-amber-500/15 blur-3xl"></div>
-
-      <div class="mx-auto max-w-6xl px-6 relative z-10">
-        <div class="text-center mb-14">
-          <h1 class="text-3xl md:text-4xl lg:text-5xl font-serif text-white mb-4">Cosa dicono i miei clienti</h1>
-          <p class="text-lg text-neutral-400 max-w-2xl mx-auto">La misura del vero successo e' la serenita' dei miei clienti nel tempo.</p>
+    <section class="bg-white py-20 dark:bg-neutral-950 lg:py-28">
+      <div class="mx-auto max-w-6xl px-6">
+        <div class="mb-14 text-center">
+          <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand-primary dark:bg-brand-primary/20 dark:text-brand-light">
+            <span class="h-1.5 w-1.5 rounded-full bg-brand-primary dark:bg-brand-light"></span>
+            Testimonianze
+          </div>
+          <h1 class="mb-4 font-serif text-3xl font-medium text-neutral-text dark:text-white md:text-4xl">Cosa dicono i miei clienti</h1>
+          <p class="mx-auto max-w-2xl text-neutral-muted dark:text-neutral-400">La misura del vero successo è la serenità dei miei clienti nel tempo.</p>
         </div>
 
         <div class="relative" id="reviews-carousel">
           <div class="overflow-hidden">
             <div class="flex transition-transform duration-500 ease-out" id="reviews-track">
               {testimonials.map((t, i) => (
-                <div class="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 p-3" data-slide={i}>
-                  <div class="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 h-full flex flex-col transition-all duration-500 hover:border-amber-400/30 hover:shadow-2xl hover:shadow-amber-400/10 hover:-translate-y-1">
-                    <div class="absolute -top-4 -left-2 w-10 h-10 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/30 -rotate-12">
-                      <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
-                    </div>
+                <div class="w-full flex-shrink-0 p-3 md:w-1/2 lg:w-1/3" data-slide={i}>
+                  <blockquote class="flex h-full flex-col rounded-3xl border border-neutral-border bg-neutral-50 p-8 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_-4px_rgba(30,58,138,0.18)] dark:border-neutral-800 dark:bg-neutral-900">
                     {t.rating && (
-                      <div class="flex gap-1 mb-3 mt-4">
+                      <div class="mb-4 flex gap-1">
                         {[...Array(5)].map((_, s) => (
-                          <svg class={`w-4 h-4 ${s < (t.rating ?? 0) ? 'text-amber-400' : 'text-neutral-600'}`} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                          <svg class={`h-4 w-4 ${s < (t.rating ?? 0) ? 'text-brand-primary dark:text-brand-light' : 'text-neutral-300 dark:text-neutral-600'}`} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                         ))}
                       </div>
                     )}
-                    <blockquote class={`flex-grow ${!t.rating ? 'mt-6' : ''}`}>
-                      <p class="text-neutral-200 text-base leading-relaxed italic">"{t.quote}"</p>
-                    </blockquote>
-                    <div class="mt-6 pt-5 border-t border-white/10 flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-primary to-brand-dark flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                    <p class="flex-grow text-base leading-relaxed text-neutral-text dark:text-neutral-100">
+                      <span class="font-serif text-3xl leading-none text-brand-primary/40 dark:text-brand-light/40" aria-hidden="true">“</span>
+                      {t.quote}
+                    </p>
+                    <footer class="mt-6 flex items-center gap-3 border-t border-neutral-200 pt-5 dark:border-neutral-800">
+                      <div class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-primary/10 text-sm font-semibold text-brand-primary dark:bg-brand-primary/20 dark:text-brand-light">
                         {t.author_name.charAt(0)}
                       </div>
                       <div>
-                        <p class="font-semibold text-white text-sm">{t.author_name}</p>
-                        {t.author_role && <p class="text-xs text-neutral-400">{t.author_role}</p>}
+                        <p class="text-sm font-semibold text-neutral-text dark:text-white">{t.author_name}</p>
+                        {t.author_role && <p class="text-xs text-neutral-muted dark:text-neutral-400">{t.author_role}</p>}
                       </div>
-                    </div>
-                  </div>
+                    </footer>
+                  </blockquote>
                 </div>
               ))}
             </div>
           </div>
 
           {testimonials.length > 3 && (
-            <div class="flex items-center justify-center gap-4 mt-8">
-              <button id="rev-prev" aria-label="Precedente" class="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-brand-primary hover:border-brand-primary transition-all">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            <div class="mt-8 flex items-center justify-center gap-4">
+              <button id="rev-prev" aria-label="Precedente" class="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-700 transition hover:border-brand-primary hover:bg-brand-primary hover:text-white dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
               </button>
               <div class="flex gap-2" id="rev-dots">
                 {testimonials.map((_, i) => (
                   <button class="p-1.5 focus:outline-none" data-rdot={i} aria-label={`Slide ${i + 1}`}>
-                    <span class={`block h-2 rounded-full transition-all duration-300 ${i === 0 ? 'bg-amber-400 w-6' : 'bg-white/20 w-2 hover:bg-white/40'}`}></span>
+                    <span class={`block h-2 rounded-full transition-all duration-300 ${i === 0 ? 'w-6 bg-brand-primary' : 'w-2 bg-neutral-300 hover:bg-neutral-400 dark:bg-neutral-600'}`}></span>
                   </button>
                 ))}
               </div>
-              <button id="rev-next" aria-label="Successiva" class="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-brand-primary hover:border-brand-primary transition-all">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              <button id="rev-next" aria-label="Successiva" class="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-700 transition hover:border-brand-primary hover:bg-brand-primary hover:text-white dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
               </button>
             </div>
           )}
@@ -301,9 +299,9 @@ const testimonials = await getAllTestimonials(true);
           const span = btn.querySelector('span');
           if (!span) return;
           if (i === current) {
-            span.className = 'block h-2 rounded-full transition-all duration-300 bg-amber-400 w-6';
+            span.className = 'block h-2 rounded-full transition-all duration-300 bg-brand-primary w-6';
           } else {
-            span.className = 'block h-2 rounded-full transition-all duration-300 bg-white/20 w-2 hover:bg-white/40';
+            span.className = 'block h-2 rounded-full transition-all duration-300 bg-neutral-300 dark:bg-neutral-600 w-2 hover:bg-neutral-400';
           }
         });
       };

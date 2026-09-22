@@ -1,6 +1,6 @@
-export const prerender = false;
+﻿export const prerender = false;
 
-import { sendBitoraCrmLead } from '../../lib/bitoraCrm';
+import { subscribeNewsletter } from '../../lib/leads';
 import { sendSiteEmail, isValidEmail } from '../../lib/resendSite';
 import { siteConfig } from '../../lib/config';
 import { wrapSiteTransactionalEmail } from '../../lib/emailLayout';
@@ -58,24 +58,20 @@ export async function POST({ request }: { request: Request }) {
       });
     }
 
-    const bitoraLead = await sendBitoraCrmLead(
-      {
-        first_name: nome,
-        last_name: cognome,
+    let created = false;
+    try {
+      const saved = await subscribeNewsletter({
         email,
-        message: 'Iscrizione newsletter dal sito sergiocontegiacomo.it',
-        source: 'website-newsletter',
-      },
-      { request },
-    );
-
-    const crmSaved = bitoraLead.ok && !bitoraLead.skipped;
-    if (!bitoraLead.ok && !bitoraLead.skipped) {
-      console.error(
-        '[newsletter] CRM non raggiungibile o rifiutato — proseguo con email (best-effort).',
-        bitoraLead.status,
-        bitoraLead.errorText,
-      );
+        firstName: nome,
+        lastName: cognome,
+      });
+      created = saved.created;
+    } catch (error) {
+      console.error('[newsletter] salvataggio iscrizione fallito', error);
+      return new Response(JSON.stringify({ success: false, message: 'Errore durante l’iscrizione' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     const staffEmail =
@@ -101,9 +97,9 @@ export async function POST({ request }: { request: Request }) {
         ${cognome ? `<li style="margin:0 0 10px;"><strong>Cognome:</strong> ${escapeHtml(cognome)}</li>` : ''}
       </ul>
       <p style="margin:22px 0 0;font-size:14px;color:#64748b;line-height:1.55;">${
-        crmSaved
-          ? 'Contatto registrato nel CRM.'
-          : 'Verifica il CRM: salvataggio non confermato (controlla API key e URL).'
+        created
+          ? 'Nuova iscrizione salvata nell’area admin del sito.'
+          : 'Email già presente: dati aggiornati nell’area admin.'
       }</p>
     `;
 

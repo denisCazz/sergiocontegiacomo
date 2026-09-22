@@ -1,4 +1,5 @@
 ﻿import postgres from 'postgres';
+import { createDbCooldown, databaseUnavailableError, DB_CONNECT_TIMEOUT_SEC } from './dbGuard';
 
 const databaseUrl = import.meta.env.DATABASE_URL || process.env.DATABASE_URL;
 
@@ -20,10 +21,42 @@ function createSql() {
     return stub;
   }
 
-  return postgres(databaseUrl, {
+  const cooldown = createDbCooldown();
+  const client = postgres(databaseUrl, {
     max: 10,
     idle_timeout: 20,
-    connect_timeout: 10,
+    connect_timeout: DB_CONNECT_TIMEOUT_SEC,
+  });
+
+  const settle = (result: unknown) => {
+    if (result && typeof (result as Promise<unknown>).then === 'function') {
+      return (result as Promise<unknown>).then(
+        (value) => {
+          cooldown.clear();
+          return value;
+        },
+        (error: unknown) => {
+          cooldown.note(error);
+          throw error;
+        },
+      );
+    }
+    return result;
+  };
+
+  return new Proxy(client, {
+    apply(target, thisArg, argArray) {
+      if (cooldown.isCoolingDown()) return Promise.reject(databaseUnavailableError());
+      return settle(Reflect.apply(target, thisArg, argArray));
+    },
+    get(target, prop, receiver) {
+      const value = Reflect.get(target, prop, receiver);
+      if (typeof value !== 'function') return value;
+      return (...args: unknown[]) => {
+        if (cooldown.isCoolingDown()) return Promise.reject(databaseUnavailableError());
+        return settle(value.apply(target, args));
+      };
+    },
   });
 }
 

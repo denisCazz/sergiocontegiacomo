@@ -1,4 +1,4 @@
----
+﻿---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { siteConfig } from '../lib/config';
 
@@ -92,7 +92,7 @@ export const prerender = true;
           <li><strong>Hosting e infrastruttura</strong>: server VPS dedicato.</li>
           <li><strong>Database</strong>: PostgreSQL ospitato sulla VPS del Titolare (contenuti dinamici, commenti/RSVP e area admin).</li>
           <li><strong>File e media</strong>: Cloudflare R2 (immagini, audio e documenti).</li>
-          <li><strong>Email transazionali e newsletter</strong>: Resend (invio email dal sito); i dati di contatto e lead sono gestiti anche nel CRM dedicato (Sergio Contegiacomo CRM).</li>
+          <li><strong>Email transazionali</strong>: Resend (invio delle email di conferma e delle notifiche allo staff). Le richieste di contatto e le iscrizioni alla newsletter sono conservate nel database PostgreSQL del sito, sulla VPS del Titolare.</li>
           <li><strong>Statistica</strong>: Google Analytics (se attivato).</li>
         </ul>
 

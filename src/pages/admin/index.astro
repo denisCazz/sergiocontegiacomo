@@ -24,7 +24,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   </div>
 
   <!-- Statistiche con azioni rapide integrate -->
-  <div class="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
+  <div class="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
     <div class="group relative rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 p-4 text-white shadow-md transition hover:shadow-lg">
       <a href="/admin/articles" class="block">
         <p class="text-[11px] font-medium text-blue-100 uppercase tracking-wide">Articoli</p>
@@ -77,6 +77,13 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       </a>
       <a href="/admin/gallery" class="absolute top-3 right-3 flex h-7 w-7 items-center justify-center rounded-lg bg-white/20 text-white hover:bg-white/40 transition" title="Gestisci Gallery">
         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+      </a>
+    </div>
+    <div class="group relative rounded-xl bg-gradient-to-br from-green-600 to-emerald-600 p-4 text-white shadow-md transition hover:shadow-lg">
+      <a href="/admin/leads" class="block">
+        <p class="text-[11px] font-medium text-green-100 uppercase tracking-wide">Richieste</p>
+        <p class="text-2xl font-bold mt-1" id="stat-contacts">-</p>
+        <p class="mt-1 text-[11px] text-green-100" id="stat-contacts-hint">nuove da leggere</p>
       </a>
     </div>
     <div class="group relative rounded-xl bg-gradient-to-br from-yellow-500 to-yellow-600 p-4 text-white shadow-md transition hover:shadow-lg">
@@ -144,6 +151,12 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       document.getElementById('stat-podcasts')!.textContent = String(counts?.podcasts || 0);
       document.getElementById('stat-events')!.textContent = String(counts?.events || 0);
       document.getElementById('stat-press')!.textContent = String(counts?.press || 0);
+      document.getElementById('stat-contacts')!.textContent = String(counts?.contacts_new || 0);
+      const contactsHint = document.getElementById('stat-contacts-hint');
+      if (contactsHint) {
+        const newsletter = Number(counts?.newsletter || 0);
+        contactsHint.textContent = `da leggere · ${newsletter} iscritti`;
+      }
       document.getElementById('stat-testimonials')!.textContent = String(counts?.testimonials || 0);
       document.getElementById('stat-gallery')!.textContent = String(counts?.gallery || 0);
 

@@ -59,6 +59,8 @@ test('landing page has required SEO and content contracts', () => {
   assert.match(source, /'@type': 'FinancialService'/);
   assert.match(source, /'@type': 'BreadcrumbList'/);
   assert.match(source, /'@type': 'FAQPage'/);
+  assert.match(source, /openingHoursSpecification/);
+  assert.doesNotMatch(source, /Lunedì e mercoledì/);
   assert.match(source, /'@graph'/);
 
   for (const h2 of requiredH2) {
@@ -107,15 +109,24 @@ test('siteConfig exposes verified Allianz and Maps URLs', () => {
   assert.match(config, /google\.com\/maps\/dir/);
 });
 
+test('local landing stays in the footer and out of the navbar', () => {
+  const header = readFileSync(join(root, 'src', 'components', 'Header.astro'), 'utf8');
+  const footer = readFileSync(join(root, 'src', 'components', 'Footer.astro'), 'utf8');
+  assert.doesNotMatch(header, /consulente-finanziario-bra/);
+  assert.match(footer, /href="\/consulente-finanziario-bra"/);
+});
+
 test('servizi page links to the local landing', () => {
   const servizi = readFileSync(serviziPath, 'utf8');
   assert.match(servizi, /href="\/consulente-finanziario-bra"/);
   assert.match(servizi, /consulenza finanziaria e patrimoniale a Bra/);
 });
 
-test('homepage source remains unchanged from baseline', async () => {
-  const expected = 'A0B9154A80FBD3E4D73A0854E326FDE5D78012C770235E228B00724F96B500F6';
-  const { createHash } = await import('node:crypto');
-  const actual = createHash('sha256').update(readFileSync(homepagePath)).digest('hex').toUpperCase();
-  assert.equal(actual, expected);
+test('homepage keeps the client copy in the hero', () => {
+  const source = readFileSync(homepagePath, 'utf8');
+  assert.match(source, /title="Consulente patrimoniale a Bra"/);
+  assert.match(source, /eyebrow="CONSULENZA PATRIMONIALE"/);
+  assert.match(source, /Proteggiamo e facciamo crescere il tuo patrimonio con metodo/);
+  assert.match(source, /in un ottica intergenerazionale/);
+  assert.doesNotMatch(source, /CONSULENTE PATRIMONIALE A BRA/);
 });

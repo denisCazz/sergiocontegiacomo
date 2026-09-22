@@ -30,3 +30,4 @@
 - [ ] Commenti articoli
 - [ ] RSVP eventi
 - [ ] Form contatti / newsletter / testimonianze
+- [ ] Richiesta contatto visibile in admin → Richieste
