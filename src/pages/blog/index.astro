@@ -4,7 +4,8 @@ import BlogCard from '../../components/BlogCard.astro';
 import Pagination from '../../components/Pagination.astro';
 import { getArticles, getArticleStatsForSlugs, getUniqueArticleTags, getLatestPressItems, getLatestAudioPillole, type Article, type ArticleStats } from '../../lib/cms';
 
-const page = Number(Astro.url.searchParams.get('page') ?? '1');
+const rawPage = Number(Astro.url.searchParams.get('page') ?? '1');
+const page = Number.isFinite(rawPage) && rawPage >= 1 ? Math.floor(rawPage) : 1;
 const activeTag = Astro.url.searchParams.get('tag') ?? undefined;
 const searchQuery = Astro.url.searchParams.get('q') ?? undefined;
 const searchLower = searchQuery?.toLowerCase() ?? '';

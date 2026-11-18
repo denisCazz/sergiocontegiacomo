@@ -5,11 +5,15 @@ import type { Article } from '../lib/cms';
 
 interface Props {
   article: Article;
-  rating?: number;
-  commentCount?: number;
+  rating?: number | string | null;
+  commentCount?: number | string | null;
 }
 
 const { article, rating, commentCount } = Astro.props;
+const numericRating = rating !== undefined && rating !== null && rating !== '' ? Number(rating) : undefined;
+const hasRating = numericRating !== undefined && Number.isFinite(numericRating) && numericRating > 0;
+const numericCommentCount = commentCount !== undefined && commentCount !== null && commentCount !== '' ? Number(commentCount) : undefined;
+const hasCommentCount = numericCommentCount !== undefined && Number.isFinite(numericCommentCount) && numericCommentCount > 0;
 const formattedDate = dayjs(article.publishedAt).locale('it').format('DD MMMM YYYY');
 ---
 
@@ -25,13 +29,13 @@ const formattedDate = dayjs(article.publishedAt).locale('it').format('DD MMMM YY
         decoding="async"
         class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
       />
-      {(rating !== undefined && rating > 0) && (
+      {(hasRating && numericRating !== undefined) && (
         <div class="absolute bottom-3 left-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm rounded-full px-2.5 py-1">
           <div class="flex items-center gap-0.5">
             {[1, 2, 3, 4, 5].map((star) => (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class={`h-3.5 w-3.5 ${star <= Math.round(rating) ? 'text-amber-400' : 'text-neutral-500'}`}
+                class={`h-3.5 w-3.5 ${star <= Math.round(numericRating) ? 'text-amber-400' : 'text-neutral-500'}`}
                 fill="currentColor"
                 viewBox="0 0 24 24"
               >
@@ -39,9 +43,9 @@ const formattedDate = dayjs(article.publishedAt).locale('it').format('DD MMMM YY
               </svg>
             ))}
           </div>
-          <span class="text-xs font-medium text-white">{rating.toFixed(1)}</span>
-          {commentCount !== undefined && commentCount > 0 && (
-            <span class="text-xs text-neutral-300">({commentCount})</span>
+          <span class="text-xs font-medium text-white">{numericRating.toFixed(1)}</span>
+          {hasCommentCount && (
+            <span class="text-xs text-neutral-300">({numericCommentCount})</span>
           )}
         </div>
       )}

@@ -218,12 +218,33 @@ export async function addComment(comment: Omit<Comment, 'id' | 'created_at'>) {
   return data[0] as unknown as Comment;
 }
 
+function normalizeArticleStats(row: Record<string, unknown>): ArticleStats {
+  const commentCount = Number(row?.comment_count ?? 0);
+  const averageRating = Number(row?.average_rating ?? 0);
+  return {
+    article_slug: String(row?.article_slug ?? ''),
+    comment_count: Number.isFinite(commentCount) ? commentCount : 0,
+    average_rating: Number.isFinite(averageRating) ? averageRating : 0,
+  };
+}
+
+function normalizeEventStats(row: Record<string, unknown>): EventStats {
+  const attendingCount = Number(row?.attending_count ?? 0);
+  const notAttendingCount = Number(row?.not_attending_count ?? 0);
+  return {
+    event_slug: String(row?.event_slug ?? ''),
+    attending_count: Number.isFinite(attendingCount) ? attendingCount : 0,
+    not_attending_count: Number.isFinite(notAttendingCount) ? notAttendingCount : 0,
+  };
+}
+
 export async function getArticleStats(slug: string) {
   try {
     const data = await sql`
       SELECT * FROM article_stats WHERE article_slug = ${slug} LIMIT 1
     `;
-    return (data[0] as unknown as ArticleStats) ?? null;
+    const row = data[0] as Record<string, unknown> | undefined;
+    return row ? normalizeArticleStats(row) : null;
   } catch (error) {
     console.error('Error fetching article stats:', error);
     return null;
@@ -233,7 +254,7 @@ export async function getArticleStats(slug: string) {
 export async function getAllArticleStats() {
   try {
     const data = await sql`SELECT * FROM article_stats`;
-    return data as unknown as ArticleStats[];
+    return (data as unknown as Record<string, unknown>[]).map(normalizeArticleStats);
   } catch (error) {
     console.error('Error fetching all article stats:', error);
     return [];
@@ -248,7 +269,7 @@ export async function getArticleStatsForSlugs(slugs: string[]) {
     const data = await sql`
       SELECT * FROM article_stats WHERE article_slug = ANY(${uniqueSlugs})
     `;
-    return data as unknown as ArticleStats[];
+    return (data as unknown as Record<string, unknown>[]).map(normalizeArticleStats);
   } catch (error) {
     console.error('Error fetching article stats by slugs:', error);
     return [];
@@ -302,7 +323,8 @@ export async function getEventStats(slug: string) {
     const data = await sql`
       SELECT * FROM event_stats WHERE event_slug = ${slug} LIMIT 1
     `;
-    return (data[0] as unknown as EventStats) ?? null;
+    const row = data[0] as Record<string, unknown> | undefined;
+    return row ? normalizeEventStats(row) : null;
   } catch (error) {
     console.error('Error fetching event stats:', error);
     return null;
